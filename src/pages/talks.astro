@@ -16,7 +16,7 @@ const talkTypeLabel: Record<string, string> = {
   talk: 'Talk',
   panel: 'Panel',
   tutorial: 'Tutorial',
-  'pc-service': 'Program Committee',
+  'pc-service': 'Service',
   webinar: 'Webinar',
 };
 
@@ -32,50 +32,42 @@ const years = [...groupedByYear.keys()].sort((a, b) => b - a);
 <Layout
   title="Talks — Srijan Saket"
   description="Keynotes, talks, workshop presentations, and program-committee service by Srijan Saket."
+  pageType="inner"
 >
-  <main>
-    <p class="skip-to">
-      <a href="/">← home</a>
+  <section class="section lede">
+    <h1>Talks &amp; service</h1>
+    <p class="hero-sub">
+      Keynotes, paper presentations, workshop talks, and program-committee service.
+      Each entry links to a page with the slide deck embedded.
     </p>
+  </section>
 
-    <section>
-      <h1>Talks &amp; service</h1>
-      <p>
-        Keynotes, paper presentations, workshop talks, and program-committee service.
-        Older decks are hosted on Google Slides; newer material lives in this repo.
-      </p>
+  {years.map((y) => (
+    <section class="section year-group">
+      <h2 class="year-label">{y}</h2>
+      <ul class="talk-list">
+        {groupedByYear.get(y)!.map((t) => (
+          <li class="talk-item">
+            <span class="talk-badge">{talkTypeLabel[t.data.type] ?? t.data.type}</span>
+            <div class="talk-body">
+              <h3 class="talk-title">
+                <a href={`/talks/${t.id}/`}>{t.data.title}</a>
+              </h3>
+              <p class="talk-meta">
+                {t.data.venue}{t.data.location ? ` · ${t.data.location}` : ''}
+                <span class="sep">&middot;</span>
+                {dateLong.format(t.data.date)}
+              </p>
+              {t.data.abstract && <p class="talk-abstract">{t.data.abstract}</p>}
+              <p class="talk-micros">
+                <a href={`/talks/${t.id}/`}>page &rarr;</a>
+                {t.data.slides && <a href={t.data.slides} target="_blank" rel="noopener">slides &rarr;</a>}
+                {t.data.video && <a href={t.data.video} target="_blank" rel="noopener">video &rarr;</a>}
+              </p>
+            </div>
+          </li>
+        ))}
+      </ul>
     </section>
-
-    {years.map((y) => (
-      <section class="year-group">
-        <span class="year-label">{y}</span>
-        <ul class="talks-full">
-          {groupedByYear.get(y)!.map((t) => (
-            <li>
-              <span class="title">
-                <span class="talk-badge">{talkTypeLabel[t.data.type] ?? t.data.type}</span>
-                {t.data.title}
-              </span>
-              <span class="meta">
-                {t.data.venue}{t.data.location ? ` · ${t.data.location}` : ''} · {dateLong.format(t.data.date)}
-              </span>
-              {t.data.abstract && <span class="abstract">{t.data.abstract}</span>}
-              {(t.data.slides || t.data.video || t.data.url) && (
-                <span class="links">
-                  {t.data.slides && <a href={t.data.slides} target="_blank" rel="noopener">slides →</a>}
-                  {t.data.video && <a href={t.data.video} target="_blank" rel="noopener">video →</a>}
-                  {t.data.url && <a href={t.data.url} target="_blank" rel="noopener">paper / page →</a>}
-                </span>
-              )}
-            </li>
-          ))}
-        </ul>
-      </section>
-    ))}
-
-    <footer>
-      Built with <a href="https://astro.build" target="_blank" rel="noopener">Astro</a> ·
-      <a href="https://github.com/srijansk/srijansk.github.io" target="_blank" rel="noopener">source on GitHub →</a>
-    </footer>
-  </main>
+  ))}
 </Layout>

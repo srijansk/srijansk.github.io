@@ -1,20 +1,24 @@
 ---
 import '../styles/global.css';
+import SocialIcons from '../components/SocialIcons.astro';
 
 interface Props {
   title: string;
   description?: string;
   canonical?: string;
+  pageType?: 'home' | 'inner';
 }
 
 const {
   title,
   description = 'Srijan Saket — building the tribal knowledge layer for LLM agents. Founding member at Pavo AI. Ex-Sourcegraph, ex-ShareChat. Applied research at the intersection of recommender systems and agentic AI.',
   canonical,
+  pageType = 'home',
 } = Astro.props;
 
 const site = Astro.site?.toString().replace(/\/$/, '') ?? 'https://srijansk.github.io';
 const canonicalUrl = canonical ?? new URL(Astro.url.pathname, site).toString();
+const isHome = pageType === 'home';
 ---
 
 <!doctype html>
@@ -33,17 +37,20 @@ const canonicalUrl = canonical ?? new URL(Astro.url.pathname, site).toString();
     <meta property="og:type" content="profile" />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:site_name" content="Srijan Saket" />
+    <meta property="og:image" content={`${site}/srijan.png`} />
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:creator" content="@srijanskt2" />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="preload" as="image" href="/srijan.png" fetchpriority="high" />
 
     <script is:inline type="application/ld+json" set:html={JSON.stringify({
       '@context': 'https://schema.org',
       '@type': 'Person',
       name: 'Srijan Saket',
       url: 'https://srijansk.github.io',
+      image: 'https://srijansk.github.io/srijan.png',
       jobTitle: 'Founding member',
       worksFor: { '@type': 'Organization', name: 'Pavo AI' },
       alumniOf: [
@@ -62,6 +69,69 @@ const canonicalUrl = canonical ?? new URL(Astro.url.pathname, site).toString();
     })} />
   </head>
   <body>
-    <slot />
+    <SocialIcons />
+    <div class="site">
+      <aside class="sidebar" aria-label="Profile">
+        <a class="sidebar-avatar-link" href="/" aria-label="Home">
+          <img
+            class="sidebar-avatar"
+            src="/srijan.png"
+            alt="Portrait of Srijan Saket"
+            width="200"
+            height="200"
+            decoding="async"
+            fetchpriority="high"
+          />
+        </a>
+        <a class="sidebar-name" href="/">Srijan Saket</a>
+        <p class="sidebar-role">
+          Founding member at <strong>Pavo AI</strong>
+        </p>
+        <p class="sidebar-sub">Recommender systems &middot; agentic AI</p>
+        <p class="sidebar-location">
+          <span aria-hidden="true">📍</span> Seattle, WA
+        </p>
+
+        <nav class="sidebar-links" aria-label="Social profiles">
+          <a href="https://www.linkedin.com/in/srijansaket/" target="_blank" rel="noopener" aria-label="LinkedIn">
+            <svg class="icon" aria-hidden="true"><use href="#i-linkedin" /></svg>
+            <span>LinkedIn</span>
+          </a>
+          <a href="https://x.com/srijanskt2" target="_blank" rel="noopener" aria-label="X (Twitter)">
+            <svg class="icon" aria-hidden="true"><use href="#i-x" /></svg>
+            <span>X <span class="muted-aside">/ Twitter</span></span>
+          </a>
+          <a href="https://github.com/srijansk" target="_blank" rel="noopener" aria-label="GitHub">
+            <svg class="icon" aria-hidden="true"><use href="#i-github" /></svg>
+            <span>GitHub</span>
+          </a>
+          <a href="https://scholar.google.com/citations?user=hheK6oIAAAAJ&hl=en" target="_blank" rel="noopener" aria-label="Google Scholar">
+            <svg class="icon" aria-hidden="true"><use href="#i-scholar" /></svg>
+            <span>Google Scholar</span>
+          </a>
+          <a href="https://bitsnneurons.substack.com" target="_blank" rel="noopener" aria-label="Bits & Neurons on Substack">
+            <svg class="icon" aria-hidden="true"><use href="#i-substack" /></svg>
+            <span>Bits &amp; Neurons</span>
+          </a>
+          <a href="mailto:srijanskt@gmail.com" aria-label="Email">
+            <svg class="icon" aria-hidden="true"><use href="#i-email" /></svg>
+            <span>srijanskt@gmail.com</span>
+          </a>
+        </nav>
+
+        {!isHome && (
+          <p class="sidebar-back"><a href="/">&larr; Back to home</a></p>
+        )}
+      </aside>
+
+      <main id="content">
+        <slot />
+        <footer class="site-footer">
+          Built with <a href="https://astro.build" target="_blank" rel="noopener">Astro</a>
+          <span>&middot;</span>
+          <a href="https://github.com/srijansk/srijansk.github.io" target="_blank" rel="noopener">source &rarr;</a>
+        </footer>
+      </main>
+    </div>
   </body>
 </html>

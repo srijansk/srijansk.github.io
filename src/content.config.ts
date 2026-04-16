@@ -43,6 +43,8 @@ const writing = defineCollection({
     date: z.coerce.date(),
     url: z.string().url(),
     teaser: z.string(),
+    excerpt: z.string().optional(),
+    thumbnail: z.string().optional(),
     featured: z.boolean().default(false),
   }),
 });

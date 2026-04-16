@@ -1,0 +1,132 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const talks = await getCollection('talks');
+  return talks.map((talk) => ({
+    params: { slug: talk.id },
+    props: { talk },
+  }));
+}
+
+const { talk } = Astro.props;
+const { Content } = await render(talk);
+
+const dateLong = new Intl.DateTimeFormat('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+const talkTypeLabel: Record<string, string> = {
+  keynote: 'Keynote',
+  talk: 'Talk',
+  panel: 'Panel',
+  tutorial: 'Tutorial',
+  'pc-service': 'Program committee service',
+  webinar: 'Webinar',
+};
+
+// Google Slides: /present?... -> /embed?...
+function slidesEmbed(url: string | undefined): string | null {
+  if (!url) return null;
+  const match = url.match(/docs\.google\.com\/presentation\/d\/([a-zA-Z0-9_-]+)/);
+  if (!match) return null;
+  return `https://docs.google.com/presentation/d/${match[1]}/embed?start=false&loop=false&delayms=3000`;
+}
+
+// YouTube: watch?v=X, youtu.be/X, shorts/X -> /embed/X
+function youtubeEmbed(url: string | undefined): string | null {
+  if (!url) return null;
+  const watch = url.match(/[?&]v=([a-zA-Z0-9_-]{11})/);
+  if (watch) return `https://www.youtube-nocookie.com/embed/${watch[1]}`;
+  const shortLink = url.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
+  if (shortLink) return `https://www.youtube-nocookie.com/embed/${shortLink[1]}`;
+  const shorts = url.match(/youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/);
+  if (shorts) return `https://www.youtube-nocookie.com/embed/${shorts[1]}`;
+  return null;
+}
+
+const slidesEmbedUrl = slidesEmbed(talk.data.slides);
+const videoEmbedUrl = youtubeEmbed(talk.data.video);
+---
+
+<Layout
+  title={`${talk.data.title} — Srijan Saket`}
+  description={talk.data.abstract ?? `${talk.data.venue} — ${dateLong.format(talk.data.date)}`}
+  pageType="inner"
+>
+  <section class="section lede">
+    <p class="eyebrow">
+      <a href="/talks/">&larr; All talks</a>
+      <span class="sep">&middot;</span>
+      <span class="talk-badge inline">{talkTypeLabel[talk.data.type] ?? talk.data.type}</span>
+    </p>
+    <h1>{talk.data.title}</h1>
+    <p class="talk-meta big">
+      <strong>{talk.data.venue}</strong>
+      {talk.data.location && <><span class="sep">&middot;</span>{talk.data.location}</>}
+      <span class="sep">&middot;</span>{dateLong.format(talk.data.date)}
+    </p>
+  </section>
+
+  {talk.data.abstract && (
+    <section class="section">
+      <h2>Abstract</h2>
+      <p class="abstract">{talk.data.abstract}</p>
+    </section>
+  )}
+
+  {videoEmbedUrl && (
+    <section class="section">
+      <h2>Video</h2>
+      <div class="embed-frame">
+        <iframe
+          src={videoEmbedUrl}
+          title={`Video of ${talk.data.title}`}
+          loading="lazy"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        ></iframe>
+      </div>
+    </section>
+  )}
+
+  {slidesEmbedUrl && (
+    <section class="section">
+      <h2>Slides</h2>
+      <div class="embed-frame slides">
+        <iframe
+          src={slidesEmbedUrl}
+          title={`Slides for ${talk.data.title}`}
+          loading="lazy"
+          allowfullscreen
+        ></iframe>
+      </div>
+      <p class="archive-line">
+        <a href={talk.data.slides} target="_blank" rel="noopener">Open slides in a new tab &rarr;</a>
+      </p>
+    </section>
+  )}
+
+  {(talk.data.url || talk.data.tags.length > 0) && (
+    <section class="section">
+      <h2>Links &amp; tags</h2>
+      <p>
+        {talk.data.url && (
+          <a href={talk.data.url} target="_blank" rel="noopener">Canonical page / paper &rarr;</a>
+        )}
+      </p>
+      {talk.data.tags.length > 0 && (
+        <p class="tags">
+          {talk.data.tags.map((t: string) => <span class="tag">{t}</span>)}
+        </p>
+      )}
+    </section>
+  )}
+
+  <article class="section talk-notes">
+    <Content />
+  </article>
+</Layout>
