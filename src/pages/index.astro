@@ -1,0 +1,284 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const allTalks = await getCollection('talks');
+const talks = allTalks
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 6);
+
+const allPubs = await getCollection('publications');
+const papers = allPubs
+  .filter((p) => p.data.type === 'paper')
+  .sort((a, b) => b.data.year - a.data.year);
+const patents = allPubs.filter((p) => p.data.type === 'patent');
+const books = allPubs.filter((p) => p.data.type === 'book');
+
+const allWriting = await getCollection('writing');
+const writing = allWriting
+  .filter((w) => w.data.featured)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const dateShort = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short' });
+const talkTypeLabel: Record<string, string> = {
+  keynote: 'Keynote',
+  talk: 'Talk',
+  panel: 'Panel',
+  tutorial: 'Tutorial',
+  'pc-service': 'PC',
+  webinar: 'Webinar',
+};
+---
+
+<Layout title="Srijan Saket — Tribal knowledge layer for LLM agents">
+  <main id="top">
+    <p class="skip-to">
+      Skip to:
+      <a href="#writing">writing</a><span>·</span>
+      <a href="#publications">pubs</a><span>·</span>
+      <a href="#talks">talks</a><span>·</span>
+      <a href="#projects">projects</a><span>·</span>
+      <a href="#contact">contact</a>
+    </p>
+
+    <section class="hero">
+      <h1>Srijan Saket</h1>
+      <p class="hero-thesis">Building the tribal knowledge layer for LLM agents.</p>
+      <p class="hero-sub">
+        The context engine agents need to reason reliably over enterprise data — with principles
+        that extend to personal-scale context too. Bringing the recommender-systems playbook to
+        a problem the agent-memory world has not recognized as a recommendation problem.
+      </p>
+      <p class="handles">
+        <a href="https://www.linkedin.com/in/srijansaket/" target="_blank" rel="noopener">LinkedIn</a><span class="sep">·</span>
+        <a href="https://x.com/srijanskt2" target="_blank" rel="noopener">X</a><span class="sep">·</span>
+        <a href="https://github.com/srijansk" target="_blank" rel="noopener">GitHub</a><span class="sep">·</span>
+        <a href="https://scholar.google.com/citations?user=hheK6oIAAAAJ&hl=en" target="_blank" rel="noopener">Scholar</a><span class="sep">·</span>
+        <a href="mailto:srijanskt@gmail.com">Email</a>
+      </p>
+      <p class="location">Seattle, WA</p>
+    </section>
+
+    <section id="now">
+      <h2>Now</h2>
+      <span class="now-date">April 2026</span>
+      <p>
+        Founding member at <strong>Pavo AI</strong> in Seattle, building the tribal knowledge
+        layer for LLM agents. Currently focused on staged agentic composition,
+        conflict-as-knowledge resolution, and bridging the recsys playbook to agent context.
+        Writing essays on these themes; submitting research to 2026 conferences and workshops.
+      </p>
+    </section>
+
+    <section id="career">
+      <h2>Career</h2>
+      <ul class="timeline">
+        <li>
+          <span class="dates">2025–</span>
+          <span class="role">
+            <strong>Pavo AI</strong>
+            <span class="role-title"><span class="sep">·</span>Founding member</span>
+            <span class="desc">Tribal knowledge layer for LLM agents.</span>
+          </span>
+        </li>
+        <li>
+          <span class="dates">2024–2025</span>
+          <span class="role">
+            <strong>Sourcegraph</strong>
+            <span class="role-title"><span class="sep">·</span>IC-5 MLE</span>
+            <span class="desc">LLM-driven code-search quality.</span>
+          </span>
+        </li>
+        <li>
+          <span class="dates">2017–2024</span>
+          <span class="role">
+            <strong>ShareChat</strong>
+            <span class="role-title"><span class="sep">·</span>Staff MLE</span>
+            <span class="desc">
+              Scaled the recommender system from 1M to 200M users; led ML frameworks across
+              content moderation, ranking, and feature pipelines.
+            </span>
+          </span>
+        </li>
+        <li>
+          <span class="dates">2016–2017</span>
+          <span class="role">
+            <strong>Fidelity Investments</strong>
+            <span class="role-title"><span class="sep">·</span>Data Scientist</span>
+          </span>
+        </li>
+        <li>
+          <span class="dates">2013–2015</span>
+          <span class="role">
+            <strong>IIT Kanpur</strong>
+            <span class="role-title"><span class="sep">·</span>M.Tech, Mathematics &amp; Computing</span>
+          </span>
+        </li>
+      </ul>
+    </section>
+
+    <section id="writing">
+      <h2>Selected writing</h2>
+      {writing.length === 0 ? (
+        <p>First essays are in review — check back shortly.</p>
+      ) : (
+        <ul class="writing-list">
+          {writing.map((w) => (
+            <li>
+              <span class="title">
+                <a href={w.data.url} target="_blank" rel="noopener">{w.data.title}</a>
+              </span>
+              <span class="meta">{w.data.publication} · {dateShort.format(w.data.date)}</span>
+              <span class="teaser">{w.data.teaser}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+      <p class="archive-line">
+        Full archive:
+        <a href="https://bitsnneurons.substack.com" target="_blank" rel="noopener">Bits &amp; Neurons →</a>
+      </p>
+    </section>
+
+    <section id="publications">
+      <h2>Publications</h2>
+      <ul class="pubs">
+        {papers.map((p) => (
+          <li>
+            <span class="pub-title">{p.data.title}.</span>
+            <span class="pub-meta">
+              {p.data.authors}{' · '}{p.data.venue}.
+            </span>
+            <span class="pub-links">
+              {p.data.url && <a href={p.data.url} target="_blank" rel="noopener">[link]</a>}
+              {p.data.arxiv && <a href={p.data.arxiv} target="_blank" rel="noopener">[arXiv]</a>}
+              {p.data.pdf && <a href={p.data.pdf} target="_blank" rel="noopener">[PDF]</a>}
+              {p.data.doi && <a href={`https://doi.org/${p.data.doi}`} target="_blank" rel="noopener">[DOI]</a>}
+            </span>
+          </li>
+        ))}
+      </ul>
+
+      {patents.length > 0 && (
+        <>
+          <h3>Patents</h3>
+          <ul class="pubs">
+            {patents.map((p) => (
+              <li>
+                <span class="badge">Patent</span>
+                <span class="pub-title">{p.data.title}.</span>
+                <span class="pub-meta">{p.data.venue}.</span>
+                {p.data.url && (
+                  <span class="pub-links"><a href={p.data.url} target="_blank" rel="noopener">[link]</a></span>
+                )}
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+
+      {books.length > 0 && (
+        <>
+          <h3>Book</h3>
+          <ul class="pubs">
+            {books.map((p) => (
+              <li>
+                <span class="badge">Book</span>
+                <span class="pub-title">{p.data.title}.</span>
+                <span class="pub-meta">{p.data.venue}.</span>
+                {p.data.note && <span class="pub-meta">{p.data.note}</span>}
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+
+      <p class="archive-line">
+        Full publication list:
+        <a href="https://scholar.google.com/citations?user=hheK6oIAAAAJ&hl=en" target="_blank" rel="noopener">Google Scholar →</a>
+      </p>
+    </section>
+
+    <section id="talks">
+      <h2>Talks &amp; service</h2>
+      <div class="talks-grid">
+        {talks.map((t) => {
+          const href = t.data.slides || t.data.url || t.data.video;
+          const cardProps = href
+            ? { href, target: '_blank', rel: 'noopener' }
+            : {};
+          const CardTag: any = href ? 'a' : 'div';
+          return (
+            <CardTag class="talk-card" {...cardProps}>
+              <div class="talk-thumb">
+                {t.data.type === 'pc-service' ? 'Program Committee service' : t.data.venue}
+              </div>
+              <div class="talk-body">
+                <span class="title">
+                  <span class="talk-badge">{talkTypeLabel[t.data.type] ?? t.data.type}</span>
+                  {t.data.title}
+                </span>
+                <span class="meta">
+                  {t.data.venue}{t.data.location ? ` · ${t.data.location}` : ''} · {dateShort.format(t.data.date)}
+                </span>
+                {(t.data.slides || t.data.video || t.data.url) && (
+                  <span class="links">
+                    {t.data.slides && <a href={t.data.slides} target="_blank" rel="noopener">slides</a>}
+                    {t.data.video && <a href={t.data.video} target="_blank" rel="noopener">video</a>}
+                    {t.data.url && !t.data.slides && <a href={t.data.url} target="_blank" rel="noopener">paper</a>}
+                  </span>
+                )}
+              </div>
+            </CardTag>
+          );
+        })}
+      </div>
+      <p class="talks-all-link">
+        <a href="/talks">Full talks list →</a>
+      </p>
+    </section>
+
+    <section id="projects">
+      <h2>Projects</h2>
+      <ul class="projects">
+        <li>
+          <a class="project-name" href="https://github.com/srijansk/agent-relay" target="_blank" rel="noopener">agent-relay</a>
+          <span class="flagship-badge">flagship</span>
+          <span class="desc">
+            Multi-agent workflow orchestrator, packaged as a docker-compose stack. Routes
+            messages between specialist agents, persists state across long-running tasks,
+            and keeps the execution surface small enough to debug in production.
+          </span>
+        </li>
+        <li>
+          <a class="project-name" href="https://github.com/srijansk/claude-ui" target="_blank" rel="noopener">claude-ui</a>
+          <span class="desc">Web interface for Claude with document analysis and conversation history.</span>
+        </li>
+        <li>
+          <a class="project-name" href="https://github.com/srijansk/LLMs-from-scratch" target="_blank" rel="noopener">LLMs-from-scratch</a>
+          <span class="desc">Study fork — building GPT-style models in PyTorch, from the ground up.</span>
+        </li>
+      </ul>
+    </section>
+
+    <section id="contact">
+      <h2>Contact</h2>
+      <p class="contact-line">
+        <a href="mailto:srijanskt@gmail.com">srijanskt@gmail.com</a>
+        <span class="sep">·</span>
+        <a href="https://www.linkedin.com/in/srijansaket/" target="_blank" rel="noopener">LinkedIn</a>
+        <span class="sep">·</span>
+        <a href="https://x.com/srijanskt2" target="_blank" rel="noopener">X</a>
+        <span class="sep">·</span>
+        <a href="https://github.com/srijansk" target="_blank" rel="noopener">GitHub</a>
+        <span class="sep">·</span>
+        <a href="https://scholar.google.com/citations?user=hheK6oIAAAAJ&hl=en" target="_blank" rel="noopener">Scholar</a>
+      </p>
+    </section>
+
+    <footer>
+      Built with <a href="https://astro.build" target="_blank" rel="noopener">Astro</a> ·
+      <a href="https://github.com/srijansk/srijansk.github.io" target="_blank" rel="noopener">source on GitHub →</a>
+    </footer>
+  </main>
+</Layout>

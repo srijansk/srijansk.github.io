@@ -1,0 +1,67 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  canonical?: string;
+}
+
+const {
+  title,
+  description = 'Srijan Saket — building the tribal knowledge layer for LLM agents. Founding member at Pavo AI. Ex-Sourcegraph, ex-ShareChat. Applied research at the intersection of recommender systems and agentic AI.',
+  canonical,
+} = Astro.props;
+
+const site = Astro.site?.toString().replace(/\/$/, '') ?? 'https://srijansk.github.io';
+const canonicalUrl = canonical ?? new URL(Astro.url.pathname, site).toString();
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="profile" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="Srijan Saket" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:creator" content="@srijanskt2" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <script is:inline type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Person',
+      name: 'Srijan Saket',
+      url: 'https://srijansk.github.io',
+      jobTitle: 'Founding member',
+      worksFor: { '@type': 'Organization', name: 'Pavo AI' },
+      alumniOf: [
+        { '@type': 'Organization', name: 'Sourcegraph' },
+        { '@type': 'Organization', name: 'ShareChat' },
+        { '@type': 'Organization', name: 'Fidelity Investments' },
+        { '@type': 'CollegeOrUniversity', name: 'IIT Kanpur' },
+      ],
+      sameAs: [
+        'https://www.linkedin.com/in/srijansaket/',
+        'https://x.com/srijanskt2',
+        'https://github.com/srijansk',
+        'https://scholar.google.com/citations?user=hheK6oIAAAAJ',
+        'https://bitsnneurons.substack.com',
+      ],
+    })} />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

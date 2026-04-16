@@ -1,0 +1,81 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const all = (await getCollection('talks')).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+
+const dateLong = new Intl.DateTimeFormat('en-US', {
+  year: 'numeric',
+  month: 'long',
+});
+
+const talkTypeLabel: Record<string, string> = {
+  keynote: 'Keynote',
+  talk: 'Talk',
+  panel: 'Panel',
+  tutorial: 'Tutorial',
+  'pc-service': 'Program Committee',
+  webinar: 'Webinar',
+};
+
+const groupedByYear = new Map<number, typeof all>();
+for (const t of all) {
+  const y = t.data.date.getUTCFullYear();
+  if (!groupedByYear.has(y)) groupedByYear.set(y, [] as any);
+  groupedByYear.get(y)!.push(t as any);
+}
+const years = [...groupedByYear.keys()].sort((a, b) => b - a);
+---
+
+<Layout
+  title="Talks — Srijan Saket"
+  description="Keynotes, talks, workshop presentations, and program-committee service by Srijan Saket."
+>
+  <main>
+    <p class="skip-to">
+      <a href="/">← home</a>
+    </p>
+
+    <section>
+      <h1>Talks &amp; service</h1>
+      <p>
+        Keynotes, paper presentations, workshop talks, and program-committee service.
+        Older decks are hosted on Google Slides; newer material lives in this repo.
+      </p>
+    </section>
+
+    {years.map((y) => (
+      <section class="year-group">
+        <span class="year-label">{y}</span>
+        <ul class="talks-full">
+          {groupedByYear.get(y)!.map((t) => (
+            <li>
+              <span class="title">
+                <span class="talk-badge">{talkTypeLabel[t.data.type] ?? t.data.type}</span>
+                {t.data.title}
+              </span>
+              <span class="meta">
+                {t.data.venue}{t.data.location ? ` · ${t.data.location}` : ''} · {dateLong.format(t.data.date)}
+              </span>
+              {t.data.abstract && <span class="abstract">{t.data.abstract}</span>}
+              {(t.data.slides || t.data.video || t.data.url) && (
+                <span class="links">
+                  {t.data.slides && <a href={t.data.slides} target="_blank" rel="noopener">slides →</a>}
+                  {t.data.video && <a href={t.data.video} target="_blank" rel="noopener">video →</a>}
+                  {t.data.url && <a href={t.data.url} target="_blank" rel="noopener">paper / page →</a>}
+                </span>
+              )}
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+
+    <footer>
+      Built with <a href="https://astro.build" target="_blank" rel="noopener">Astro</a> ·
+      <a href="https://github.com/srijansk/srijansk.github.io" target="_blank" rel="noopener">source on GitHub →</a>
+    </footer>
+  </main>
+</Layout>
