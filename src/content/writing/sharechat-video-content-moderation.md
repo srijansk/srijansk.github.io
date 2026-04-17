@@ -4,4 +4,5 @@ publication: "ShareChat Engineering"
 date: 2022-05-01
 url: "https://sharechat.com/blogs/data-science/fast-accurate-and-scalable-video-content-moderation"
 teaser: "Spatial + temporal ML for moderating short-form video at scale."
+thumbnail: "/writing/sharechat-video-moderation.jpg"
 ---
