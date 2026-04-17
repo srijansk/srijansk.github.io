@@ -515,7 +515,7 @@ strong { font-weight: 600; color: var(--text); }
 }
 
 @media (min-width: 620px) {
-  .writing-full-list li {
+  .writing-full-list li:has(.writing-full-thumb) {
     grid-template-columns: 200px 1fr;
   }
 }
