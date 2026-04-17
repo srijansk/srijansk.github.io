@@ -1,0 +1,80 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const all = (await getCollection('writing')).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+
+const dateShort = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short' });
+
+const groupedByYear = new Map<number, typeof all>();
+for (const w of all) {
+  const y = w.data.date.getUTCFullYear();
+  if (!groupedByYear.has(y)) groupedByYear.set(y, [] as any);
+  groupedByYear.get(y)!.push(w as any);
+}
+const years = [...groupedByYear.keys()].sort((a, b) => b - a);
+---
+
+<Layout
+  title="Writing — Srijan Saket"
+  description="Essays, engineering war stories, and blog posts by Srijan Saket."
+  pageType="inner"
+>
+  <section class="section lede">
+    <h1>Writing</h1>
+    <p class="hero-sub">
+      Essays, engineering war stories, and technical deep-dives. I co-write the infra + AI
+      newsletter
+      <a href="https://bitsnneurons.substack.com" target="_blank" rel="noopener">Bits &amp; Neurons</a>
+      with Vivek Chandela. Older posts appeared on the ShareChat engineering blog and Medium.
+    </p>
+  </section>
+
+  {years.map((y) => (
+    <section class="section year-group">
+      <h2 class="year-label">{y}</h2>
+      <ul class="writing-full-list">
+        {groupedByYear.get(y)!.map((w) => (
+          <li>
+            {w.data.thumbnail && (
+              <a class="writing-full-thumb" href={w.data.url} target="_blank" rel="noopener">
+                <img
+                  src={w.data.thumbnail}
+                  alt=""
+                  width="480"
+                  height="270"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </a>
+            )}
+            <div class="writing-full-body">
+              <span class="writing-meta">
+                {w.data.publication}
+                <span class="sep">&middot;</span>
+                {dateShort.format(w.data.date)}
+              </span>
+              <h3 class="writing-title">
+                <a href={w.data.url} target="_blank" rel="noopener">{w.data.title}</a>
+              </h3>
+              <p class="writing-excerpt">{w.data.excerpt ?? w.data.teaser}</p>
+              <p class="writing-cta">
+                <a href={w.data.url} target="_blank" rel="noopener">Read on {w.data.publication} &rarr;</a>
+              </p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))}
+
+  <section class="section">
+    <h2>Subscribe</h2>
+    <p>
+      For new posts, subscribe to
+      <a href="https://bitsnneurons.substack.com" target="_blank" rel="noopener">Bits &amp; Neurons on Substack &rarr;</a>
+    </p>
+  </section>
+</Layout>
