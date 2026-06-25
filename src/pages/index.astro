@@ -41,7 +41,7 @@ const talkTypeLabel: Record<string, string> = {
   </section>
 
   <section class="section" id="now">
-    <span class="section-kicker">April 2026</span>
+    <span class="section-kicker">June 2026</span>
     <h2>What I'm working on</h2>
     <p>
       I'm a founding member at <strong>Pavo AI</strong> in Seattle, building the tribal
@@ -65,7 +65,7 @@ const talkTypeLabel: Record<string, string> = {
         <span class="dates">2025 &mdash;</span>
         <span class="role">
           <strong>Pavo AI</strong><span class="sep">&middot;</span><span class="role-title">Founding member</span>
-          <span class="desc">Tribal knowledge layer for LLM agents. Seattle, WA.</span>
+          <span class="desc">Tribal knowledge layer for LLM agents; building the founding engineering team across the US, London, and India. Seattle, WA.</span>
         </span>
       </li>
       <li>
@@ -244,13 +244,25 @@ const talkTypeLabel: Record<string, string> = {
     <ul class="projects">
       <li>
         <span class="project-header">
-          <a class="project-name" href="https://github.com/srijansk/agent-relay" target="_blank" rel="noopener">agent-relay</a>
+          <a class="project-name" href="https://github.com/srijansk/crewlore" target="_blank" rel="noopener">crewlore</a>
           <span class="flagship-badge">flagship</span>
         </span>
         <span class="desc">
-          Multi-agent workflow orchestrator, packaged as a docker-compose stack. Routes
-          messages between specialist agents, persists state across long-running tasks, and
-          keeps the execution surface small enough to debug in production.
+          A local-first compiler that turns AI-coding-agent (Claude Code) sessions into a
+          versioned, plaintext, citable team-knowledge layer in your git repo. Every claim
+          carries a verbatim anchor back to its source line &mdash; verifiable, not hallucinated.
+          Compiled on the public pydantic-ai repo: 18 claims, 100% anchor fidelity. On PyPI
+          &mdash; <code>pipx install crewlore</code>.
+        </span>
+      </li>
+      <li>
+        <span class="project-header">
+          <a class="project-name" href="https://github.com/srijansk/agent-relay" target="_blank" rel="noopener">agent-relay</a>
+        </span>
+        <span class="desc">
+          Multi-agent workflows that learn from their own past runs. Plans, reviews, build logs,
+          and audits live in your git repo as markdown; <code>relay distill --llm</code> compresses
+          past reviewer rejections into forward-looking lessons the next planner reads automatically.
         </span>
       </li>
       <li>
