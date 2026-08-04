@@ -14,6 +14,3 @@ abstract: |
   artifacts.
 tags: [recsys, video, short-video, labels]
 ---
-
-# TODO: confirm exact workshop date (LERI @ RecSys 2023 vs MEMER @ WWW 2023).
-# The slide deck was reused across both venues per the prior site.

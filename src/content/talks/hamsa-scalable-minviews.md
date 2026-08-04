@@ -12,6 +12,3 @@ abstract: |
   tier.
 tags: [vector-search, ann, recsys, infra]
 ---
-
-# TODO: confirm the venue and exact date for this talk. Slides only on the
-# legacy Google Sites resources tab; no conference tag was attached.

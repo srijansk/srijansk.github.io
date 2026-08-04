@@ -11,5 +11,3 @@ abstract: |
   high cadence.
 tags: [recsys, systems, webinar]
 ---
-
-# TODO: confirm exact KIMO webinar date (estimated mid-2022).

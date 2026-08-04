@@ -16,7 +16,3 @@ abstract: |
 tags: [streaming, recsys, infra]
 featured: true
 ---
-
-# TODO: confirm whether a Kafka Summit 2024 version of this talk was also
-# delivered (the legacy Google Sites resources tab labelled the slide deck
-# "Kafka Summit 2024"). If yes, split into two talk entries.
