@@ -1029,9 +1029,11 @@ strong { font-weight: 600; color: var(--text); }
 
 .prose figure img,
 .prose figure iframe,
-.prose figure video {
+.prose figure video,
+.prose figure svg {
   display: block;
   width: 100%;
+  height: auto;
   border: 1px solid var(--hairline);
   border-radius: 3px;
   background: #FFFFFF;
