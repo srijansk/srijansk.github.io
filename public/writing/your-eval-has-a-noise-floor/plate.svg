@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-labelledby="t">
+  <title id="t">Your Eval Has a Noise Floor</title>
+  <!--
+    A field of movement that happens when nothing changes, and the single
+    mark that rises clearly out of it. Everything inside the band is weather.
+  -->
+  <rect width="1200" height="630" fill="#FAFAF7"/>
+
+  <!-- the band: what an unchanged configuration already does -->
+  <rect x="180" y="372" width="840" height="98" fill="rgba(155,74,47,0.09)"/>
+  <line x1="180" y1="372" x2="1020" y2="372" stroke="#9B4A2F" stroke-width="3" stroke-dasharray="10 8" opacity=".75"/>
+
+  <!-- noise -->
+  <g stroke="#1A1A1A" stroke-width="7" stroke-linecap="round" opacity=".34">
+    <line x1="200" y1="470" x2="200" y2="419"/>
+    <line x1="232" y1="470" x2="232" y2="410"/>
+    <line x1="264" y1="470" x2="264" y2="380"/>
+    <line x1="296" y1="470" x2="296" y2="418"/>
+    <line x1="328" y1="470" x2="328" y2="414"/>
+    <line x1="360" y1="470" x2="360" y2="408"/>
+    <line x1="392" y1="470" x2="392" y2="441"/>
+    <line x1="424" y1="470" x2="424" y2="414"/>
+    <line x1="456" y1="470" x2="456" y2="404"/>
+    <line x1="488" y1="470" x2="488" y2="391"/>
+    <line x1="520" y1="470" x2="520" y2="448"/>
+    <line x1="552" y1="470" x2="552" y2="431"/>
+    <line x1="584" y1="470" x2="584" y2="449"/>
+    <line x1="616" y1="470" x2="616" y2="390"/>
+    <line x1="648" y1="470" x2="648" y2="399"/>
+    <line x1="680" y1="470" x2="680" y2="453"/>
+    <line x1="712" y1="470" x2="712" y2="375"/>
+    <line x1="744" y1="470" x2="744" y2="377"/>
+    <line x1="776" y1="470" x2="776" y2="402"/>
+    <line x1="808" y1="470" x2="808" y2="406"/>
+    <line x1="840" y1="470" x2="840" y2="443"/>
+    <line x1="872" y1="470" x2="872" y2="455"/>
+    <line x1="904" y1="470" x2="904" y2="413"/>
+    <line x1="936" y1="470" x2="936" y2="451"/>
+    <line x1="968" y1="470" x2="968" y2="440"/>
+    <line x1="1000" y1="470" x2="1000" y2="436"/>
+  </g>
+
+  <!-- the result that clears the floor -->
+  <line x1="600" y1="470" x2="600" y2="168" stroke="#0A5C38" stroke-width="14" stroke-linecap="round"/>
+  <circle cx="600" cy="168" r="17" fill="#0A5C38"/>
+
+  <!-- baseline -->
+  <line x1="150" y1="470" x2="1050" y2="470" stroke="#1A1A1A" stroke-width="3"/>
+</svg>

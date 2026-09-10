@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-labelledby="t">
+  <title id="t">Completion Is a Proof, Not a Status</title>
+  <!--
+    Four arcs sweep from a common origin and settle at four different points.
+    Only where the outermost closes is there a seal. Everything inside it is
+    a run that has stopped without being finished.
+  -->
+  <rect width="1200" height="630" fill="#FAFAF7"/>
+
+  <!-- ground line the arcs settle onto -->
+  <line x1="270" y1="470" x2="930" y2="470" stroke="#1A1A1A" stroke-width="2" opacity=".25"/>
+
+  <g fill="none" stroke-linecap="round">
+    <!-- transport: settles first, shortest sweep -->
+    <path d="M480 470 A 120 120 0 0 1 660 366.1" stroke="#1A1A1A" stroke-width="7" opacity=".32"/>
+    <!-- process -->
+    <path d="M420 470 A 180 180 0 0 1 755.9 380" stroke="#1A1A1A" stroke-width="7" opacity=".42"/>
+    <!-- output -->
+    <path d="M360 470 A 240 240 0 0 1 836.4 428.3" stroke="#1A1A1A" stroke-width="7" opacity=".55"/>
+    <!-- workspace: the only one that closes -->
+    <path d="M300 470 A 300 300 0 0 1 900 470" stroke="#0A5C38" stroke-width="10"/>
+  </g>
+
+  <!-- where each clock stopped -->
+  <circle cx="660" cy="366.1" r="10" fill="#1A1A1A" opacity=".32"/>
+  <circle cx="755.9" cy="380" r="10" fill="#1A1A1A" opacity=".42"/>
+  <circle cx="836.4" cy="428.3" r="10" fill="#1A1A1A" opacity=".55"/>
+
+  <!-- the seal: the only point at which completion is provable -->
+  <circle cx="900" cy="470" r="22" fill="#0A5C38"/>
+  <circle cx="900" cy="470" r="34" fill="none" stroke="#0A5C38" stroke-width="3" opacity=".45"/>
+
+  <!-- common origin -->
+  <circle cx="300" cy="470" r="13" fill="#1A1A1A"/>
+
+  <!-- the span between first stop and the seal: looks done, is not -->
+  <g stroke="#9B4A2F" stroke-width="3" stroke-dasharray="8 8" opacity=".7">
+    <line x1="660" y1="392" x2="660" y2="520"/>
+    <line x1="900" y1="510" x2="900" y2="520"/>
+  </g>
+  <line x1="660" y1="520" x2="900" y2="520" stroke="#9B4A2F" stroke-width="3" opacity=".7"/>
+</svg>

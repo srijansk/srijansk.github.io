@@ -1206,6 +1206,80 @@ strong { font-weight: 600; color: var(--text); }
   .prose figure img, .prose figure iframe { animation: none !important; }
 }
 
+/* ===== Lead plate =====
+ * The post's mark: an abstract line drawing of the argument, doubling as the
+ * card thumbnail and the social card. It is not a diagram — the figures do
+ * that work — so it carries empty alt text and sits outside .prose.
+ */
+.post-plate {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1200 / 630;
+  border: 1px solid var(--hairline);
+  border-radius: 3px;
+  margin: 0 0 2.5rem;
+  background: var(--bg);
+}
+
+@media (min-width: 1100px) {
+  .post-plate {
+    width: calc(100% + 8rem);
+    margin-left: -4rem;
+    margin-right: -4rem;
+  }
+}
+
+/* ===== Contents ===== */
+.post-toc {
+  border-left: 2px solid var(--hairline-strong);
+  padding: 0.15rem 0 0.15rem 1.25rem;
+  margin: 0 0 2.75rem;
+}
+.post-toc h2 {
+  font-family: var(--font-heading);
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+  color: var(--muted);
+  margin: 0 0 0.6rem;
+  font-weight: 600;
+}
+.post-toc ol {
+  list-style: none;
+  counter-reset: toc;
+  padding: 0;
+  margin: 0;
+}
+.post-toc li {
+  counter-increment: toc;
+  font-family: var(--font-heading);
+  font-size: 0.88rem;
+  line-height: 1.45;
+  padding: 0.22rem 0 0.22rem 1.75rem;
+  position: relative;
+}
+.post-toc li::before {
+  content: counter(toc, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.post-toc a {
+  color: var(--soft);
+  text-decoration: none;
+}
+.post-toc a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Anchored headings must clear the top of the viewport when jumped to. */
+.prose h2 { scroll-margin-top: 1.5rem; }
+
 /* ===== Print ===== */
 @media print {
   .site {

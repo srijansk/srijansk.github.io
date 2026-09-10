@@ -8,6 +8,8 @@ excerpt: "Re-judging a byte-identical artifact — same text, same rubric, same 
 tags: [evaluation, benchmarks, agents]
 series: "Evidence-carrying systems"
 seriesOrder: 3
+thumbnail: "/writing/your-eval-has-a-noise-floor/plate.svg"
+socialImage: "/writing/your-eval-has-a-noise-floor/card.png"
 featured: true
 draft: true
 ---

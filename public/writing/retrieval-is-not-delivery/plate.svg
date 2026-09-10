@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-labelledby="t">
+  <title id="t">Retrieval Is Not Delivery</title>
+  <!--
+    Eight strands of evidence enter on the left. At each boundary some are
+    dropped. Two arrive. The mark is the argument: the loss is not at the
+    source, it is at every crossing after it.
+  -->
+  <rect width="1200" height="630" fill="#FAFAF7"/>
+
+  <g stroke-linecap="round" fill="none">
+    <!-- boundaries -->
+    <g stroke="#1A1A1A" stroke-width="2" opacity=".28">
+      <line x1="260" y1="120" x2="260" y2="510"/>
+      <line x1="450" y1="120" x2="450" y2="510"/>
+      <line x1="640" y1="120" x2="640" y2="510"/>
+      <line x1="830" y1="120" x2="830" y2="510"/>
+    </g>
+
+    <!-- dropped at boundary 1 -->
+    <g stroke="#1A1A1A" stroke-width="7" opacity=".30">
+      <line x1="140" y1="175" x2="260" y2="175"/>
+      <line x1="140" y1="455" x2="260" y2="455"/>
+    </g>
+    <!-- dropped at boundary 2 -->
+    <g stroke="#1A1A1A" stroke-width="7" opacity=".30">
+      <line x1="140" y1="215" x2="450" y2="215"/>
+      <line x1="140" y1="415" x2="450" y2="415"/>
+    </g>
+    <!-- dropped at boundary 3 -->
+    <g stroke="#1A1A1A" stroke-width="7" opacity=".30">
+      <line x1="140" y1="255" x2="640" y2="255"/>
+    </g>
+    <!-- dropped at boundary 4 -->
+    <g stroke="#1A1A1A" stroke-width="7" opacity=".30">
+      <line x1="140" y1="375" x2="830" y2="375"/>
+    </g>
+
+    <!-- the two that survive the whole path -->
+    <g stroke="#0A5C38" stroke-width="9">
+      <line x1="140" y1="295" x2="1060" y2="295"/>
+      <line x1="140" y1="335" x2="1060" y2="335"/>
+    </g>
+  </g>
+
+  <!-- terminations: where a strand was lost -->
+  <g stroke="#9B4A2F" stroke-width="4" stroke-linecap="round">
+    <g transform="translate(260,175)"><line x1="-9" y1="-9" x2="9" y2="9"/><line x1="9" y1="-9" x2="-9" y2="9"/></g>
+    <g transform="translate(260,455)"><line x1="-9" y1="-9" x2="9" y2="9"/><line x1="9" y1="-9" x2="-9" y2="9"/></g>
+    <g transform="translate(450,215)"><line x1="-9" y1="-9" x2="9" y2="9"/><line x1="9" y1="-9" x2="-9" y2="9"/></g>
+    <g transform="translate(450,415)"><line x1="-9" y1="-9" x2="9" y2="9"/><line x1="9" y1="-9" x2="-9" y2="9"/></g>
+    <g transform="translate(640,255)"><line x1="-9" y1="-9" x2="9" y2="9"/><line x1="9" y1="-9" x2="-9" y2="9"/></g>
+    <g transform="translate(830,375)"><line x1="-9" y1="-9" x2="9" y2="9"/><line x1="9" y1="-9" x2="-9" y2="9"/></g>
+  </g>
+
+  <!-- arrival -->
+  <circle cx="1060" cy="295" r="13" fill="#0A5C38"/>
+  <circle cx="1060" cy="335" r="13" fill="#0A5C38"/>
+
+  <!-- source bracket -->
+  <path d="M118 158 L104 158 L104 472 L118 472" stroke="#1A1A1A" stroke-width="5" fill="none" stroke-linecap="round" opacity=".55"/>
+</svg>

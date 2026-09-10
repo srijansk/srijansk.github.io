@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-labelledby="t">
+  <title id="t">Agent Context Is a Recommendation Problem</title>
+  <!--
+    Everything the organisation knows, narrowed by a first gate, then by a
+    second gate that is drawn but absent. The ranking stage is the argument,
+    so it is the only thing in the mark that is dashed.
+  -->
+  <rect width="1200" height="630" fill="#FAFAF7"/>
+
+  <!-- the corpus -->
+  <g fill="#1A1A1A" opacity=".30">
+    <circle cx="146" cy="174" r="7"/>
+    <circle cx="191" cy="175" r="7"/>
+    <circle cx="228" cy="179" r="7"/>
+    <circle cx="282" cy="184" r="7"/>
+    <circle cx="322" cy="176" r="7"/>
+    <circle cx="151" cy="222" r="7"/>
+    <circle cx="187" cy="219" r="7"/>
+    <circle cx="230" cy="231" r="7"/>
+    <circle cx="281" cy="229" r="7"/>
+    <circle cx="322" cy="221" r="7"/>
+    <circle cx="147" cy="272" r="7"/>
+    <circle cx="195" cy="275" r="7"/>
+    <circle cx="239" cy="264" r="7"/>
+    <circle cx="277" cy="272" r="7"/>
+    <circle cx="318" cy="265" r="7"/>
+    <circle cx="150" cy="309" r="7"/>
+    <circle cx="198" cy="320" r="7"/>
+    <circle cx="235" cy="312" r="7"/>
+    <circle cx="282" cy="316" r="7"/>
+    <circle cx="323" cy="320" r="7"/>
+    <circle cx="150" cy="359" r="7"/>
+    <circle cx="193" cy="359" r="7"/>
+    <circle cx="229" cy="357" r="7"/>
+    <circle cx="280" cy="354" r="7"/>
+    <circle cx="312" cy="362" r="7"/>
+    <circle cx="147" cy="405" r="7"/>
+    <circle cx="192" cy="403" r="7"/>
+    <circle cx="241" cy="401" r="7"/>
+    <circle cx="275" cy="401" r="7"/>
+    <circle cx="320" cy="402" r="7"/>
+    <circle cx="148" cy="453" r="7"/>
+    <circle cx="189" cy="451" r="7"/>
+    <circle cx="240" cy="444" r="7"/>
+    <circle cx="270" cy="446" r="7"/>
+    <circle cx="322" cy="452" r="7"/>
+  </g>
+
+  <!-- gate one: candidate generation, real -->
+  <path d="M452 170 L470 170 L470 460 L452 460" fill="none" stroke="#0A5C38" stroke-width="7" stroke-linecap="round"/>
+  <path d="M488 170 L470 170 M488 460 L470 460" fill="none" stroke="#0A5C38" stroke-width="7" stroke-linecap="round"/>
+
+  <!-- survivors -->
+  <g fill="#1A1A1A" opacity=".55">
+    <circle cx="560" cy="211" r="8"/>
+    <circle cx="606" cy="212" r="8"/>
+    <circle cx="560" cy="280" r="8"/>
+    <circle cx="606" cy="284" r="8"/>
+    <circle cx="560" cy="348" r="8"/>
+    <circle cx="606" cy="358" r="8"/>
+    <circle cx="560" cy="431" r="8"/>
+    <circle cx="606" cy="432" r="8"/>
+  </g>
+
+  <!-- gate two: ranking, missing -->
+  <path d="M772 170 L790 170 L790 460 L772 460" fill="none" stroke="#9B4A2F" stroke-width="6" stroke-linecap="round" stroke-dasharray="12 10"/>
+  <path d="M808 170 L790 170 M808 460 L790 460" fill="none" stroke="#9B4A2F" stroke-width="6" stroke-linecap="round" stroke-dasharray="12 10"/>
+
+  <!-- the slate -->
+  <line x1="1000" y1="250" x2="1000" y2="424" stroke="#0A5C38" stroke-width="3" opacity=".45"/>
+  <g fill="#0A5C38">
+    <circle cx="1000" cy="250" r="13"/>
+    <circle cx="1000" cy="308" r="13"/>
+    <circle cx="1000" cy="366" r="13"/>
+    <circle cx="1000" cy="424" r="13"/>
+  </g>
+</svg>

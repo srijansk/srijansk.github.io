@@ -9,6 +9,8 @@ coauthors: ["Vivek Sharma"]
 tags: [agents, systems, reliability]
 series: "Evidence-carrying systems"
 seriesOrder: 2
+thumbnail: "/writing/completion-is-a-proof/plate.svg"
+socialImage: "/writing/completion-is-a-proof/card.png"
 featured: true
 draft: true
 ---

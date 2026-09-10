@@ -55,6 +55,9 @@ const writing = defineCollection({
     teaser: z.string(),
     excerpt: z.string().optional(),
     thumbnail: z.string().optional(),
+    /** Raster twin of `thumbnail` for og:image — most platforms will not
+        render an SVG social card, so the plate is shipped both ways. */
+    socialImage: z.string().optional(),
     featured: z.boolean().default(false),
     /** Standfirst under the H1 on self-hosted posts. */
     dek: z.string().optional(),

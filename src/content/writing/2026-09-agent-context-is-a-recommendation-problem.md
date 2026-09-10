@@ -8,6 +8,8 @@ excerpt: "We built the retrieval system, registered the tools, wrote careful des
 tags: [retrieval, agents, recsys, context-engineering]
 series: "Context as a ranking problem"
 seriesOrder: 1
+thumbnail: "/writing/agent-context-is-a-recommendation-problem/plate.svg"
+socialImage: "/writing/agent-context-is-a-recommendation-problem/card.png"
 featured: true
 draft: true
 ---

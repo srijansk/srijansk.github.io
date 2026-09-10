@@ -25,7 +25,13 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props as { post: WritingEntry };
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
+
+// A contents list earns its place once a post has enough sections to get
+// lost in. Below that it is furniture. H2 only — H3s are rules inside a
+// section, not destinations.
+const toc = headings.filter((h) => h.depth === 2);
+const showToc = toc.length >= 6;
 
 const dateLong = new Intl.DateTimeFormat('en-US', {
   year: 'numeric',
@@ -46,7 +52,7 @@ const position = showSeries ? siblings.findIndex((s) => s.id === post.id) + 1 : 
   pageType="inner"
   noindex={post.data.draft}
   ogType="article"
-  ogImage={post.data.thumbnail}
+  ogImage={post.data.socialImage ?? post.data.thumbnail}
 >
   <article class="post">
     <header class="post-header">
@@ -79,6 +85,27 @@ const position = showSeries ? siblings.findIndex((s) => s.id === post.id) + 1 : 
         </ul>
       )}
     </header>
+
+    {post.data.thumbnail && (
+      <img
+        class="post-plate"
+        src={post.data.thumbnail}
+        alt=""
+        width="1200"
+        height="630"
+        fetchpriority="high"
+        decoding="async"
+      />
+    )}
+
+    {showToc && (
+      <nav class="post-toc" aria-label="Contents">
+        <h2>Contents</h2>
+        <ol>
+          {toc.map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}
+        </ol>
+      </nav>
+    )}
 
     <div class="prose">
       <Content />
