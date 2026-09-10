@@ -24,7 +24,7 @@ const books = allPubs.filter((p) => p.data.type === 'book');
 
 const writing = (await getPublishedWriting()).filter((w) => w.data.featured);
 
-const dateShort = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short' });
+const dateShort = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', timeZone: 'UTC' });
 const talkTypeLabel: Record<string, string> = {
   keynote: 'Keynote',
   talk: 'Talk',

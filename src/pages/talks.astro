@@ -9,6 +9,7 @@ const all = (await getCollection('talks')).sort(
 const dateLong = new Intl.DateTimeFormat('en-US', {
   year: 'numeric',
   month: 'long',
+  timeZone: 'UTC',
 });
 
 const talkTypeLabel: Record<string, string> = {

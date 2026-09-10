@@ -12,7 +12,7 @@ import {
 
 const all = await getPublishedWriting();
 
-const dateShort = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short' });
+const dateShort = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', timeZone: 'UTC' });
 
 const groupedByYear = new Map<number, WritingEntry[]>();
 for (const w of all) {
