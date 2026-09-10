@@ -1375,13 +1375,15 @@ strong { font-weight: 600; color: var(--text); }
 
 /* ===== Print ===== */
 @media print {
+  .prose .metric-grid { grid-template-columns: repeat(2, 1fr); }
+  .prose figure.wide, .post-plate { width: 100%; margin-left: 0; margin-right: 0; }
   .site {
     display: block;
     max-width: 100%;
     padding: 0;
   }
   .sidebar { border-bottom: 1px solid var(--hairline-strong); margin-bottom: 2rem; }
-  .sidebar-links, .talks-all-link, .archive-line, .site-footer, .embed-frame { display: none; }
+  .sidebar-links, .sidebar-nav, .sidebar-back, .skip-link, .talks-all-link, .archive-line, .site-footer, .embed-frame { display: none; }
   a { color: var(--text); text-decoration: none; }
   body { font-size: 11pt; background: #FFFFFF; }
 }

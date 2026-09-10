@@ -39,7 +39,96 @@ Most agent products compress the end of a run into a single state: running, succ
 Their order is not fixed, which is the entire difficulty. A request can vanish while the command continues. A parent can exit while a child holds a pipe open. Output can drain before an asynchronous upload finishes. The model can emit a final response anywhere on that timeline — and that response is an intent to close, not proof that closing is safe.
 
 <figure class="wide">
-  <img src="/writing/completion-is-a-proof/figures/four-clocks.svg" alt="Animated timeline showing four independent lanes — transport, process, output, workspace — settling at different times, with the safe completion point occurring only after the last one settles." width="1000" height="420" loading="lazy" decoding="async" />
+  <!-- Inlined from figures/four-clocks.svg (canonical; edit there, then re-inline).
+       Inline rather than <img> so the page's print and reduced-motion rules apply:
+       an <img> sub-document would print at frame zero, i.e. empty. -->
+  <svg xmlns="http://www.w3.org/2000/svg" id="fc" viewBox="0 0 1000 420" width="1000" height="420" role="img"
+       aria-labelledby="title desc" font-family="Inter, system-ui, -apple-system, 'Segoe UI', sans-serif">
+    <title id="title">Four clocks settling independently at the end of an agent run</title>
+    <desc id="desc">Four horizontal lanes — transport, process, output, workspace — each settling at a different point on the same timeline. Transport settles first. The span between the transport settle and the workspace settle is marked as the window in which a run looks finished but is not, where duplicate execution and lost files occur. Safe completion is only at the last settle.</desc>
+  
+    <style>
+      #fc .lane-label { font-size: 14.1px; fill: #1A1A1A; font-weight: 600; }
+      #fc .lane-sub { font-size: 11.75px; fill: #595959; }
+      #fc .kicker { font-size: 11.75px; fill: #595959; letter-spacing: .11em; text-transform: uppercase; }
+      #fc .tick { font-size: 11.75px; fill: #595959; }
+      #fc .flag { font-size: 14.1px; fill: #0A5C38; font-weight: 600; }
+      #fc .danger { font-size: 12.9px; fill: #9B4A2F; font-weight: 600; }
+      #fc .danger-sub { font-size: 12.9px; fill: #9B4A2F; }
+  
+      #fc .bar { fill: #0A5C38; opacity: .82; }
+  
+      /* The figure builds once and then holds its finished state.
+       *
+       * A looping animation would return this diagram to an empty frame every
+       * few seconds, so a reader arriving mid-cycle — or screenshotting it —
+       * gets nothing. `both` fill means each element sits at the `from` state
+       * before its delay and at its authored state forever after, so the
+       * finished figure is the resting state and motion is pure onboarding.
+       */
+      #fc .bar { animation: grow .85s cubic-bezier(.4,0,.2,1) both; }
+      #fc .late { animation: fade .45s ease-out both; }
+  
+      @keyframes grow { from { width: 0; } }
+      @keyframes fade { from { opacity: 0; } }
+  
+      #fc #b1 { animation-delay: .15s } #d1 { animation-delay: 1.00s }
+      #fc #b2 { animation-delay: .75s } #d2 { animation-delay: 1.60s }
+      #fc #b3 { animation-delay: 1.35s } #d3 { animation-delay: 2.20s }
+      #fc #b4 { animation-delay: 1.95s } #d4 { animation-delay: 2.80s }
+      #fc #zone { animation-delay: 1.15s }
+      #fc #safe { animation-delay: 2.90s }
+  
+      /* Motion is an aid here, never the content: in print, in reduced-motion,
+         and in any renderer that does not run animations, the finished diagram
+         is the authored state. */
+      @media (prefers-reduced-motion: reduce), print {
+        #fc .bar, #fc .late { animation: none; }
+      }
+    </style>
+  
+    <rect width="1000" height="420" fill="#FFFFFF"/>
+    <text class="kicker" x="30" y="28">One run · four independent clocks</text>
+    <g class="late" id="zone">
+      <rect x="412" y="52" width="414" height="272" fill="rgba(155,74,47,0.07)"/>
+      <line x1="412" y1="52" x2="412" y2="324" stroke="#9B4A2F" stroke-width="1.25" stroke-dasharray="3 3" opacity=".65"/>
+      <text class="danger" x="424" y="348">The window where a run looks finished and is not</text>
+      <text class="danger-sub" x="424" y="366">Retry here duplicates work. Release here discards files.</text>
+    </g>
+    <g>
+      <text class="lane-label" x="30" y="82">Transport</text>
+      <text class="lane-sub"   x="30" y="98">did the stream return?</text>
+      <rect x="190" y="68" width="740" height="22" rx="2" fill="#F4F4EF" stroke="#E5E5E0"/>
+      <rect id="b1" class="bar" x="190" y="68" width="222" height="22" rx="2"/>
+      <circle class="late" id="d1" cx="412" cy="79" r="5" fill="#0A5C38"/>
+      <text class="lane-label" x="30" y="147">Process</text>
+      <text class="lane-sub"   x="30" y="163">can it still execute?</text>
+      <rect x="190" y="133" width="740" height="22" rx="2" fill="#F4F4EF" stroke="#E5E5E0"/>
+      <rect id="b2" class="bar" x="190" y="133" width="385" height="22" rx="2"/>
+      <circle class="late" id="d2" cx="575" cy="144" r="5" fill="#0A5C38"/>
+      <text class="lane-label" x="30" y="212">Output</text>
+      <text class="lane-sub"   x="30" y="228">drained to a final byte?</text>
+      <rect x="190" y="198" width="740" height="22" rx="2" fill="#F4F4EF" stroke="#E5E5E0"/>
+      <rect id="b3" class="bar" x="190" y="198" width="488" height="22" rx="2"/>
+      <circle class="late" id="d3" cx="678" cy="209" r="5" fill="#0A5C38"/>
+      <text class="lane-label" x="30" y="277">Workspace</text>
+      <text class="lane-sub"   x="30" y="293">checkpointed and verified?</text>
+      <rect x="190" y="263" width="740" height="22" rx="2" fill="#F4F4EF" stroke="#E5E5E0"/>
+      <rect id="b4" class="bar" x="190" y="263" width="636" height="22" rx="2"/>
+      <circle class="late" id="d4" cx="826" cy="274" r="5" fill="#0A5C38"/>
+    </g>
+    <g class="late" id="safe">
+      <line x1="826" y1="52" x2="826" y2="324" stroke="#0A5C38" stroke-width="1.25"/>
+      <polygon points="826,46 820,56 832,56" fill="#0A5C38"/>
+      <text class="flag" x="826" y="38" text-anchor="middle">safe to complete</text>
+    </g>
+    <line x1="190" y1="324" x2="930" y2="324" stroke="#D8D8D2"/>
+    <text class="tick" x="190" y="342">model emits final response</text>
+    <text class="tick" x="930" y="342" text-anchor="end">receipts joined</text>
+  
+    <line x1="30" y1="386" x2="970" y2="386" stroke="#E5E5E0"/>
+    <text class="lane-sub" x="30" y="404">A status field can only record one of these. A completion contract joins all four.</text>
+  </svg>
   <figcaption><b>FIG. 01</b> — A returned request is only the first clock to settle. Safe completion waits for process quiescence, output drain, and a verified workspace checkpoint. The gap between the first and last settle is where duplicate execution and lost files live.</figcaption>
 </figure>
 
