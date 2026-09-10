@@ -64,7 +64,7 @@ The first version asked the research agent for a concise summary to pass to the 
 
 A source might say that a rule applies only to eligible records, at a daily aggregation level, after excluding retries. A fluent summary returns *aggregate eligible records*. The gist survives. The conditions, the source location, and the exclusion do not — and, crucially, the downstream agent has no way to tell that anything is missing. A lossy summary and a complete one look identical on arrival.
 
-<figure>
+<figure class="wide">
   <img src="/writing/retrieval-is-not-delivery/figures/evidence-record.svg" alt="Side-by-side comparison: a free-form summary preserving only the gist, versus a structured evidence record preserving verbatim excerpt, source, conditions, interpretation, and open gaps." width="920" height="520" loading="lazy" decoding="async" />
   <figcaption><b>FIG. 02</b> — A summary preserves the gist. A structured evidence record also preserves the exact wording, where it came from, the conditions attached to it, and what remains unresolved.</figcaption>
 </figure>

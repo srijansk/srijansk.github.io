@@ -1,19 +1,21 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 420" width="920" height="420" role="img"
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 420" width="1000" height="420" role="img"
      aria-labelledby="title desc" font-family="Inter, system-ui, -apple-system, 'Segoe UI', sans-serif">
   <title id="title">Effective use of an item by its position in a long context</title>
   <desc id="desc">A curve showing that an item placed near the start or the end of a long context is used far more effectively than the identical item placed in the middle. The same shape describes position bias in ranked lists, where top-of-list items receive disproportionate engagement regardless of quality.</desc>
 
   <style>
-    .kicker { font-size: 10.5px; fill: #595959; letter-spacing: .11em; text-transform: uppercase; }
-    .ax     { font-size: 11px; fill: #595959; }
-    .axb    { font-size: 11.5px; fill: #2F2F2F; font-weight: 600; }
-    .ann    { font-size: 11.5px; fill: #9B4A2F; }
-    .annok  { font-size: 11.5px; fill: #0A5C38; }
-    .note   { font-size: 11.5px; fill: #595959; }
-    .lede   { font-size: 12.5px; fill: #2F2F2F; }
+    .kicker { font-size: 11.75px; fill: #595959; letter-spacing: .11em; text-transform: uppercase; }
+    .ax     { font-size: 12.9px; fill: #595959; }
+    .axb    { font-size: 12.9px; fill: #2F2F2F; font-weight: 600; }
+    .ann    { font-size: 12.9px; fill: #9B4A2F; }
+    .annok  { font-size: 12.9px; fill: #0A5C38; }
+    .note   { font-size: 12.9px; fill: #595959; }
+    .lede   { font-size: 14.1px; fill: #2F2F2F; }
   </style>
 
-  <rect width="920" height="420" fill="#FFFFFF"/>
+  <rect width="1000" height="420" fill="#FFFFFF"/>
+
+  <g transform="translate(40,0)">
   <text class="kicker" x="30" y="26">Position is a treatment, not an accident</text>
 
   <!-- plot frame -->
@@ -42,7 +44,7 @@
            C 330 208, 400 232, 460 236
            C 520 232, 590 206, 650 160
            C 710 116, 800 92, 880 86"
-        fill="none" stroke="#0A5C38" stroke-width="2.5" stroke-linecap="round"/>
+        fill="none" stroke="#0A5C38" stroke-width="3.0" stroke-linecap="round"/>
 
   <!-- area under, faint -->
   <path d="M90 82
@@ -72,4 +74,5 @@
   <line x1="30" y1="358" x2="890" y2="358" stroke="#E5E5E0"/>
   <text class="lede" x="30" y="380">Recommender systems named this <tspan font-weight="600">position bias</tspan> in the mid-2000s and correct for it with</text>
   <text class="lede" x="30" y="398">randomised exposure and propensity weighting. Agent context met it again as <tspan font-style="italic">lost in the middle</tspan>.</text>
+  </g>
 </svg>

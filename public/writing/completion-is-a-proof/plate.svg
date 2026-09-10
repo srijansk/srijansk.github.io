@@ -1,42 +1,49 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-labelledby="t">
   <title id="t">Completion Is a Proof, Not a Status</title>
   <!--
-    Four arcs sweep from a common origin and settle at four different points.
-    Only where the outermost closes is there a seal. Everything inside it is
-    a run that has stopped without being finished.
+    PLATE GRAMMAR — see retrieval-is-not-delivery/plate.svg for the shared
+    frame, strokes, dot radii and colours. g.ink is set by
+    scripts/align-plates.py; do not hand-tune it.
+
+    THIS PLATE: four clocks sweep from one origin and settle at four
+    different points. Only where the outermost closes is there a seal.
+    Ellipses rather than circles so the mark fills the same ink box as its
+    siblings without growing taller than them.
   -->
   <rect width="1200" height="630" fill="#FAFAF7"/>
 
-  <!-- ground line the arcs settle onto -->
-  <line x1="270" y1="470" x2="930" y2="470" stroke="#1A1A1A" stroke-width="2" opacity=".25"/>
+  <g class="ink" transform="translate(-5,-23)">
+    <!-- the ground the clocks settle onto -->
+    <line x1="160" y1="470" x2="1040" y2="470" stroke="#1A1A1A" stroke-width="2" opacity=".28"/>
 
-  <g fill="none" stroke-linecap="round">
-    <!-- transport: settles first, shortest sweep -->
-    <path d="M480 470 A 120 120 0 0 1 660 366.1" stroke="#1A1A1A" stroke-width="7" opacity=".32"/>
-    <!-- process -->
-    <path d="M420 470 A 180 180 0 0 1 755.9 380" stroke="#1A1A1A" stroke-width="7" opacity=".42"/>
-    <!-- output -->
-    <path d="M360 470 A 240 240 0 0 1 836.4 428.3" stroke="#1A1A1A" stroke-width="7" opacity=".55"/>
-    <!-- workspace: the only one that closes -->
-    <path d="M300 470 A 300 300 0 0 1 900 470" stroke="#0A5C38" stroke-width="10"/>
+    <g fill="none" stroke-linecap="round">
+      <!-- transport: settles first -->
+      <path d="M410 470 A 190 130 0 0 1 709 363.5" stroke="#1A1A1A" stroke-width="7" opacity=".30"/>
+      <!-- process -->
+      <path d="M320 470 A 280 190 0 0 1 837.4 369.3" stroke="#1A1A1A" stroke-width="7" opacity=".40"/>
+      <!-- output -->
+      <path d="M230 470 A 370 250 0 0 1 957.4 405.3" stroke="#1A1A1A" stroke-width="7" opacity=".52"/>
+      <!-- workspace: the only one that closes -->
+      <path d="M180 470 A 420 300 0 0 1 1020 470" stroke="#0A5C38" stroke-width="9"/>
+    </g>
+
+    <!-- where each clock stopped -->
+    <circle cx="709" cy="363.5" r="10" fill="#1A1A1A" opacity=".30"/>
+    <circle cx="837.4" cy="369.3" r="10" fill="#1A1A1A" opacity=".40"/>
+    <circle cx="957.4" cy="405.3" r="10" fill="#1A1A1A" opacity=".52"/>
+
+    <!-- the seal: the only point at which completion is provable -->
+    <circle cx="1020" cy="470" r="20" fill="#0A5C38"/>
+    <circle cx="1020" cy="470" r="30" fill="none" stroke="#0A5C38" stroke-width="3" opacity=".45"/>
+
+    <!-- common origin -->
+    <circle cx="180" cy="470" r="13" fill="#1A1A1A"/>
+
+    <!-- the span that looks finished and is not -->
+    <g stroke="#9B4A2F" stroke-width="3" opacity=".7">
+      <line x1="709" y1="388" x2="709" y2="512" stroke-dasharray="8 8"/>
+      <line x1="1020" y1="505" x2="1020" y2="512" stroke-dasharray="8 8"/>
+      <line x1="709" y1="512" x2="1020" y2="512"/>
+    </g>
   </g>
-
-  <!-- where each clock stopped -->
-  <circle cx="660" cy="366.1" r="10" fill="#1A1A1A" opacity=".32"/>
-  <circle cx="755.9" cy="380" r="10" fill="#1A1A1A" opacity=".42"/>
-  <circle cx="836.4" cy="428.3" r="10" fill="#1A1A1A" opacity=".55"/>
-
-  <!-- the seal: the only point at which completion is provable -->
-  <circle cx="900" cy="470" r="22" fill="#0A5C38"/>
-  <circle cx="900" cy="470" r="34" fill="none" stroke="#0A5C38" stroke-width="3" opacity=".45"/>
-
-  <!-- common origin -->
-  <circle cx="300" cy="470" r="13" fill="#1A1A1A"/>
-
-  <!-- the span between first stop and the seal: looks done, is not -->
-  <g stroke="#9B4A2F" stroke-width="3" stroke-dasharray="8 8" opacity=".7">
-    <line x1="660" y1="392" x2="660" y2="520"/>
-    <line x1="900" y1="510" x2="900" y2="520"/>
-  </g>
-  <line x1="660" y1="520" x2="900" y2="520" stroke="#9B4A2F" stroke-width="3" opacity=".7"/>
 </svg>

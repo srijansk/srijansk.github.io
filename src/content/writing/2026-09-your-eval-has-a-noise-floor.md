@@ -71,7 +71,7 @@ A rubric claim like *the nightly job excludes retried events before aggregating,
 
 Decomposing each claim into atomic assertions and scoring those changes both the resolution and the number. Sixty claims became several hundred atomic assertions in my case, and the reported percentages moved substantially — not because any system got better, but because the ruler changed.
 
-<figure>
+<figure class="wide">
   <img src="/writing/your-eval-has-a-noise-floor/figures/claim-decomposition.svg" alt="Diagram: one compound rubric claim decomposed into four atomic assertions, showing how whole-claim scoring collapses partial credit that atomic scoring preserves." width="920" height="440" loading="lazy" decoding="async" />
   <figcaption><b>FIG. 02</b> — The same output, two rulers. Whole-claim scoring throws away the distinction between <i>almost complete</i> and <i>entirely absent</i>. Atomic scoring keeps it — and produces a different headline number for identical work.</figcaption>
 </figure>

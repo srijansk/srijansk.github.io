@@ -51,7 +51,7 @@ The useful abstraction is not a larger state machine. It is a small set of evide
 - The **workspace service** owns durable publication. Its receipt names a committed mutation watermark, an immutable checkpoint manifest, and the runtime generation permitted to write it.
 - The **close protocol** freezes admission, waits for every admitted session, verifies that the checkpoint covers their terminal mutations, and only then publishes success and releases compute.
 
-<figure>
+<figure class="wide">
   <img src="/writing/completion-is-a-proof/figures/completion-authorities.svg" alt="Diagram showing three authorities — session runtime, workspace service, close protocol — each certifying only facts it can observe, joined into a single completion decision." width="920" height="500" loading="lazy" decoding="async" />
   <figcaption><b>FIG. 02</b> — No component is asked to certify a fact it cannot observe. The close protocol exposes success only after joining the runtime and workspace receipts.</figcaption>
 </figure>

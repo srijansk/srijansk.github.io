@@ -74,7 +74,7 @@ Three results that agent builders are currently rediscovering, at cost.
 
 **Position bias is a measurement problem before it is a modelling problem.** In recommendation, the fact that top-of-list items get more engagement — regardless of quality — has been understood, measured, and corrected for since the mid-2000s, with inverse-propensity weighting and randomised exposure. The agent-context version arrived as [Lost in the Middle](https://arxiv.org/abs/2307.03172): relevant information placed in the middle of a long context receives less effective attention than the same information at either end. The correct response is not *use a bigger context window.* It is the response the recsys field already worked out: treat position as a variable you control and account for, order deliberately, and measure the effect rather than hoping it is small.
 
-<figure>
+<figure class="wide">
   <img src="/writing/agent-context-is-a-recommendation-problem/figures/position-effect.svg" alt="Chart showing effective use of an item by its position in a long context: high at the start, dipping through the middle, recovering at the end — annotated with the recommender-systems analogue of position bias." width="920" height="420" loading="lazy" decoding="async" />
   <figcaption><b>FIG. 02</b> — Position is a treatment, not an accident. A ranker that ignores where an item lands is optimising a metric it cannot actually deliver.</figcaption>
 </figure>
