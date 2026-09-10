@@ -46,7 +46,6 @@ Their order is not fixed, which is the entire difficulty. A request can vanish w
        aria-labelledby="title desc" font-family="Inter, system-ui, -apple-system, 'Segoe UI', sans-serif">
     <title id="title">Four clocks settling independently at the end of an agent run</title>
     <desc id="desc">Four horizontal lanes — transport, process, output, workspace — each settling at a different point on the same timeline. Transport settles first. The span between the transport settle and the workspace settle is marked as the window in which a run looks finished but is not, where duplicate execution and lost files occur. Safe completion is only at the last settle.</desc>
-  
     <style>
       #fc .lane-label { font-size: 14.1px; fill: #1A1A1A; font-weight: 600; }
       #fc .lane-sub { font-size: 11.75px; fill: #595959; }
@@ -55,38 +54,23 @@ Their order is not fixed, which is the entire difficulty. A request can vanish w
       #fc .flag { font-size: 14.1px; fill: #0A5C38; font-weight: 600; }
       #fc .danger { font-size: 12.9px; fill: #9B4A2F; font-weight: 600; }
       #fc .danger-sub { font-size: 12.9px; fill: #9B4A2F; }
-  
       #fc .bar { fill: #0A5C38; opacity: .82; }
-  
-      /* The figure builds once and then holds its finished state.
-       *
-       * A looping animation would return this diagram to an empty frame every
-       * few seconds, so a reader arriving mid-cycle — or screenshotting it —
-       * gets nothing. `both` fill means each element sits at the `from` state
-       * before its delay and at its authored state forever after, so the
-       * finished figure is the resting state and motion is pure onboarding.
-       */
       #fc .bar { animation: grow .85s cubic-bezier(.4,0,.2,1) both; }
       #fc .late { animation: fade .45s ease-out both; }
-  
       @keyframes grow { from { width: 0; } }
       @keyframes fade { from { opacity: 0; } }
-  
       #fc #b1 { animation-delay: .15s } #d1 { animation-delay: 1.00s }
       #fc #b2 { animation-delay: .75s } #d2 { animation-delay: 1.60s }
       #fc #b3 { animation-delay: 1.35s } #d3 { animation-delay: 2.20s }
       #fc #b4 { animation-delay: 1.95s } #d4 { animation-delay: 2.80s }
       #fc #zone { animation-delay: 1.15s }
       #fc #safe { animation-delay: 2.90s }
-  
-      /* Motion is an aid here, never the content: in print, in reduced-motion,
          and in any renderer that does not run animations, the finished diagram
          is the authored state. */
       @media (prefers-reduced-motion: reduce), print {
         #fc .bar, #fc .late { animation: none; }
       }
     </style>
-  
     <rect width="1000" height="420" fill="#FFFFFF"/>
     <text class="kicker" x="30" y="28">One run · four independent clocks</text>
     <g class="late" id="zone">
@@ -125,7 +109,6 @@ Their order is not fixed, which is the entire difficulty. A request can vanish w
     <line x1="190" y1="324" x2="930" y2="324" stroke="#D8D8D2"/>
     <text class="tick" x="190" y="342">model emits final response</text>
     <text class="tick" x="930" y="342" text-anchor="end">receipts joined</text>
-  
     <line x1="30" y1="386" x2="970" y2="386" stroke="#E5E5E0"/>
     <text class="lane-sub" x="30" y="404">A status field can only record one of these. A completion contract joins all four.</text>
   </svg>
