@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The evidence path — five checkpoints</title>
+<link rel="stylesheet" href="../../_figure.css" />
+<style>
+  .track {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+  .stage {
+    position: relative;
+    text-align: left;
+    padding: 12px 10px 14px;
+    border: 1px solid var(--hairline);
+    border-radius: 3px;
+    background: var(--bg);
+    transition: border-color 120ms, background 120ms;
+    display: block;
+    width: 100%;
+  }
+  .stage:hover { border-color: var(--accent-mid); }
+  .stage[aria-selected="true"] {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .stage-n {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    display: block;
+  }
+  .stage-name {
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 3px;
+    display: block;
+  }
+  .stage-val {
+    font-size: 11px;
+    color: var(--accent);
+    margin-top: 6px;
+    display: block;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* The survival bar: how much of the expected evidence is still alive here. */
+  .bars {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    margin: 10px 0 14px;
+  }
+  .bar-shell {
+    height: 34px;
+    background: var(--hairline);
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+  }
+  .bar-fill {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    background: var(--accent);
+    opacity: 0.85;
+  }
+  .bar-lost {
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      -45deg, var(--warn-soft), var(--warn-soft) 4px,
+      transparent 4px, transparent 8px
+    );
+  }
+  .bar-cap {
+    position: absolute;
+    left: 6px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 11px;
+    font-weight: 600;
+    color: #FFFFFF;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .detail {
+    border-top: 1px solid var(--hairline-strong);
+    padding-top: 12px;
+    min-height: 74px;
+  }
+  .detail h3 {
+    margin: 0 0 4px;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .detail p { margin: 0 0 6px; font-size: 13px; }
+  .detail .miss {
+    color: var(--warn);
+    font-size: 12.5px;
+    margin: 0;
+  }
+  .detail .miss b { font-weight: 600; }
+
+  @media (max-width: 720px) {
+    .track, .bars { grid-template-columns: repeat(2, 1fr); }
+    .bars { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<p class="fig-kicker">The path from a source to an answer</p>
+
+<div class="track" role="tablist" aria-label="Checkpoints">
+  <button class="stage" role="tab" id="t0" aria-controls="panel" aria-selected="true" data-i="0">
+    <span class="stage-n">01</span><span class="stage-name">Search</span><span class="stage-val">source opened</span>
+  </button>
+  <button class="stage" role="tab" id="t1" aria-controls="panel" aria-selected="false" data-i="1">
+    <span class="stage-n">02</span><span class="stage-name">Read</span><span class="stage-val">65% &rarr; 82%</span>
+  </button>
+  <button class="stage" role="tab" id="t2" aria-controls="panel" aria-selected="false" data-i="2">
+    <span class="stage-n">03</span><span class="stage-name">Pass on</span><span class="stage-val">22% &rarr; 60%</span>
+  </button>
+  <button class="stage" role="tab" id="t3" aria-controls="panel" aria-selected="false" data-i="3">
+    <span class="stage-n">04</span><span class="stage-name">Check live</span><span class="stage-val">0 &rarr; 14/45</span>
+  </button>
+  <button class="stage" role="tab" id="t4" aria-controls="panel" aria-selected="false" data-i="4">
+    <span class="stage-n">05</span><span class="stage-name">Answer</span><span class="stage-val">23% &rarr; 51%</span>
+  </button>
+</div>
+
+<div class="bars" aria-hidden="true">
+  <div class="bar-shell"><div class="bar-fill" style="width:100%"></div><span class="bar-cap">all</span></div>
+  <div class="bar-shell"><div class="bar-fill" style="width:82%"></div><div class="bar-lost" style="width:18%"></div><span class="bar-cap">82%</span></div>
+  <div class="bar-shell"><div class="bar-fill" style="width:60%"></div><div class="bar-lost" style="width:40%"></div><span class="bar-cap">60%</span></div>
+  <div class="bar-shell"><div class="bar-fill" style="width:31%"></div><div class="bar-lost" style="width:69%"></div><span class="bar-cap">14/45</span></div>
+  <div class="bar-shell"><div class="bar-fill" style="width:51%"></div><div class="bar-lost" style="width:49%"></div><span class="bar-cap">51%</span></div>
+</div>
+
+<div class="detail" id="panel" role="tabpanel" tabindex="0" aria-live="polite">
+  <h3 id="d-name">Search</h3>
+  <p id="d-q">Did the agent open a source that contains the expected fact?</p>
+  <p class="miss"><b>A miss here means:</b> <span id="d-m">the search never surfaced the right source.</span></p>
+</div>
+
+<p class="fig-hint">Bars show the share of expected evidence still alive at each checkpoint, after the improvement work. Hatching is what was lost by that point.</p>
+
+<script>
+  var DATA = [
+    { name: 'Search',
+      q: 'Did the agent open a source that contains the expected fact?',
+      m: 'the search never surfaced the right source. This is the only checkpoint most teams instrument.' },
+    { name: 'Read',
+      q: 'Did it actually capture the fact from the source it opened?',
+      m: 'the fact was present and overlooked, or read and misunderstood. Retrieval metrics score this as a success.' },
+    { name: 'Pass on',
+      q: 'Did the exact evidence survive the message to the next agent?',
+      m: 'a summary removed a load-bearing detail — a condition, an exclusion, a source location. The receiving agent cannot tell anything is missing.' },
+    { name: 'Check live',
+      q: 'Was a time-sensitive fact verified against the live system?',
+      m: 'the answer may be well-cited and out of date. Documents describe intent; live systems show state.' },
+    { name: 'Answer',
+      q: 'Did the final response actually include the required support?',
+      m: 'something was lost earlier, or dropped during writing. A final-answer score sees only this column.' }
+  ];
+
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.stage'));
+  var nameEl = document.getElementById('d-name');
+  var qEl = document.getElementById('d-q');
+  var mEl = document.getElementById('d-m');
+
+  function select(i) {
+    tabs.forEach(function (t, j) { t.setAttribute('aria-selected', String(i === j)); });
+    nameEl.textContent = DATA[i].name;
+    qEl.textContent = DATA[i].q;
+    mEl.textContent = DATA[i].m;
+  }
+
+  tabs.forEach(function (t) {
+    t.addEventListener('click', function () { select(Number(t.dataset.i)); });
+    t.addEventListener('mouseenter', function () { select(Number(t.dataset.i)); });
+    t.addEventListener('keydown', function (e) {
+      var i = Number(t.dataset.i);
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+        e.preventDefault();
+        var next = (i + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
+        tabs[next].focus();
+        select(next);
+      }
+    });
+  });
+</script>
+</body>
+</html>

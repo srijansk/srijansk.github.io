@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 500" width="920" height="500" role="img"
+     aria-labelledby="title desc" font-family="Inter, system-ui, -apple-system, 'Segoe UI', sans-serif">
+  <title id="title">Three authorities, each certifying only what it can observe</title>
+  <desc id="desc">The session runtime issues a receipt proving process death and the final output cursor. The workspace service issues a receipt naming a committed mutation watermark and an immutable checkpoint manifest. The close protocol joins both receipts and only then publishes success. Each authority is annotated with the fact it cannot observe.</desc>
+
+  <style>
+    .kicker { font-size: 10.5px; fill: #595959; letter-spacing: .11em; text-transform: uppercase; }
+    .box-h  { font-size: 14px; fill: #1A1A1A; font-weight: 600; }
+    .owns   { font-size: 10.5px; fill: #595959; letter-spacing: .06em; text-transform: uppercase; }
+    .item   { font-size: 12px; fill: #2F2F2F; }
+    .cant   { font-size: 11px; fill: #9B4A2F; }
+    .join   { font-size: 12.5px; fill: #0A5C38; font-weight: 600; }
+    .mono   { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; fill: #1A1A1A; }
+    .note   { font-size: 11.5px; fill: #595959; }
+  </style>
+
+  <rect width="920" height="500" fill="#FFFFFF"/>
+  <text class="kicker" x="30" y="28">Who is allowed to claim what</text>
+
+  <!-- ── session runtime ────────────────────────────────────── -->
+  <rect x="30" y="46" width="400" height="164" rx="3" fill="#FAFAF7" stroke="#D8D8D2"/>
+  <text class="box-h" x="48" y="72">Session runtime</text>
+  <text class="owns"  x="48" y="92">owns the process tree and the byte log</text>
+  <line x1="48" y1="102" x2="412" y2="102" stroke="#E5E5E0"/>
+  <text class="item" x="48" y="122">• the process tree can no longer execute</text>
+  <text class="item" x="48" y="142">• the final output cursor is <tspan class="mono">N</tspan> bytes</text>
+  <text class="item" x="48" y="162">• last mutation for this session is <tspan class="mono">m</tspan></text>
+  <rect x="48" y="174" width="364" height="24" rx="2" fill="rgba(155,74,47,0.06)"/>
+  <text class="cant" x="58" y="190">cannot see: whether those files were ever published</text>
+
+  <!-- ── workspace service ──────────────────────────────────── -->
+  <rect x="490" y="46" width="400" height="164" rx="3" fill="#FAFAF7" stroke="#D8D8D2"/>
+  <text class="box-h" x="508" y="72">Workspace service</text>
+  <text class="owns"  x="508" y="92">owns durable publication</text>
+  <line x1="508" y1="102" x2="872" y2="102" stroke="#E5E5E0"/>
+  <text class="item" x="508" y="122">• committed mutation watermark</text>
+  <text class="item" x="508" y="142">• immutable checkpoint manifest</text>
+  <text class="item" x="508" y="162">• the runtime generation allowed to write</text>
+  <rect x="508" y="174" width="364" height="24" rx="2" fill="rgba(155,74,47,0.06)"/>
+  <text class="cant" x="518" y="190">cannot see: whether a process is still running</text>
+
+  <!-- receipts flowing down -->
+  <path d="M230 210 L230 246 L430 246 L430 268" stroke="#0A5C38" stroke-width="1.2" fill="none" opacity=".55"/>
+  <path d="M690 210 L690 246 L490 246 L490 268" stroke="#0A5C38" stroke-width="1.2" fill="none" opacity=".55"/>
+  <polygon points="430,274 426,266 434,266" fill="#0A5C38" opacity=".55"/>
+  <polygon points="490,274 486,266 494,266" fill="#0A5C38" opacity=".55"/>
+  <text class="note" x="240" y="240">receipt</text>
+  <text class="note" x="660" y="240">receipt</text>
+
+  <!-- ── close protocol ─────────────────────────────────────── -->
+  <rect x="180" y="278" width="560" height="136" rx="3" fill="#FFFFFF" stroke="#0A5C38" stroke-opacity=".5"/>
+  <rect x="180" y="278" width="560" height="32" rx="3" fill="rgba(10,92,56,0.08)"/>
+  <rect x="180" y="306" width="560" height="4" fill="rgba(10,92,56,0.08)"/>
+  <text class="box-h" x="198" y="300">Close protocol — a join, not a callback</text>
+
+  <text class="join" x="198" y="332">1</text><text class="item" x="216" y="332">seal admission</text>
+  <text class="join" x="198" y="352">2</text><text class="item" x="216" y="352">settle every admitted session</text>
+  <text class="join" x="198" y="372">3</text><text class="item" x="216" y="372">advance publication past the largest terminal mutation</text>
+  <text class="join" x="198" y="392">4</text><text class="item" x="216" y="392">write the manifest last, then read back that exact version</text>
+
+  <!-- outcome -->
+  <path d="M460 414 L460 438" stroke="#0A5C38" stroke-width="1.2"/>
+  <polygon points="460,444 455,436 465,436" fill="#0A5C38"/>
+  <rect x="330" y="448" width="260" height="30" rx="3" fill="rgba(10,92,56,0.08)" stroke="#0A5C38" stroke-opacity=".45"/>
+  <text class="join" x="460" y="468" text-anchor="middle">publish success · release compute</text>
+
+  <text class="note" x="30" y="472">A missing receipt is not "stuck". It names</text>
+  <text class="note" x="30" y="488">one authority and one unmet obligation.</text>
+</svg>

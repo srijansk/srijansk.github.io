@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Is your result above the noise floor?</title>
+<link rel="stylesheet" href="../../_figure.css" />
+<style>
+  .scale { position: relative; height: 96px; margin: 6px 0 0; }
+
+  .band {
+    position: absolute;
+    top: 0;
+    height: 56px;
+    border-radius: 2px;
+  }
+  .band-judge { background: rgba(155,74,47,0.16); }
+  .band-run   { background: rgba(155,74,47,0.08); }
+  .band-clear { background: rgba(10,92,56,0.07); }
+
+  .band-edge {
+    position: absolute;
+    top: 0;
+    height: 56px;
+    border-left: 1px dashed rgba(155,74,47,.55);
+  }
+
+  .band-tag {
+    position: absolute;
+    top: 60px;
+    font-size: 10.5px;
+    color: var(--warn);
+    white-space: nowrap;
+    transform: translateX(-50%);
+  }
+  .band-tag.ok { color: var(--accent); }
+
+  .marker {
+    position: absolute;
+    top: -10px;
+    height: 76px;
+    border-left: 2px solid var(--text);
+    transition: left 90ms linear;
+  }
+  .marker::after {
+    content: '';
+    position: absolute;
+    left: -5px; top: -1px;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 8px solid var(--text);
+  }
+
+  .axis {
+    position: absolute;
+    top: 56px; left: 0; right: 0;
+    border-top: 1px solid var(--hairline-strong);
+  }
+  .tick {
+    position: absolute;
+    top: 58px;
+    font-size: 10px;
+    color: var(--muted);
+    transform: translateX(-50%);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .controls { display: flex; align-items: center; gap: 14px; margin-top: 26px; }
+  .controls label { font-size: 11.5px; color: var(--muted); white-space: nowrap; }
+  input[type=range] { flex: 1; accent-color: #0A5C38; }
+
+  .readout {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+    min-width: 96px;
+    text-align: right;
+  }
+  .readout small { font-size: 11px; font-weight: 400; color: var(--muted); display: block; }
+
+  .verdict {
+    margin-top: 16px;
+    border-top: 1px solid var(--hairline-strong);
+    padding-top: 12px;
+    min-height: 62px;
+  }
+  .verdict-h {
+    font-size: 13px;
+    font-weight: 600;
+    margin: 0 0 4px;
+  }
+  .verdict-b { font-size: 12.5px; color: var(--soft); margin: 0; }
+  .bad  .verdict-h { color: var(--warn); }
+  .thin .verdict-h { color: #8A6D1F; }
+  .good .verdict-h { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<p class="fig-kicker">An observed improvement, against what moves on its own</p>
+
+<div class="scale" id="scale">
+  <div class="band band-clear" style="left:0; right:0"></div>
+  <div class="band band-run"   id="bandRun"></div>
+  <div class="band band-judge" id="bandJudge"></div>
+  <div class="band-edge" id="edgeJudge"></div>
+  <div class="band-edge" id="edgeRun"></div>
+
+  <div class="band-tag" id="tagJudge">judge noise &plusmn;4</div>
+  <div class="band-tag" id="tagRun">run-to-run floor ~6</div>
+  <div class="band-tag ok" id="tagClear">above the floor</div>
+
+  <div class="axis"></div>
+  <div class="marker" id="marker"></div>
+</div>
+
+<div class="controls">
+  <label for="delta">Observed improvement</label>
+  <input type="range" id="delta" min="0" max="15" step="1" value="3"
+         aria-describedby="verdictText" />
+  <span class="readout"><span id="val">3</span> / 60<small id="pct">5.0% recall</small></span>
+</div>
+
+<div class="verdict" id="verdict">
+  <p class="verdict-h" id="verdictH">Inside judge noise</p>
+  <p class="verdict-b" id="verdictText"></p>
+</div>
+
+<script>
+  var MAX = 15, JUDGE = 4, RUN = 6;
+  var scale = document.getElementById('scale');
+  var range = document.getElementById('delta');
+
+  function pctOf(v) { return (v / MAX) * 100; }
+
+  // Static band geometry.
+  document.getElementById('bandJudge').style.cssText =
+    'left:0; width:' + pctOf(JUDGE) + '%';
+  document.getElementById('bandRun').style.cssText =
+    'left:0; width:' + pctOf(RUN) + '%';
+  document.getElementById('edgeJudge').style.left = pctOf(JUDGE) + '%';
+  document.getElementById('edgeRun').style.left = pctOf(RUN) + '%';
+  document.getElementById('tagJudge').style.left = pctOf(JUDGE / 2) + '%';
+  document.getElementById('tagRun').style.left = pctOf((JUDGE + RUN) / 2) + '%';
+  document.getElementById('tagClear').style.left = pctOf((RUN + MAX) / 2) + '%';
+
+  // Axis ticks every 3 claims.
+  for (var t = 0; t <= MAX; t += 3) {
+    var el = document.createElement('span');
+    el.className = 'tick';
+    el.style.left = pctOf(t) + '%';
+    el.textContent = t;
+    scale.appendChild(el);
+  }
+
+  var VERDICTS = [
+    { max: JUDGE, cls: 'bad', h: 'Inside judge noise',
+      t: 'Re-judging the identical artifact — same bytes, same rubric, one more pass — moves the score by about this much. Nothing has been demonstrated. Increase judge passes and take a majority before looking again.' },
+    { max: RUN, cls: 'bad', h: 'Inside the run-to-run floor',
+      t: 'Two identical runs of the unchanged configuration already differ by roughly this much. The result is indistinguishable from re-running what you had. Report it as inside the noise.' },
+    { max: 9, cls: 'thin', h: 'Above the floor, but thin',
+      t: 'Larger than the movement of an unchanged configuration, but not by much. Repeat at n ≥ 3 and publish the spread alongside the mean — a single run this close to the floor will not replicate reliably.' },
+    { max: 99, cls: 'good', h: 'Clears the floor',
+      t: 'Comfortably larger than both bands. Still repeat and still publish the spread: a mean without a spread is half a result, and it is the half that hides your next surprise.' }
+  ];
+
+  function update() {
+    var v = Number(range.value);
+    document.getElementById('val').textContent = v;
+    document.getElementById('pct').textContent = (v / 60 * 100).toFixed(1) + '% recall';
+    document.getElementById('marker').style.left = pctOf(v) + '%';
+
+    var pick = VERDICTS.find(function (x) { return v <= x.max; });
+    var box = document.getElementById('verdict');
+    box.className = 'verdict ' + pick.cls;
+    document.getElementById('verdictH').textContent = pick.h;
+    document.getElementById('verdictText').textContent = pick.t;
+  }
+
+  range.addEventListener('input', update);
+  update();
+</script>
+</body>
+</html>

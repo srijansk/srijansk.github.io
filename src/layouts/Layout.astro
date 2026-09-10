@@ -7,13 +7,21 @@ interface Props {
   description?: string;
   canonical?: string;
   pageType?: 'home' | 'inner';
+  /** Drafts build to their real URL but must never be indexed. */
+  noindex?: boolean;
+  ogType?: 'profile' | 'article';
+  /** Path relative to the site root, e.g. /writing/foo/card.png */
+  ogImage?: string;
 }
 
 const {
   title,
-  description = 'Srijan Saket — building the tribal knowledge layer for LLM agents. Founding member at Pavo AI. Ex-Sourcegraph, ex-ShareChat. Applied research at the intersection of recommender systems and agentic AI.',
+  description = 'Srijan Saket — building the tribal knowledge layer for LLM agents. Founding Engineer at Pavo AI. Ex-Sourcegraph, ex-ShareChat. Applied research at the intersection of recommender systems and agentic AI.',
   canonical,
   pageType = 'home',
+  noindex = false,
+  ogType = 'profile',
+  ogImage,
 } = Astro.props;
 
 const site = Astro.site?.toString().replace(/\/$/, '') ?? 'https://srijansk.github.io';
@@ -31,15 +39,18 @@ const isHome = pageType === 'home';
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalUrl} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
 
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content="profile" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:site_name" content="Srijan Saket" />
-    <meta property="og:image" content={`${site}/srijan.png`} />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content={ogImage ? `${site}${ogImage}` : `${site}/srijan.png`} />
+    <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
     <meta name="twitter:creator" content="@srijanskt2" />
+
+    <link rel="alternate" type="application/rss+xml" title="Srijan Saket — Writing" href="/rss.xml" />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="sitemap" href="/sitemap-index.xml" />
@@ -51,7 +62,7 @@ const isHome = pageType === 'home';
       name: 'Srijan Saket',
       url: 'https://srijansk.github.io',
       image: 'https://srijansk.github.io/srijan.png',
-      jobTitle: 'Founding member',
+      jobTitle: 'Founding Engineer',
       worksFor: { '@type': 'Organization', name: 'Pavo AI' },
       alumniOf: [
         { '@type': 'Organization', name: 'Sourcegraph' },
@@ -69,6 +80,7 @@ const isHome = pageType === 'home';
     })} />
   </head>
   <body>
+    <a class="skip-link" href="#content">Skip to content</a>
     <SocialIcons />
     <div class="site">
       <aside class="sidebar" aria-label="Profile">
@@ -85,7 +97,7 @@ const isHome = pageType === 'home';
         </a>
         <a class="sidebar-name" href="/">Srijan Saket</a>
         <p class="sidebar-role">
-          Founding member at <strong>Pavo AI</strong>
+          Founding Engineer at <strong>Pavo AI</strong>
         </p>
         <p class="sidebar-sub">Retrieval, agents &amp; evaluation &middot; recommender systems</p>
         <p class="sidebar-location">

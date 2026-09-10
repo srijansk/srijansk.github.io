@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 440" width="920" height="440" role="img"
+     aria-labelledby="title desc" font-family="Inter, system-ui, -apple-system, 'Segoe UI', sans-serif">
+  <title id="title">One compound rubric claim scored two ways</title>
+  <desc id="desc">A single rubric claim is decomposed into four atomic assertions. An artifact satisfying three of the four scores zero under whole-claim all-or-nothing grading and seventy-five percent under atomic grading. The same output produces a different headline number depending on which ruler is used.</desc>
+
+  <style>
+    .kicker { font-size: 10.5px; fill: #595959; letter-spacing: .11em; text-transform: uppercase; }
+    .h      { font-size: 14px; fill: #1A1A1A; font-weight: 600; }
+    .claim  { font-size: 12.5px; fill: #2F2F2F; }
+    .atom   { font-size: 12px; fill: #2F2F2F; }
+    .mark   { font-size: 13px; font-weight: 700; }
+    .score  { font-size: 26px; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .slabel { font-size: 11px; fill: #595959; }
+    .note   { font-size: 11.5px; fill: #595959; }
+  </style>
+
+  <rect width="920" height="440" fill="#FFFFFF"/>
+  <text class="kicker" x="30" y="26">One claim · four assertions · two rulers</text>
+
+  <!-- the compound claim -->
+  <rect x="30" y="42" width="860" height="52" rx="3" fill="#FAFAF7" stroke="#D8D8D2"/>
+  <text class="h" x="46" y="64">Rubric claim</text>
+  <text class="claim" x="130" y="64">“The nightly job excludes retried events before aggregating,</text>
+  <text class="claim" x="130" y="82">and this behaviour changed in the second era of the pipeline.”</text>
+
+  <!-- decomposition arrow -->
+  <path d="M460 94 L460 116" stroke="#D8D8D2" stroke-width="1"/>
+  <polygon points="460,122 455,114 465,114" fill="#D8D8D2"/>
+  <text class="note" x="474" y="113">decompose</text>
+
+  <!-- atomic assertions -->
+  <g>
+    <rect x="30" y="128" width="560" height="34" rx="2" fill="#FFFFFF" stroke="#E5E5E0"/>
+    <circle cx="52" cy="145" r="8" fill="rgba(10,92,56,0.12)"/>
+    <text class="mark" x="52" y="150" text-anchor="middle" fill="#0A5C38">✓</text>
+    <text class="atom" x="74" y="150">a nightly job exists and aggregates this metric</text>
+
+    <rect x="30" y="170" width="560" height="34" rx="2" fill="#FFFFFF" stroke="#E5E5E0"/>
+    <circle cx="52" cy="187" r="8" fill="rgba(10,92,56,0.12)"/>
+    <text class="mark" x="52" y="192" text-anchor="middle" fill="#0A5C38">✓</text>
+    <text class="atom" x="74" y="192">retried events are excluded</text>
+
+    <rect x="30" y="212" width="560" height="34" rx="2" fill="#FFFFFF" stroke="#E5E5E0"/>
+    <circle cx="52" cy="229" r="8" fill="rgba(10,92,56,0.12)"/>
+    <text class="mark" x="52" y="234" text-anchor="middle" fill="#0A5C38">✓</text>
+    <text class="atom" x="74" y="234">the exclusion happens before aggregation, not after</text>
+
+    <rect x="30" y="254" width="560" height="34" rx="2" fill="rgba(155,74,47,0.05)" stroke="rgba(155,74,47,0.3)"/>
+    <circle cx="52" cy="271" r="8" fill="rgba(155,74,47,0.14)"/>
+    <text class="mark" x="52" y="276" text-anchor="middle" fill="#9B4A2F">✕</text>
+    <text class="atom" x="74" y="276" fill="#9B4A2F">the behaviour differs between the two pipeline eras</text>
+  </g>
+
+  <!-- scoring panels -->
+  <rect x="620" y="128" width="270" height="76" rx="3" fill="rgba(155,74,47,0.05)" stroke="rgba(155,74,47,0.3)"/>
+  <text class="slabel" x="636" y="150">Whole-claim, all-or-nothing</text>
+  <text class="score" x="636" y="184" fill="#9B4A2F">0%</text>
+  <text class="note" x="700" y="184" fill="#9B4A2F">credit for this claim</text>
+
+  <rect x="620" y="212" width="270" height="76" rx="3" fill="rgba(10,92,56,0.06)" stroke="rgba(10,92,56,0.35)"/>
+  <text class="slabel" x="636" y="234">Atomic assertions</text>
+  <text class="score" x="636" y="268" fill="#0A5C38">75%</text>
+  <text class="note" x="710" y="268" fill="#0A5C38">3 of 4 assertions</text>
+
+  <!-- footer -->
+  <line x1="30" y1="322" x2="890" y2="322" stroke="#E5E5E0"/>
+  <text class="note" x="30" y="346">Same artifact. Same evidence. Different headline number — because the ruler changed, not the work.</text>
+  <text class="note" x="30" y="368">Whole-claim grading cannot distinguish “almost complete” from “entirely absent”, which flatters weak</text>
+  <text class="note" x="30" y="386">outputs and penalises near-complete ones.</text>
+
+  <rect x="30" y="400" width="860" height="26" rx="2" fill="#FAFAF7"/>
+  <text class="note" x="44" y="418" fill="#2F2F2F">Rule: a score is comparable only to another score computed under the same claim-set version. Ship the changelog.</text>
+</svg>

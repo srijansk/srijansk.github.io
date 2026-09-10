@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 520" width="920" height="520" role="img"
+     aria-labelledby="title desc" font-family="Inter, system-ui, -apple-system, 'Segoe UI', sans-serif">
+  <title id="title">A free-form summary compared with a structured evidence record</title>
+  <desc id="desc">Left: a short summary preserving only the gist, with four fields shown as lost. Right: a structured record preserving the finding, a verbatim excerpt, its source, the conditions attached, and any open gap.</desc>
+
+  <style>
+    .lbl { font-size: 11px; fill: #595959; letter-spacing: .09em; text-transform: uppercase; }
+    .h   { font-size: 15px; fill: #1A1A1A; font-weight: 600; }
+    .k   { font-size: 10.5px; fill: #595959; letter-spacing: .06em; text-transform: uppercase; }
+    .v   { font-size: 12.5px; fill: #2F2F2F; }
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; fill: #1A1A1A; }
+    .lost{ font-size: 12.5px; fill: #9B4A2F; }
+    .note{ font-size: 11.5px; fill: #595959; }
+  </style>
+
+  <rect width="920" height="520" fill="#FFFFFF"/>
+
+  <!-- ── source ─────────────────────────────────────────────── -->
+  <text class="lbl" x="30" y="30">What the source says</text>
+  <rect x="30" y="42" width="860" height="58" rx="3" fill="#FAFAF7" stroke="#D8D8D2"/>
+  <text class="mono" x="46" y="66">Daily active is computed over eligible records only, aggregated per calendar day,</text>
+  <text class="mono" x="46" y="86">after retried events are excluded.  — ops-runbook.md, §4.2</text>
+
+  <!-- connector -->
+  <path d="M300 100 L300 122 M300 122 L180 122 L180 146" stroke="#D8D8D2" stroke-width="1" fill="none"/>
+  <path d="M620 100 L620 122 M620 122 L700 122 L700 146" stroke="#0A5C38" stroke-width="1" fill="none" opacity=".55"/>
+  <polygon points="180,152 176,144 184,144" fill="#D8D8D2"/>
+  <polygon points="700,152 696,144 704,144" fill="#0A5C38" opacity=".55"/>
+
+  <!-- ── LEFT: free-form summary ───────────────────────────────── -->
+  <rect x="30" y="156" width="410" height="330" rx="3" fill="#FFFFFF" stroke="#D8D8D2"/>
+  <rect x="30" y="156" width="410" height="34" rx="3" fill="#FAFAF7"/>
+  <rect x="30" y="186" width="410" height="4" fill="#FAFAF7"/>
+  <text class="h" x="46" y="179">Free-form summary</text>
+
+  <rect x="46" y="206" width="378" height="34" rx="2" fill="#FAFAF7" stroke="#E5E5E0"/>
+  <text class="mono" x="58" y="228">"aggregate eligible records by day"</text>
+
+  <text class="k" x="46" y="272">What survived</text>
+  <text class="v" x="46" y="292">The gist.</text>
+
+  <text class="k" x="46" y="326">What did not</text>
+  <text class="lost" x="46" y="348">— the retry exclusion</text>
+  <text class="lost" x="46" y="370">— the source and location</text>
+  <text class="lost" x="46" y="392">— the eligibility condition</text>
+  <text class="lost" x="46" y="414">— any signal that something is missing</text>
+
+  <rect x="46" y="434" width="378" height="34" rx="2" fill="rgba(155,74,47,0.07)" stroke="rgba(155,74,47,0.28)"/>
+  <text class="note" x="58" y="455" fill="#9B4A2F">The receiving agent cannot tell this is incomplete.</text>
+
+  <!-- ── RIGHT: structured record ──────────────────────────────── -->
+  <rect x="480" y="156" width="410" height="330" rx="3" fill="#FFFFFF" stroke="#0A5C38" stroke-opacity=".45"/>
+  <rect x="480" y="156" width="410" height="34" rx="3" fill="rgba(10,92,56,0.08)"/>
+  <rect x="480" y="186" width="410" height="4" fill="rgba(10,92,56,0.08)"/>
+  <text class="h" x="496" y="179">Structured evidence record</text>
+
+  <g>
+    <text class="k" x="496" y="214">finding</text>
+    <text class="v" x="496" y="232">Daily active excludes retried events.</text>
+
+    <text class="k" x="496" y="262">excerpt</text>
+    <text class="mono" x="496" y="280" font-size="11">"…after retried events are excluded."</text>
+
+    <text class="k" x="496" y="310">source</text>
+    <text class="mono" x="496" y="328" font-size="11">ops-runbook.md §4.2</text>
+
+    <text class="k" x="496" y="358">conditions</text>
+    <text class="v" x="496" y="376">eligible records only; per calendar day</text>
+
+    <text class="k" x="496" y="406">open gap</text>
+    <text class="v" x="496" y="424">not yet checked against the live table</text>
+  </g>
+
+  <rect x="496" y="434" width="378" height="34" rx="2" fill="rgba(10,92,56,0.07)" stroke="rgba(10,92,56,0.28)"/>
+  <text class="note" x="508" y="455" fill="#0A5C38">Interpretation is separable from what the source actually said.</text>
+
+  <!-- ── footer ───────────────────────────────────────────────── -->
+  <line x1="30" y1="500" x2="890" y2="500" stroke="#E5E5E0"/>
+  <text class="note" x="30" y="516">Exact excerpts surviving the handoff: 22% with summaries, 60% with structured records.</text>
+</svg>

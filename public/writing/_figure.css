@@ -1,0 +1,80 @@
+/*
+ * Shared chrome for iframed figures.
+ *
+ * An iframe is its own document, so it inherits nothing from the page. These
+ * are the same tokens as src/styles/global.css — keep them in sync by hand;
+ * there are few enough that a build step would cost more than it saves.
+ *
+ * System fonts only. Loading the page's webfonts a second time inside every
+ * figure would be a real bandwidth cost for a caption-sized gain.
+ */
+:root {
+  --bg: #FAFAF7;
+  --surface: #FFFFFF;
+  --text: #1A1A1A;
+  --muted: #595959;
+  --soft: #2F2F2F;
+  --accent: #0A5C38;
+  --accent-soft: rgba(10, 92, 56, 0.08);
+  --accent-mid: rgba(10, 92, 56, 0.42);
+  --warn: #9B4A2F;
+  --warn-soft: rgba(155, 74, 47, 0.09);
+  --hairline: #E5E5E0;
+  --hairline-strong: #D8D8D2;
+  --font: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  padding: 20px 22px 22px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.fig-kicker {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+  color: var(--muted);
+  margin: 0 0 10px;
+}
+
+.fig-hint {
+  font-size: 11px;
+  color: var(--muted);
+  margin: 12px 0 0;
+}
+
+/* Focus must be visible: these figures are keyboard-operable. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

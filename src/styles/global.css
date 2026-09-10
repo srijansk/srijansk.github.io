@@ -810,6 +810,402 @@ strong { font-weight: 600; color: var(--text); }
 .site-footer a:hover { color: var(--accent); }
 .site-footer span { margin: 0 0.35rem; opacity: 0.6; }
 
+/* ===== Skip link =====
+ * Eleven sidebar links precede <main> on every page. Long-form articles
+ * make that materially worse for keyboard users, so the link is real:
+ * off-screen until focused, then pinned top-left.
+ */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  padding: 0.6rem 1rem;
+  background: var(--bg);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 3px;
+  text-decoration: none;
+}
+.skip-link:focus {
+  left: 1rem;
+  top: 1rem;
+}
+
+/* ===== Article (self-hosted posts) =====
+ * A narrower measure than the rest of the site: ~68ch is the readable
+ * band for long serif prose. Figures and tables are allowed to break out
+ * of it, because a diagram squeezed to text width stops explaining.
+ */
+.post {
+  max-width: 68ch;
+}
+
+.post-header {
+  margin-bottom: 2.75rem;
+  padding-bottom: 1.75rem;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.post-header h1 {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.75rem;
+}
+
+@media (min-width: 720px) {
+  .post-header h1 { font-size: 2.4rem; }
+}
+
+.post-draft-flag {
+  font-family: var(--font-heading);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #8A6D1F;
+  background: rgba(138, 109, 31, 0.09);
+  border: 1px solid rgba(138, 109, 31, 0.25);
+  border-radius: 3px;
+  padding: 0.5rem 0.75rem;
+  margin: 0 0 1.25rem;
+}
+
+.post-series-kicker {
+  font-family: var(--font-heading);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  margin: 0 0 0.6rem;
+}
+
+.post-dek {
+  font-size: 1.15rem;
+  line-height: 1.55;
+  color: var(--soft);
+  margin: 0 0 1.25rem;
+}
+
+.post-meta {
+  font-family: var(--font-heading);
+  font-size: 0.86rem;
+  color: var(--muted);
+  margin: 0;
+}
+.post-meta .sep { margin: 0 0.45rem; opacity: 0.5; }
+
+.post-tags {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0;
+  margin: 0.9rem 0 0;
+}
+.post-tags li {
+  font-family: var(--font-heading);
+  font-size: 0.74rem;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+  color: var(--muted);
+  border: 1px solid var(--hairline-strong);
+  border-radius: 2px;
+  padding: 0.15rem 0.5rem;
+}
+
+/* ===== Prose ===== */
+.prose > * + * { margin-top: 1.35rem; }
+
+.prose h2 {
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  margin-top: 3rem;
+  padding-top: 0.4rem;
+  border-top: 1px solid var(--hairline);
+}
+
+.prose h3 {
+  font-family: var(--font-heading);
+  font-size: 1.08rem;
+  margin-top: 2.25rem;
+}
+
+.prose p { margin: 0; }
+.prose a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+
+.prose ul, .prose ol { padding-left: 1.35rem; margin-top: 1.1rem; }
+.prose li + li { margin-top: 0.55rem; }
+
+.prose strong { font-weight: 600; }
+
+.prose blockquote {
+  margin: 2rem 0;
+  padding: 0.2rem 0 0.2rem 1.25rem;
+  border-left: 2px solid var(--accent);
+  font-size: 1.1rem;
+  line-height: 1.5;
+  color: var(--soft);
+  font-style: italic;
+}
+.prose blockquote p { margin: 0; }
+
+.prose code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--accent-soft);
+  padding: 0.1em 0.35em;
+  border-radius: 2px;
+}
+
+.prose pre {
+  background: #F4F4EF;
+  border: 1px solid var(--hairline);
+  border-radius: 3px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+.prose pre code { background: none; padding: 0; font-size: inherit; }
+
+.prose hr {
+  border: 0;
+  border-top: 1px solid var(--hairline);
+  margin: 2.75rem 0;
+}
+
+/* Tables scroll inside their own box rather than widening the page. */
+.prose .table-scroll {
+  overflow-x: auto;
+  margin: 2rem 0;
+  border: 1px solid var(--hairline);
+  border-radius: 3px;
+}
+.prose table {
+  border-collapse: collapse;
+  width: 100%;
+  font-family: var(--font-heading);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+.prose th, .prose td {
+  text-align: left;
+  padding: 0.7rem 0.9rem;
+  border-bottom: 1px solid var(--hairline);
+  vertical-align: top;
+}
+.prose th {
+  font-weight: 600;
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  background: #F4F4EF;
+  white-space: nowrap;
+}
+.prose tbody tr:last-child td { border-bottom: 0; }
+
+/* ===== Figures =====
+ * Allowed to break the 68ch measure on wide viewports. Static SVG,
+ * animated SVG, and iframed interactive figures all use this shell.
+ */
+.prose figure {
+  margin: 2.5rem 0;
+}
+
+@media (min-width: 1100px) {
+  .prose figure.wide {
+    width: calc(100% + 8rem);
+    margin-left: -4rem;
+    margin-right: -4rem;
+  }
+}
+
+.prose figure img,
+.prose figure iframe,
+.prose figure video {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--hairline);
+  border-radius: 3px;
+  background: #FFFFFF;
+}
+
+/* Embedded interactive figures.
+ *
+ * An iframe cannot size itself to its content, and the content reflows
+ * taller as it narrows — the opposite of what aspect-ratio would do. So
+ * each figure declares explicit heights against its OWN width via a
+ * container query, not the viewport: the article measure and the .wide
+ * break-out mean the two diverge substantially.
+ *
+ * Heights are measured, with a small buffer. If you edit a figure's
+ * content, re-measure.
+ */
+.prose figure {
+  container-type: inline-size;
+}
+
+.prose figure iframe {
+  border: 1px solid var(--hairline);
+  display: block;
+  width: 100%;
+}
+
+.fig-evidence-path { height: 545px; }
+.fig-noise-floor   { height: 415px; }
+.fig-two-views     { height: 665px; }
+
+@container (min-width: 480px) {
+  .fig-evidence-path { height: 490px; }
+  .fig-noise-floor   { height: 365px; }
+  .fig-two-views     { height: 585px; }
+}
+
+@container (min-width: 800px) {
+  .fig-evidence-path { height: 340px; }
+  .fig-noise-floor   { height: 345px; }
+  .fig-two-views     { height: 370px; }
+}
+
+.prose figcaption {
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--muted);
+  margin-top: 0.7rem;
+}
+.prose figcaption b, .prose figcaption strong {
+  color: var(--soft);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+/* ===== Metric grid =====
+ * A row of headline numbers. Deliberately plain: the number carries the
+ * weight, the label qualifies it, the note under the grid says what the
+ * measurement was and is not optional.
+ */
+.prose .metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1px;
+  background: var(--hairline);
+  border: 1px solid var(--hairline);
+  border-radius: 3px;
+  margin: 2rem 0 0;
+  overflow: hidden;
+}
+.prose .metric-grid > div {
+  background: var(--bg);
+  padding: 1.1rem 1rem;
+}
+.prose .metric-value {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 1.45rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--accent);
+  line-height: 1.15;
+}
+.prose .metric-label {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 0.84rem;
+  color: var(--text);
+  margin-top: 0.4rem;
+  line-height: 1.4;
+}
+.prose .metric-context {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 0.74rem;
+  color: var(--muted);
+  margin-top: 0.25rem;
+}
+.prose .metric-note {
+  font-family: var(--font-heading);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--muted);
+  margin-top: 0.7rem;
+}
+
+/* A pull-quote that is an argument, not decoration. */
+.prose .claim {
+  font-family: var(--font-heading);
+  font-size: 1.12rem;
+  line-height: 1.45;
+  font-weight: 500;
+  color: var(--text);
+  border-top: 2px solid var(--accent);
+  border-bottom: 1px solid var(--hairline);
+  padding: 1.15rem 0;
+  margin: 2.5rem 0;
+}
+
+/* ===== Series nav ===== */
+.post-series-nav {
+  margin-top: 3.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--hairline-strong);
+}
+.post-series-nav h2 {
+  font-family: var(--font-heading);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin: 0 0 0.9rem;
+}
+.post-series-nav ol {
+  list-style: none;
+  counter-reset: series;
+  padding: 0;
+  margin: 0;
+}
+.post-series-nav li {
+  counter-increment: series;
+  font-family: var(--font-heading);
+  font-size: 0.92rem;
+  line-height: 1.45;
+  padding: 0.4rem 0 0.4rem 2rem;
+  position: relative;
+}
+.post-series-nav li::before {
+  content: counter(series);
+  position: absolute;
+  left: 0;
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.post-series-nav .current { color: var(--muted); }
+.post-series-nav a { color: var(--accent); }
+
+.post-back {
+  margin-top: 2.5rem;
+  font-family: var(--font-heading);
+  font-size: 0.88rem;
+}
+.post-back a { color: var(--muted); }
+.post-back a:hover { color: var(--accent); }
+
+.writing-series {
+  color: var(--accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .prose figure img, .prose figure iframe { animation: none !important; }
+}
+
 /* ===== Print ===== */
 @media print {
   .site {

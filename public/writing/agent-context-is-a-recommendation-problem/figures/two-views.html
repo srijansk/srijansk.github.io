@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>One pipeline, two vocabularies</title>
+<link rel="stylesheet" href="../../_figure.css" />
+<style>
+  .toggle { display: flex; gap: 0; margin-bottom: 18px; border: 1px solid var(--hairline-strong); border-radius: 3px; width: fit-content; overflow: hidden; }
+  .toggle button {
+    padding: 7px 16px;
+    font-size: 12px;
+    color: var(--muted);
+    background: var(--bg);
+    transition: background 120ms, color 120ms;
+  }
+  .toggle button + button { border-left: 1px solid var(--hairline-strong); }
+  .toggle button[aria-pressed="true"] { background: var(--accent); color: #FFFFFF; font-weight: 600; }
+
+  .flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; align-items: stretch; }
+
+  .node {
+    border: 1px solid var(--hairline);
+    border-radius: 3px;
+    background: var(--bg);
+    padding: 11px 11px 13px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 128px;
+    text-align: left;
+    width: 100%;
+    transition: border-color 120ms, background 120ms;
+  }
+  .node:hover { border-color: var(--accent-mid); }
+  .node[aria-selected="true"] { border-color: var(--accent); background: var(--accent-soft); }
+
+  .node.absent {
+    border-style: dashed;
+    border-color: rgba(155,74,47,.5);
+    background: rgba(155,74,47,0.04);
+  }
+  .node.absent .n-name { color: var(--warn); }
+
+  .n-step { font-family: var(--mono); font-size: 10px; color: var(--muted); }
+  .n-name { font-size: 13px; font-weight: 600; margin-top: 4px; line-height: 1.25; }
+  .n-sub  { font-size: 11px; color: var(--muted); margin-top: 6px; line-height: 1.35; }
+  .n-vol  { font-size: 10.5px; color: var(--accent); margin-top: auto; padding-top: 8px; font-variant-numeric: tabular-nums; }
+  .node.absent .n-vol { color: var(--warn); }
+
+  .detail {
+    margin-top: 16px;
+    border-top: 1px solid var(--hairline-strong);
+    padding-top: 12px;
+    min-height: 56px;
+  }
+  .detail h3 { margin: 0 0 4px; font-size: 13px; font-weight: 600; }
+  .detail p { margin: 0; font-size: 12.5px; color: var(--soft); }
+
+  @media (max-width: 760px) {
+    .flow { grid-template-columns: repeat(2, 1fr); }
+    .node { min-height: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="toggle" role="group" aria-label="Vocabulary">
+  <button id="vRec" aria-pressed="true">Recommender systems</button>
+  <button id="vAgent" aria-pressed="false">Agent context</button>
+</div>
+
+<div class="flow" id="flow" role="tablist" aria-label="Pipeline stages"></div>
+
+<div class="detail" id="detail" role="tabpanel" aria-live="polite">
+  <h3 id="dH"></h3>
+  <p id="dP"></p>
+</div>
+
+<p class="fig-hint" id="hint"></p>
+
+<script>
+  var VIEWS = {
+    rec: {
+      hint: 'The two-stage design has been standard in production recommenders since roughly 2010.',
+      stages: [
+        { name: 'Catalogue', sub: 'everything that could be shown', vol: '10⁶–10⁹ items',
+          d: 'The full inventory. Far too large to score item by item, which is the entire reason the next two stages are separate.' },
+        { name: 'Candidate generation', sub: 'cheap recall over everything', vol: '→ ~10³',
+          d: 'Optimised for recall, not precision. Its job is to not lose the good item; deciding which of the survivors is best is explicitly somebody else\'s problem.' },
+        { name: 'Ranking', sub: 'expensive, feature-rich, precision', vol: '→ ~10¹',
+          d: 'A second pass using features similarity cannot see: recency, authority, interaction history, context. This is where a recommender spends its intelligence.' },
+        { name: 'Slate construction', sub: 'dedupe, diversify, order', vol: 'the set',
+          d: 'The set is not the sum of its items. Redundancy is costly, ordering matters, and position is a variable you control rather than an accident.' },
+        { name: 'User', sub: 'clicks, skips, dwell', vol: 'abundant feedback',
+          d: 'Millions of implicit signals per day, which is what makes a learned ranker trainable in the first place.' }
+      ]
+    },
+    agent: {
+      hint: 'Most agent-context stacks ship the candidate generator straight to the prompt and call it retrieval.',
+      stages: [
+        { name: 'Everything the org knows', sub: 'code, docs, warehouse, history', vol: 'unbounded',
+          d: 'Heterogeneous and mostly unwritten. The knowledge that matters most is frequently the knowledge nobody documented.' },
+        { name: 'Vector search', sub: 'top-k by similarity', vol: '→ k ≈ 5–20',
+          d: 'Recall-oriented, exactly like candidate generation — but here its output goes straight into the prompt, so it is asked to do a precision job it was never designed for.' },
+        { name: 'Ranking', sub: 'usually absent', vol: 'no second pass', absent: true,
+          d: 'The missing stage. Nothing re-scores candidates using recency, source authority, contradiction history, or which entities this specific task actually touches.' },
+        { name: 'Prompt assembly', sub: 'usually concatenation', vol: 'a hard budget',
+          d: 'Slate construction under a much tighter budget, with position effects that are known and largely uncorrected. Redundancy here costs you the task, not just a scroll.' },
+        { name: 'Model', sub: 'did the task succeed?', vol: 'one weak signal',
+          d: 'Sparse, delayed, expensive, and nearly impossible to attribute back to a single injected claim. This is where the analogy genuinely breaks.' }
+      ]
+    }
+  };
+
+  var flow = document.getElementById('flow');
+  var dH = document.getElementById('dH'), dP = document.getElementById('dP');
+  var hint = document.getElementById('hint');
+  var current = 'rec', selected = 1;
+
+  function render() {
+    var view = VIEWS[current];
+    hint.textContent = view.hint;
+    flow.innerHTML = '';
+    view.stages.forEach(function (s, i) {
+      var b = document.createElement('button');
+      b.className = 'node' + (s.absent ? ' absent' : '');
+      b.setAttribute('role', 'tab');
+      b.setAttribute('aria-selected', String(i === selected));
+      b.innerHTML =
+        '<span class="n-step">' + String(i + 1).padStart(2, '0') + '</span>' +
+        '<span class="n-name">' + s.name + '</span>' +
+        '<span class="n-sub">' + s.sub + '</span>' +
+        '<span class="n-vol">' + s.vol + '</span>';
+      b.addEventListener('click', function () { selected = i; render(); });
+      b.addEventListener('mouseenter', function () { selected = i; render(); });
+      flow.appendChild(b);
+    });
+    dH.textContent = view.stages[selected].name;
+    dP.textContent = view.stages[selected].d;
+  }
+
+  function setView(v) {
+    current = v;
+    document.getElementById('vRec').setAttribute('aria-pressed', String(v === 'rec'));
+    document.getElementById('vAgent').setAttribute('aria-pressed', String(v === 'agent'));
+    render();
+  }
+
+  document.getElementById('vRec').addEventListener('click', function () { setView('rec'); });
+  document.getElementById('vAgent').addEventListener('click', function () { setView('agent'); });
+  setView('rec');
+</script>
+</body>
+</html>
