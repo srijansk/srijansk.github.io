@@ -56,22 +56,32 @@ export async function getPublishedWriting(
     .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 }
 
-/** Series shown as reading paths on the index, in this order. */
-export const SERIES_ORDER = ['Evidence-carrying systems', 'Context as a ranking problem'];
-
 /**
- * A series earns a block on the index once it has two visible posts. One
- * post is not a series, and a heading over a single item advertises
- * exactly the thinness the site audit warned against.
+ * Series shown as reading paths at the top of the index.
+ *
+ * Ordered by each series' most recent post, newest first, so the work being
+ * promoted is what a visitor lands on — with no list to remember to update
+ * when a new series starts. A series earns a block once it has two visible
+ * posts: one post is not a series, and a heading over a single item
+ * advertises exactly the thinness the site audit warned against.
  */
 export function seriesBlocks(entries: WritingEntry[]): { name: string; thesis: string; posts: WritingEntry[] }[] {
-  return SERIES_ORDER.map((name) => ({
-    name,
-    thesis: SERIES_THESIS[name] ?? '',
-    posts: entries
-      .filter((e) => e.data.series === name)
-      .sort((a, b) => (a.data.seriesOrder ?? 0) - (b.data.seriesOrder ?? 0)),
-  })).filter((s) => s.posts.length >= 2);
+  const byName = new Map<string, WritingEntry[]>();
+  for (const e of entries) {
+    if (!e.data.series) continue;
+    if (!byName.has(e.data.series)) byName.set(e.data.series, []);
+    byName.get(e.data.series)!.push(e);
+  }
+  return [...byName.entries()]
+    .filter(([, posts]) => posts.length >= 2)
+    .map(([name, posts]) => ({
+      name,
+      thesis: SERIES_THESIS[name] ?? '',
+      posts: [...posts].sort((a, b) => (a.data.seriesOrder ?? 0) - (b.data.seriesOrder ?? 0)),
+      newest: Math.max(...posts.map((e) => e.data.date.getTime())),
+    }))
+    .sort((a, b) => b.newest - a.newest)
+    .map(({ newest: _newest, ...block }) => block);
 }
 
 /** Every entry including drafts — only for building routes. */
