@@ -7,10 +7,15 @@ import {
   isSelfHosted,
   readingTime,
   byline,
+  seriesBlocks,
   type WritingEntry,
 } from '../lib/writing';
 
-const all = await getPublishedWriting();
+// In the dev server, drafts are listed and badged so the page can be reviewed
+// as it will land. A production build evaluates DEV to false and they vanish.
+const all = await getPublishedWriting({ includeDrafts: import.meta.env.DEV });
+
+const series = seriesBlocks(all);
 
 const dateShort = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', timeZone: 'UTC' });
 
@@ -38,6 +43,43 @@ const years = [...groupedByYear.keys()].sort((a, b) => b - a);
       with Vivek Chandela. Earlier posts appeared on the ShareChat engineering blog and Medium.
     </p>
   </section>
+
+  {series.map((s) => (
+    <section class="section series-block" aria-labelledby={`series-${s.posts[0].id}`}>
+      <span class="section-kicker">Series</span>
+      <h2 id={`series-${s.posts[0].id}`}>{s.name}</h2>
+      {s.thesis && <p class="series-thesis">{s.thesis}</p>}
+      <ol class="series-list">
+        {s.posts.map((w) => {
+          const minutes = readingTime(w.body);
+          return (
+            <li>
+              <a class="series-item" href={hrefFor(w)} {...linkAttrs(w)}>
+                <span class="series-item-title">
+                  {w.data.title}
+                  {w.data.draft && <span class="draft-pill">draft</span>}
+                </span>
+                <span class="series-item-teaser">{w.data.teaser}</span>
+                <span class="series-item-meta">
+                  {byline(w)}
+                  <span class="sep">&middot;</span>
+                  {dateShort.format(w.data.date)}
+                  {minutes && <><span class="sep">&middot;</span>{minutes}</>}
+                </span>
+              </a>
+            </li>
+          );
+        })}
+      </ol>
+    </section>
+  ))}
+
+  {series.length > 0 && (
+    <section class="section">
+      <span class="section-kicker">Everything</span>
+      <h2>All writing</h2>
+    </section>
+  )}
 
   {years.map((y) => (
     <section class="section year-group">
@@ -69,6 +111,7 @@ const years = [...groupedByYear.keys()].sort((a, b) => b - a);
                   {dateShort.format(w.data.date)}
                   {minutes && <><span class="sep">&middot;</span>{minutes}</>}
                   {w.data.series && <><span class="sep">&middot;</span><span class="writing-series">{w.data.series}</span></>}
+                  {w.data.draft && <span class="draft-pill">draft</span>}
                 </span>
                 <h3 class="writing-title">
                   <a href={href} {...attrs}>{w.data.title}</a>

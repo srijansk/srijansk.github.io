@@ -41,12 +41,37 @@ export function linkAttrs(entry: WritingEntry) {
  * Published entries, newest first. Drafts are excluded everywhere a reader
  * could stumble on them — the index, the landing page, the feed, the
  * sitemap — while still building to their own URL for review.
+ *
+ * `includeDrafts` exists so the dev server can show a draft exactly where
+ * it will land, badged. Pass `import.meta.env.DEV` from pages a reviewer
+ * looks at; never from the feed or sitemap. A production build always
+ * evaluates it to false, so nothing draft can leak by this route.
  */
-export async function getPublishedWriting(): Promise<WritingEntry[]> {
+export async function getPublishedWriting(
+  { includeDrafts = false }: { includeDrafts?: boolean } = {},
+): Promise<WritingEntry[]> {
   const all = await getCollection('writing');
   return all
-    .filter((entry) => !entry.data.draft)
+    .filter((entry) => includeDrafts || !entry.data.draft)
     .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+}
+
+/** Series shown as reading paths on the index, in this order. */
+export const SERIES_ORDER = ['Evidence-carrying systems', 'Context as a ranking problem'];
+
+/**
+ * A series earns a block on the index once it has two visible posts. One
+ * post is not a series, and a heading over a single item advertises
+ * exactly the thinness the site audit warned against.
+ */
+export function seriesBlocks(entries: WritingEntry[]): { name: string; thesis: string; posts: WritingEntry[] }[] {
+  return SERIES_ORDER.map((name) => ({
+    name,
+    thesis: SERIES_THESIS[name] ?? '',
+    posts: entries
+      .filter((e) => e.data.series === name)
+      .sort((a, b) => (a.data.seriesOrder ?? 0) - (b.data.seriesOrder ?? 0)),
+  })).filter((s) => s.posts.length >= 2);
 }
 
 /** Every entry including drafts — only for building routes. */
@@ -78,6 +103,17 @@ export function byline(entry: WritingEntry): string {
   if (co.length === 1) return `Srijan Saket with ${co[0]}`;
   return `Srijan Saket with ${co.slice(0, -1).join(', ')} and ${co[co.length - 1]}`;
 }
+
+/**
+ * What each series argues, in one line. Rendered under the series nav so a
+ * reader arriving at part two knows what the three parts add up to.
+ */
+export const SERIES_THESIS: Record<string, string> = {
+  'Evidence-carrying systems':
+    'You cannot improve what you cannot locate. Three posts on making evidence, completion, and measurement legible enough to fix.',
+  'Context as a ranking problem':
+    'Getting the right knowledge to the right agent at the right moment is a recommendation problem, and the field has two decades of answers.',
+};
 
 /** Sibling posts in the same series, in reading order. */
 export async function seriesSiblings(entry: WritingEntry): Promise<WritingEntry[]> {

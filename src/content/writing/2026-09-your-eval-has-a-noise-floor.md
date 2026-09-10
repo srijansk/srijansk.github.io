@@ -24,7 +24,7 @@ Nothing had changed. Same code, same corpus, same prompt, same model, same reaso
 
 That is an obvious statement and an easy one to violate, because the machinery that would catch it — repeats, re-judges, a stated floor — costs real money and produces no new capability. It is the experiment that tells you your other experiments were wrong. Nobody is excited to run it.
 
-This is what it cost to measure, what the numbers turned out to be, and the protocol I would now insist on before believing any single-run comparison of agents that produce long-form output.
+Scoring every output three times, in [the evidence supply-chain work](/writing/retrieval-is-not-delivery/), was the first version of this discipline. This post is what happened when I measured how much that actually bought — what it cost, what the numbers turned out to be, and the protocol I would now insist on before believing any single-run comparison of agents that produce long-form output.
 
 ## Two sources of movement, measured separately
 
@@ -53,7 +53,7 @@ A single-pass re-judge of a byte-identical artifact moved its score by four clai
 
 ## What the floor costs
 
-The uncomfortable part is the arithmetic. Five judge passes per artifact, three generation repeats per configuration, and two configurations to compare is thirty scored artifacts to make one honest claim about one change. On expensive models and long artifacts, that is not a rounding error in the budget — it is the budget.
+The uncomfortable part is the arithmetic. Three generation repeats per configuration and two configurations to compare is six artifacts; five judge passes on each is thirty judging passes — all to make one honest claim about one change. On expensive models and long artifacts, that is not a rounding error in the budget — it is the budget.
 
 There are three ways to pay it, in descending order of how much I like them:
 

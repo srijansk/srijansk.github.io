@@ -38,7 +38,7 @@ Look at what actually has to be decided each turn:
 
 That is not a search box. That is a ranking-and-slate problem with a budget constraint, position effects, implicit feedback, and multiple objectives. Which is the standard formulation of a recommender system, taught in every survey of the field.
 
-The reason this matters is not taxonomic. It is that the retrieval framing leads you to spend your effort on similarity, and the recommendation framing tells you that similarity was never the hard part.
+The reason this matters is not taxonomic. It is that the retrieval framing leads you to spend your effort on similarity, and the recommendation framing tells you that similarity was never the hard part. [Measuring an agent pipeline end to end](/writing/retrieval-is-not-delivery/) made that concrete for me: the search stage was the one that was already working.
 
 ## The mapping
 
@@ -66,13 +66,13 @@ Concretely:
 
 The row I want to dwell on is the empty one.
 
-**Most agent-context systems have no ranking stage at all.** They have candidate generation — a similarity search — and then they take the top *k* and concatenate. In recommender terms, that is shipping the candidate generator straight to production and calling it a ranker. Nobody in recsys has done that since roughly 2010, because it is known to be substantially worse than a two-stage design: the cheap recall-oriented stage and the expensive precision-oriented stage want different features, different objectives, and different cost profiles, and collapsing them into one cosine distance gives you neither.
+**Most agent-context systems have no ranking stage at all.** They have candidate generation — a similarity search — and then they take the top *k* and concatenate. In recommender terms, that is shipping the candidate generator straight to production and calling it a ranker. Production recommenders settled the question long enough ago that YouTube's 2016 architecture paper could already describe candidate generation followed by ranking as [the classic two-stage dichotomy](https://research.google/pubs/deep-neural-networks-for-youtube-recommendations/). The reason is not fashion: the cheap recall-oriented stage and the expensive precision-oriented stage want different features, different objectives, and different cost profiles, and collapsing them into one cosine distance gives you neither.
 
 ## What the field already knows
 
 Three results that agent builders are currently rediscovering, at cost.
 
-**Position bias is a measurement problem before it is a modelling problem.** In recommendation, the fact that top-of-list items get more engagement — regardless of quality — has been understood, measured, and corrected for since the mid-2000s, with inverse-propensity weighting and randomised exposure. The agent-context version arrived as [Lost in the Middle](https://arxiv.org/abs/2307.03172): relevant information placed in the middle of a long context receives less effective attention than the same information at either end. The correct response is not *use a bigger context window.* It is the response the recsys field already worked out: treat position as a variable you control and account for, order deliberately, and measure the effect rather than hoping it is small.
+**Position bias is a measurement problem before it is a modelling problem.** In recommendation, the fact that top-of-list items get more engagement — regardless of quality — was [measured with eye-tracking in 2005](https://www.cs.cornell.edu/people/tj/publications/joachims_etal_05a.pdf), and the field has been correcting for it since: first by randomising exposure, later with [inverse-propensity weighting](https://arxiv.org/abs/1608.04468) that turns biased clicks into unbiased training signal. The agent-context version arrived as [Lost in the Middle](https://arxiv.org/abs/2307.03172): relevant information placed in the middle of a long context receives less effective attention than the same information at either end. The correct response is not *use a bigger context window.* It is the response the recsys field already worked out: treat position as a variable you control and account for, order deliberately, and measure the effect rather than hoping it is small.
 
 <figure class="wide">
   <img src="/writing/agent-context-is-a-recommendation-problem/figures/position-effect.svg" alt="Chart showing effective use of an item by its position in a long context: high at the start, dipping through the middle, recovering at the end — annotated with the recommender-systems analogue of position bias." width="920" height="420" loading="lazy" decoding="async" />
@@ -111,6 +111,6 @@ This is a framing argument, not an experimental result. I have not run an ablati
 
 I am also aware that the mapping flatters my own background. I spent about a decade building production recommenders — scaling one from a million users to two hundred million — and then moved to retrieval quality in code search and now to knowledge systems for agents. A person with that history is exactly the person who would see recommendation everywhere. Discount accordingly, and check the four places I said it breaks.
 
-But the failure I opened with is real and it is common: a well-built, correctly-described, entirely unused knowledge system. The retrieval framing does not have a name for that failure. The recommendation framing has had one for twenty years, along with a body of work on what to do about it.
+But the failure I opened with is real and it is common: a well-built, correctly-described, entirely unused knowledge system. The retrieval framing does not have a name for that failure. The recommendation framing has had one for two decades, along with a body of work on what to do about it.
 
 <div class="claim">Getting the right knowledge to the right agent at the right moment is not a search problem that happens to feed a model. It is a recommendation problem that happens to have a model as its user.</div>

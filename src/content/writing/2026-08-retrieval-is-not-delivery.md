@@ -4,7 +4,7 @@ publication: "Srijan Saket"
 date: 2026-08-02
 teaser: "An agent can find the right evidence and still lose the detail that matters before the final answer. Measuring the whole path instead of the last step."
 dek: "An agent can find the right evidence and still lose the detail that matters before the final answer. So we stopped scoring the answer and started measuring the path."
-excerpt: "Across eight versions of a two-agent question-answering workflow, evaluated on the same 45 questions, expected facts found in the reference document rose from 65% to 82% — while the evidence that survived the handoff between agents sat at 22%, and the evidence reaching the final answer at 23%. Retrieval was never the bottleneck. The handoff was."
+excerpt: "At baseline, a two-agent question-answering workflow found 65% of the expected facts while reading — but only 22% of that evidence survived the handoff to the writer, and 23% reached the final answer. Retrieval was never the bottleneck. The handoff was. Eight versions and 45 fixed questions later, here is what it took to measure the whole path instead of the last step."
 coauthors: ["Susnato Dhar"]
 tags: [retrieval, agents, evaluation]
 series: "Evidence-carrying systems"
@@ -31,7 +31,7 @@ The product context was specific. The engineering lesson is not.
 
 Before any of the improvement work, human annotators broke each question into the specific facts a complete answer needed, and identified evidence in the corpus that could support each one. If a question required four facts and only two reached a given checkpoint, recall at that checkpoint was 50%.
 
-Every output was scored three times and averaged, because automated evaluators drift between scoring passes and a single pass will happily hand you a two-point difference that does not exist.
+Every output was scored three times and averaged, because automated evaluators drift between scoring passes and a single pass will happily hand you a two-point difference that does not exist. How much that drift actually costs, and what it takes to measure it, is [the third post in this series](/writing/your-eval-has-a-noise-floor/).
 
 These are **not answer-accuracy scores**. A question could receive a genuinely useful answer and still lose points for omitting one required condition, source, or exception.
 

@@ -8,6 +8,7 @@ import {
   readingTime,
   seriesSiblings,
   slugFor,
+  SERIES_THESIS,
   type WritingEntry,
 } from '../../lib/writing';
 
@@ -114,6 +115,9 @@ const position = showSeries ? siblings.findIndex((s) => s.id === post.id) + 1 : 
     {showSeries && (
       <nav class="post-series-nav" aria-label={`${post.data.series} series`}>
         <h2>{post.data.series}</h2>
+        {post.data.series && SERIES_THESIS[post.data.series] && (
+          <p class="post-series-thesis">{SERIES_THESIS[post.data.series]}</p>
+        )}
         <ol>
           {siblings.map((sibling) => (
             <li aria-current={sibling.id === post.id ? 'page' : undefined}>

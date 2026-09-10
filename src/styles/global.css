@@ -1165,6 +1165,14 @@ strong { font-weight: 600; color: var(--text); }
   color: var(--muted);
   margin: 0 0 0.9rem;
 }
+.post-series-thesis {
+  font-family: var(--font-heading);
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--soft);
+  margin: 0 0 1rem;
+  max-width: 52ch;
+}
 .post-series-nav ol {
   list-style: none;
   counter-reset: series;
@@ -1279,6 +1287,91 @@ strong { font-weight: 600; color: var(--text); }
 
 /* Anchored headings must clear the top of the viewport when jumped to. */
 .prose h2 { scroll-margin-top: 1.5rem; }
+
+/* ===== Series block (index) =====
+ * A reading path, not a shelf: numbered, no thumbnails, one line each. The
+ * full cards live in the year archive below it.
+ */
+.series-block h2 {
+  margin-bottom: 0.35rem;
+}
+.series-thesis {
+  font-size: 1.02rem;
+  line-height: 1.55;
+  color: var(--soft);
+  margin: 0 0 1.4rem;
+  max-width: 60ch;
+}
+.series-list {
+  list-style: none;
+  counter-reset: series-item;
+  padding: 0;
+  margin: 0;
+  border-top: 1px solid var(--hairline);
+}
+.series-list li {
+  counter-increment: series-item;
+  border-bottom: 1px solid var(--hairline);
+}
+.series-item {
+  display: grid;
+  grid-template-columns: 2.6rem 1fr;
+  grid-template-rows: auto auto auto;
+  column-gap: 0.4rem;
+  padding: 1rem 0.35rem;
+  text-decoration: none;
+  color: inherit;
+  border-radius: 3px;
+  transition: background 120ms;
+}
+.series-item:hover { background: var(--accent-soft); }
+.series-item::before {
+  content: counter(series-item, decimal-leading-zero);
+  grid-row: 1 / span 3;
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  padding-top: 0.25rem;
+}
+.series-item-title {
+  font-family: var(--font-heading);
+  font-size: 1.08rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--text);
+}
+.series-item:hover .series-item-title { color: var(--accent); }
+.series-item-teaser {
+  font-size: 0.98rem;
+  line-height: 1.5;
+  color: var(--soft);
+  margin-top: 0.3rem;
+}
+.series-item-meta {
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 0.45rem;
+}
+.series-item-meta .sep { margin: 0 0.4rem; opacity: 0.5; }
+
+/* Only ever visible in the dev server: production builds list no drafts. */
+.draft-pill {
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 0.5rem;
+  font-family: var(--font-heading);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8A6D1F;
+  background: rgba(138, 109, 31, 0.10);
+  border: 1px solid rgba(138, 109, 31, 0.3);
+  border-radius: 2px;
+  padding: 0.1rem 0.4rem;
+}
 
 /* ===== Print ===== */
 @media print {
