@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>One run, four observations, one draft — with and without a ledger</title>
+<link rel="stylesheet" href="../../_figure.css" />
+<style>
+  .toggle { display: flex; margin: 0 0 14px; border: 1px solid var(--hairline-strong); border-radius: 3px; width: fit-content; overflow: hidden; }
+  .toggle button { padding: 7px 14px; font-size: 12px; color: var(--muted); background: var(--bg); transition: background 120ms, color 120ms; }
+  .toggle button + button { border-left: 1px solid var(--hairline-strong); }
+  .toggle button[aria-pressed="true"] { background: var(--accent); color: #FFFFFF; font-weight: 600; }
+
+  /* the run */
+  .strip { position: relative; height: 54px; margin: 6px 0 2px; }
+  .cells { display: grid; grid-template-columns: repeat(40, 1fr); gap: 2px; height: 22px; }
+  .cell { border-radius: 2px; background: var(--hairline); }
+  .cell.past { background: #D8D8D2; }
+  .cell.obs { background: var(--accent); }
+  .cell.obs.aged { background: rgba(10,92,56,0.28); }
+  .cell.draft { background: var(--text); }
+  .cell.now { outline: 2px solid var(--text); outline-offset: 1px; }
+  .marks { position: relative; height: 26px; }
+  .mark { position: absolute; top: 4px; transform: translateX(-50%); font-size: 10px; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .mark.d { color: var(--text); font-weight: 600; }
+
+  .controls { display: flex; align-items: center; gap: 12px; margin: 8px 0 16px; }
+  .controls label { font-size: 11px; color: var(--muted); white-space: nowrap; }
+  input[type=range] { flex: 1; accent-color: #0A5C38; }
+  .readout { font-size: 13px; font-weight: 600; min-width: 64px; text-align: right; font-variant-numeric: tabular-nums; }
+
+  /* the four observations */
+  .facts { display: grid; grid-template-columns: 1fr; gap: 6px; }
+  .fact { display: grid; grid-template-columns: 172px 1fr 56px; gap: 10px; align-items: center; font-size: 12px; }
+  .f-name { color: var(--soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .f-name small { display: block; font-size: 10px; color: var(--muted); font-family: var(--mono); }
+  .f-bar { height: 10px; background: var(--hairline); border-radius: 2px; position: relative; overflow: hidden; }
+  .f-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent); border-radius: 2px; transition: width 90ms linear, background 120ms; }
+  .f-fill.low { background: var(--warn); }
+  .f-pct { text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); font-size: 11px; }
+  .fact.unseen { opacity: .35; }
+
+  /* the drafts */
+  .drafts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 16px; }
+  .draft-box { border: 1px solid var(--hairline); border-radius: 3px; padding: 9px 10px; background: var(--bg); min-height: 62px; }
+  .draft-box.pending { opacity: .4; }
+  .d-h { font-size: 11px; color: var(--muted); display: flex; justify-content: space-between; }
+  .d-h b { color: var(--text); font-weight: 600; }
+  .dots { display: flex; gap: 6px; margin-top: 8px; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--accent); background: var(--accent); }
+  .dot.miss { border-color: var(--warn); background: transparent; }
+  .dot.gate { border-color: var(--accent); background: transparent; box-shadow: inset 0 0 0 2px #FFFFFF, inset 0 0 0 4px var(--accent); }
+  .dot.na { border-color: var(--hairline-strong); background: transparent; }
+  .d-note { font-size: 10px; color: var(--muted); margin-top: 6px; }
+
+  .verdict { margin-top: 14px; border-top: 1px solid var(--hairline-strong); padding-top: 10px; min-height: 58px; }
+  .verdict-h { font-size: 13px; font-weight: 600; margin: 0 0 3px; }
+  .verdict-b { font-size: 12px; color: var(--soft); margin: 0; }
+  .bad .verdict-h { color: var(--warn); }
+  .good .verdict-h { color: var(--accent); }
+
+  @media (max-width: 600px) {
+    .fact { grid-template-columns: 120px 1fr 44px; }
+    .drafts { grid-template-columns: 1fr; }
+    .draft-box { min-height: 0; }
+  }
+</style>
+</head>
+<body>
+
+<p class="fig-kicker">One run · four observations · three sections drafted</p>
+
+<div class="toggle" role="group" aria-label="Memory design">
+  <button id="mNo" aria-pressed="true">Without a ledger</button>
+  <button id="mLed" aria-pressed="false">With a ledger</button>
+</div>
+
+<div class="strip">
+  <div class="cells" id="cells" aria-hidden="true"></div>
+  <div class="marks" id="marks" aria-hidden="true"></div>
+</div>
+
+<div class="controls">
+  <label for="turn">Turn</label>
+  <input type="range" id="turn" min="1" max="40" step="1" value="1" aria-describedby="verdictText" />
+  <span class="readout"><span id="tv">1</span> / 40</span>
+</div>
+
+<div class="facts" id="facts"></div>
+
+<div class="drafts" id="drafts"></div>
+
+<div class="verdict" id="verdict">
+  <p class="verdict-h" id="verdictH"></p>
+  <p class="verdict-b" id="verdictText"></p>
+</div>
+
+<p class="fig-hint">Effectiveness here is a schematic exponential in turns since the observation was made — an illustration of the shape, not a measured curve. Drafts happen at turns 14, 28 and 40. With a ledger, each draft is preceded by a read-back that reinstates every noted value, and closed by a gate that refuses once if a noted value is missing from the text.</p>
+
+<script>
+  var N = 40, DRAFTS = [14, 28, 40], TAU = 9, KEEP = 0.35;
+  var OBS = [
+    { t: 3,  name: 'fee constant, era 2',      val: '0.035' },
+    { t: 9,  name: 'cutover date',              val: '2024-03-11' },
+    { t: 17, name: 'retry exclusion',           val: 'before aggregate' },
+    { t: 26, name: 'eligibility threshold',     val: '≥ 3 sessions' }
+  ];
+  var ledger = false;
+  var range = document.getElementById('turn');
+
+  // Effectiveness of an observation at turn `now`.
+  function eff(o, now) {
+    if (now < o.t) return null;
+    var since = now - o.t;
+    if (ledger) {
+      // A read-back at each draft point re-observes every noted value.
+      var lastReview = -1;
+      DRAFTS.forEach(function (d) { if (d <= now && d >= o.t) lastReview = d; });
+      if (lastReview >= 0) since = now - lastReview;
+    }
+    return Math.exp(-since / TAU);
+  }
+
+  // Build the strip once.
+  var cells = document.getElementById('cells'), marks = document.getElementById('marks');
+  for (var i = 1; i <= N; i++) { var c = document.createElement('div'); c.className = 'cell'; c.dataset.t = i; cells.appendChild(c); }
+  OBS.forEach(function (o) { var m = document.createElement('span'); m.className = 'mark'; m.style.left = ((o.t - 0.5) / N * 100) + '%'; m.textContent = 'obs ' + o.t; marks.appendChild(m); });
+  DRAFTS.forEach(function (d, i) { var m = document.createElement('span'); m.className = 'mark d'; m.style.left = ((d - 0.5) / N * 100) + '%'; m.textContent = '§' + (i + 1); marks.appendChild(m); });
+
+  function render() {
+    var now = Number(range.value);
+    document.getElementById('tv').textContent = now;
+
+    // strip
+    Array.prototype.forEach.call(cells.children, function (c) {
+      var t = Number(c.dataset.t), cls = 'cell';
+      if (t <= now) cls += ' past';
+      var o = OBS.find(function (x) { return x.t === t; });
+      if (o && t <= now) cls += ' obs' + (eff(o, now) < KEEP ? ' aged' : '');
+      if (DRAFTS.indexOf(t) >= 0 && t <= now) cls += ' draft';
+      if (t === now) cls += ' now';
+      c.className = cls;
+    });
+
+    // facts
+    var fx = document.getElementById('facts'); fx.innerHTML = '';
+    OBS.forEach(function (o) {
+      var e = eff(o, now);
+      var row = document.createElement('div');
+      row.className = 'fact' + (e === null ? ' unseen' : '');
+      var pct = e === null ? 0 : Math.round(e * 100);
+      row.innerHTML =
+        '<span class="f-name">' + o.name + '<small>' + o.val + ' · seen at turn ' + o.t + '</small></span>' +
+        '<span class="f-bar"><span class="f-fill' + (e !== null && e < KEEP ? ' low' : '') + '" style="width:' + pct + '%"></span></span>' +
+        '<span class="f-pct">' + (e === null ? 'not yet' : pct + '%') + '</span>';
+      fx.appendChild(row);
+    });
+
+    // drafts
+    var dx = document.getElementById('drafts'); dx.innerHTML = '';
+    var expected = 0, landed = 0, gated = 0;
+    DRAFTS.forEach(function (d, i) {
+      var box = document.createElement('div');
+      var done = d <= now;
+      box.className = 'draft-box' + (done ? '' : ' pending');
+      var dots = '', note = '';
+      var miss = 0, gate = 0;
+      OBS.forEach(function (o) {
+        if (o.t > d) { dots += '<span class="dot na" title="not yet observed"></span>'; return; }
+        if (!done) { dots += '<span class="dot na"></span>'; return; }
+        expected++;
+        var e = eff(o, d);
+        if (ledger) {
+          // read-back makes e = 1 at the draft; the gate would catch any miss anyway
+          landed++; dots += '<span class="dot' + (Math.exp(-(d - o.t) / TAU) < KEEP ? ' gate' : '') + '" title="' + o.val + '"></span>';
+          if (Math.exp(-(d - o.t) / TAU) < KEEP) gate++;
+        } else if (e >= KEEP) { landed++; dots += '<span class="dot" title="' + o.val + '"></span>'; }
+        else { miss++; dots += '<span class="dot miss" title="' + o.val + ' — missing"></span>'; }
+      });
+      if (done) {
+        if (ledger) note = gate ? gate + ' value' + (gate > 1 ? 's' : '') + ' reinstated by read-back' : 'all values young at draft time';
+        else note = miss ? miss + ' value' + (miss > 1 ? 's' : '') + ' missing from the draft' : 'all values still effective';
+      } else note = 'drafted at turn ' + d;
+      gated += gate;
+      box.innerHTML = '<div class="d-h"><b>Section ' + (i + 1) + '</b><span>turn ' + d + '</span></div><div class="dots">' + dots + '</div><div class="d-note">' + note + '</div>';
+      dx.appendChild(box);
+    });
+
+    // verdict
+    var v = document.getElementById('verdict');
+    var h = document.getElementById('verdictH'), b = document.getElementById('verdictText');
+    if (expected === 0) {
+      v.className = 'verdict';
+      h.textContent = 'Nothing drafted yet';
+      b.textContent = 'Scrub forward. The first section is drafted at turn 14, when the first two observations are 11 and 5 turns old.';
+    } else if (ledger) {
+      v.className = 'verdict good';
+      h.textContent = landed + ' of ' + expected + ' expected values in the drafts';
+      b.textContent = (gated ? gated + ' of them had aged below the threshold by draft time and came back only because the read-back re-observed them. ' : '') + 'The ledger does not stop values ageing in the conversation. It makes the conversation stop being where they live.';
+    } else {
+      v.className = 'verdict' + (landed < expected ? ' bad' : '');
+      h.textContent = landed + ' of ' + expected + ' expected values in the drafts';
+      b.textContent = landed < expected
+        ? 'Every missing value was observed correctly and is still in the context. It was drafted from whatever was vivid at turn ' + DRAFTS.filter(function (d) { return d <= now; }).pop() + '.'
+        : 'So far every draft happened while its values were still fresh.';
+    }
+  }
+
+  function setMode(m) {
+    ledger = m;
+    document.getElementById('mNo').setAttribute('aria-pressed', String(!m));
+    document.getElementById('mLed').setAttribute('aria-pressed', String(m));
+    render();
+  }
+  document.getElementById('mNo').addEventListener('click', function () { setMode(false); });
+  document.getElementById('mLed').addEventListener('click', function () { setMode(true); });
+  range.addEventListener('input', render);
+  render();
+</script>
+</body>
+</html>
