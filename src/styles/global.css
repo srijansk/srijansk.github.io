@@ -1033,10 +1033,14 @@ strong { font-weight: 600; color: var(--text); }
 .prose figure svg {
   display: block;
   width: 100%;
-  height: auto;
   border: 1px solid var(--hairline);
   border-radius: 3px;
   background: #FFFFFF;
+}
+
+.prose figure img,
+.prose figure svg {
+  height: auto;
 }
 
 /* Embedded interactive figures.
@@ -1374,6 +1378,15 @@ strong { font-weight: 600; color: var(--text); }
   border-radius: 2px;
   padding: 0.1rem 0.4rem;
 }
+
+/* Run-replay figure (context-aging). Measured content heights at the tallest
+ * state — with-ledger, turn 40: 335px→908 · 500px→807 · 700px→620 · 852px→602.
+ * The draft boxes stack below 600px, so this figure breaks at 640 rather than
+ * at the shared 480/800 steps. */
+.fig-run-replay { height: 930px; }
+@container (min-width: 480px) { .fig-run-replay { height: 830px; } }
+@container (min-width: 640px) { .fig-run-replay { height: 660px; } }
+@container (min-width: 800px) { .fig-run-replay { height: 630px; } }
 
 /* ===== Print ===== */
 @media print {
