@@ -11,7 +11,7 @@ seriesOrder: 1
 thumbnail: "/writing/agent-context-is-a-recommendation-problem/plate.svg"
 socialImage: "/writing/agent-context-is-a-recommendation-problem/card.png"
 featured: true
-draft: true
+draft: false
 ---
 
 We built the knowledge system. Typed claims, conflict detection, lineage back to source. We gave the agent explicit tools to query it — search, look up a definition, fetch known contradictions for an entity — registered in the tool schema with descriptions and worked examples.

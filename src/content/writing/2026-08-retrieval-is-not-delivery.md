@@ -12,7 +12,7 @@ seriesOrder: 1
 thumbnail: "/writing/retrieval-is-not-delivery/plate.svg"
 socialImage: "/writing/retrieval-is-not-delivery/card.png"
 featured: true
-draft: true
+draft: false
 ---
 
 The trace looked successful. A research agent opened the right internal document and found that retry events had to be excluded before a daily metric was computed. Its summary said only: *aggregate eligible records by day.* The final answer sounded plausible. It had dropped the one condition that changed the number.

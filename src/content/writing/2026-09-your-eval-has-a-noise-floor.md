@@ -11,7 +11,7 @@ seriesOrder: 3
 thumbnail: "/writing/your-eval-has-a-noise-floor/plate.svg"
 socialImage: "/writing/your-eval-has-a-noise-floor/card.png"
 featured: true
-draft: true
+draft: false
 ---
 
 I shipped a change, re-ran the benchmark, and the score went up by three claims out of sixty. Five percent. Modest, but real — the kind of result that gets written into a decision log and quietly becomes load-bearing for everything built on top of it.

@@ -12,7 +12,7 @@ seriesOrder: 2
 thumbnail: "/writing/completion-is-a-proof/plate.svg"
 socialImage: "/writing/completion-is-a-proof/card.png"
 featured: true
-draft: true
+draft: false
 ---
 
 A command in a remote coding-agent sandbox wrote one unbroken 4 MiB line. The HTTP stream returned no output and no terminal event. The producer was still alive, blocked on its pipe — and the request had already cleaned up the ordinary handle used to cancel it.
