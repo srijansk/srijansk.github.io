@@ -50,7 +50,7 @@ const position = showSeries ? siblings.findIndex((s) => s.id === post.id) + 1 : 
 <Layout
   title={`${post.data.title} — Srijan Saket`}
   description={post.data.dek ?? post.data.teaser}
-  pageType="inner"
+  pageType="post"
   noindex={post.data.draft}
   ogType="article"
   ogImage={post.data.socialImage ?? post.data.thumbnail}
@@ -132,6 +132,20 @@ const position = showSeries ? siblings.findIndex((s) => s.id === post.id) + 1 : 
       </nav>
     )}
 
+    <aside class="post-author" aria-label="About the author">
+      <img class="post-author-avatar" src="/srijan.png" alt="" width="56" height="56" loading="lazy" decoding="async" />
+      <div class="post-author-body">
+        <p class="post-author-name">Srijan Saket</p>
+        <p class="post-author-role">Founding Engineer at Pavo AI &middot; retrieval, agents &amp; evaluation &middot; recommender systems</p>
+        <p class="post-author-links">
+          <a href="https://www.linkedin.com/in/srijansaket/" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-linkedin" /></svg>LinkedIn</a>
+          <a href="https://x.com/srijanskt2" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-x" /></svg>X</a>
+          <a href="https://github.com/srijansk" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-github" /></svg>GitHub</a>
+          <a href="https://bitsnneurons.substack.com" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-substack" /></svg>Bits &amp; Neurons</a>
+          <a href="/rss.xml"><svg class="icon" aria-hidden="true"><use href="#i-email" /></svg>RSS</a>
+        </p>
+      </div>
+    </aside>
     <p class="post-back"><a href="/writing/">&larr; All writing</a></p>
   </article>
 </Layout>

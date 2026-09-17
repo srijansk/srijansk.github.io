@@ -6,7 +6,7 @@ interface Props {
   title: string;
   description?: string;
   canonical?: string;
-  pageType?: 'home' | 'inner';
+  pageType?: 'home' | 'inner' | 'post';
   /** Drafts build to their real URL but must never be indexed. */
   noindex?: boolean;
   ogType?: 'profile' | 'article';
@@ -27,6 +27,7 @@ const {
 const site = Astro.site?.toString().replace(/\/$/, '') ?? 'https://srijansk.github.io';
 const canonicalUrl = canonical ?? new URL(Astro.url.pathname, site).toString();
 const isHome = pageType === 'home';
+const isPost = pageType === 'post';
 ---
 
 <!doctype html>
@@ -82,7 +83,21 @@ const isHome = pageType === 'home';
   <body>
     <a class="skip-link" href="#content">Skip to content</a>
     <SocialIcons />
-    <div class="site">
+    <div class:list={['site', isPost && 'site--post']}>
+      {isPost && (
+        <header class="topbar">
+          <a class="topbar-identity" href="/" aria-label="Home">
+            <img class="topbar-avatar" src="/srijan.png" alt="" width="36" height="36" decoding="async" />
+            <span class="topbar-name">Srijan Saket</span>
+          </a>
+          <nav class="topbar-nav" aria-label="Pages">
+            <a href="/">Home</a>
+            <a href="/writing/" aria-current="page">Writing</a>
+            <a href="/talks/">Speaking</a>
+          </nav>
+        </header>
+      )}
+      {!isPost && (
       <aside class="sidebar" aria-label="Profile">
         <a class="sidebar-avatar-link" href="/" aria-label="Home">
           <img
@@ -141,6 +156,7 @@ const isHome = pageType === 'home';
           <p class="sidebar-back"><a href="/">&larr; Back to home</a></p>
         )}
       </aside>
+      )}
 
       <main id="content">
         <slot />

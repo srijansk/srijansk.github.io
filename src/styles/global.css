@@ -1388,6 +1388,103 @@ strong { font-weight: 600; color: var(--text); }
 @container (min-width: 640px) { .fig-run-replay { height: 660px; } }
 @container (min-width: 800px) { .fig-run-replay { height: 630px; } }
 
+/* ===== Post pages: one reading column =====
+ * Identity pages keep the sidebar. A post is for reading: a one-line top
+ * bar, a 72ch measure, figures allowed out to the 1000px they are drawn
+ * at, and the author at the end rather than alongside every paragraph.
+ */
+.site--post {
+  display: block;
+  max-width: 1120px;
+}
+@media (min-width: 960px) {
+  .site--post { padding: 2rem 2rem 6rem; }
+}
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  font-family: var(--font-heading);
+  padding-bottom: 1rem;
+  margin-bottom: 3rem;
+  border-bottom: 1px solid var(--hairline);
+}
+.topbar-identity {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  text-decoration: none;
+  color: var(--text);
+}
+.topbar-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+.topbar-name {
+  font-weight: 700;
+  font-size: 1.02rem;
+  letter-spacing: -0.005em;
+}
+.topbar-nav {
+  display: flex;
+  gap: 1.4rem;
+}
+.topbar-nav a {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--soft);
+  text-decoration: none;
+}
+.topbar-nav a:hover, .topbar-nav a[aria-current="page"] { color: var(--accent); }
+
+.site--post .post {
+  max-width: 72ch;
+  margin: 0 auto;
+}
+/* Break-outs: as wide as the drawing, never wider, centred on the column. */
+@media (min-width: 1100px) {
+  .site--post .prose figure.wide,
+  .site--post .post-plate {
+    width: min(calc(100% + 16rem), 1000px);
+    margin-left: calc((100% - min(calc(100% + 16rem), 1000px)) / 2);
+    margin-right: 0;
+  }
+}
+
+.post-author {
+  display: flex;
+  gap: 1.1rem;
+  align-items: flex-start;
+  margin: 3.5rem 0 2rem;
+  padding: 1.4rem 0 0;
+  border-top: 1px solid var(--hairline-strong);
+  font-family: var(--font-heading);
+}
+.post-author-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex: 0 0 auto;
+}
+.post-author-name { font-weight: 700; margin: 0.15rem 0 0.15rem; font-size: 1.02rem; }
+.post-author-role { color: var(--soft); font-size: 0.9rem; margin: 0 0 0.6rem; line-height: 1.45; }
+.post-author-links { display: flex; flex-wrap: wrap; gap: 0.35rem 1.1rem; margin: 0; }
+.post-author-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.86rem;
+  color: var(--soft);
+  text-decoration: none;
+}
+.post-author-links a:hover { color: var(--accent); }
+.post-author-links .icon { width: 14px; height: 14px; fill: currentColor; }
+
 /* ===== Print ===== */
 @media print {
   .prose .metric-grid { grid-template-columns: repeat(2, 1fr); }
@@ -1398,7 +1495,7 @@ strong { font-weight: 600; color: var(--text); }
     padding: 0;
   }
   .sidebar { border-bottom: 1px solid var(--hairline-strong); margin-bottom: 2rem; }
-  .sidebar-links, .sidebar-nav, .sidebar-back, .skip-link, .talks-all-link, .archive-line, .site-footer, .embed-frame { display: none; }
+  .topbar-nav, .post-author-links, .sidebar-links, .sidebar-nav, .sidebar-back, .skip-link, .talks-all-link, .archive-line, .site-footer, .embed-frame { display: none; }
   a { color: var(--text); text-decoration: none; }
   body { font-size: 11pt; background: #FFFFFF; }
 }
