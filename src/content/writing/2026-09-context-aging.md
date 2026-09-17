@@ -11,7 +11,7 @@ seriesOrder: 2
 thumbnail: "/writing/context-aging/plate.svg"
 socialImage: "/writing/context-aging/card.png"
 featured: true
-draft: true
+draft: false
 ---
 
 The agent read the pricing rule at tool call 12. Two constants, two eras, a cutover date — it quoted all three back in its own reasoning, correctly. Then it kept going: two hundred and eighty more calls across a codebase, a warehouse and a query log, drafting sections of a long technical reference as it went. The section on pricing, written near the end of the run, described the rule with one constant.
