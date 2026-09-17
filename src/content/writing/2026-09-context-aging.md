@@ -6,6 +6,7 @@ teaser: "Long-running agents don't fail when the window fills. They fail earlier
 dek: "Long-running agents don't fail when the window fills. They fail earlier, when what they observed forty calls ago is still in the context and no longer effective. The fix is not a bigger window. It is to stop treating the conversation as the memory."
 excerpt: "An agent read a pricing rule with two constant eras at tool call 12 — correctly, aloud, in its own reasoning. Two hundred and eighty calls later, the document it finished described the rule with one constant. Nothing had been truncated; the fact was in the context the whole time. Context rot, lost-in-the-middle and context poisoning are about how much, where, and what. This is about when — and why the fix is a durable tier the agent writes to at the moment of observation, reads back before it drafts, and is checked against by code before it is allowed to say it is done."
 tags: [agents, context-engineering, memory]
+coauthors: ["Susnato Dhar"]
 series: "Context as a ranking problem"
 seriesOrder: 2
 thumbnail: "/writing/context-aging/plate.svg"
@@ -20,7 +21,7 @@ Nothing had been truncated. The run was well inside the window. The observation 
 
 <div class="claim">An observation can be present in an agent's context and no longer effective. That gap — present, not effective — is the failure, and it has a shape that length alone does not explain.</div>
 
-I have now measured this from both ends of one system, with a colleague. On the reading side, an agent that consumes a long reference document to answer questions. On the writing side, the agent that produces that document, over runs of 270 to 350 turns in a single continuous conversation. Both fail the same way at different scales. What follows is what we instrumented, what we built, what moved, what did not, and why I think the field is currently filing this failure under the wrong name.
+I have now measured this from both ends of one system, with <b>Susnato Dhar</b>. On the reading side, an agent that consumes a long reference document to answer questions. On the writing side, the agent that produces that document, over runs of 270 to 350 turns in a single continuous conversation. Both fail the same way at different scales. What follows is what we instrumented, what we built, what moved, what did not, and why I think the field is currently filing this failure under the wrong name.
 
 ## Three fixes that don't fix it
 
@@ -92,7 +93,7 @@ The ledger lives on the harness side, on the run's state, not in the conversatio
   <figcaption><b>FIG. 02</b> — Scrub the run. Without a ledger, each observation's effect on the draft fades with the turns since it was made, and the draft at the end is written from whatever is still vivid. With one, noted values are read back before drafting and checked before the section closes. The decay curve is a schematic, not a measurement.</figcaption>
 </figure>
 
-I cannot yet give you the delta. The validation is in progress against a locked prompt at three or more repeats, because the last time I trusted a single run [it turned out to be weather](/writing/your-eval-has-a-noise-floor/). What I can say is what the gate changed in kind: the loss channel became visible to code. The first implementation of the ledger came from a colleague; my part was the validation and the wording of the read-back.
+I cannot yet give you the delta. The validation is in progress against a locked prompt at three or more repeats, because the last time I trusted a single run [it turned out to be weather](/writing/your-eval-has-a-noise-floor/). What I can say is what the gate changed in kind: the loss channel became visible to code. The first implementation of the ledger is Susnato's; my part was the validation and the wording of the read-back.
 
 ## Failure 3: compaction without a destination
 
