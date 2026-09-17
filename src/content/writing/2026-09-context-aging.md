@@ -28,7 +28,7 @@ The instinct on seeing the pricing section is one of three.
 
 **A bigger window.** But the fact was in the window. The runs where this happened were using a fraction of their capacity. This is not overflow.
 
-**A better model.** A stronger model of the same family made the same omission. Whatever is going on, it is not a capability the next release supplies.
+**A better model.** I cannot rule this one out from evidence, and I say so at the end. But look at what a better model would have to do. It would not need to read better — it read the rule correctly. It would need to weigh an observation from 280 calls ago the same as one from two calls ago, and the multi-turn literature below says that is precisely what models do not do.
 
 **Better retrieval.** The search worked. The agent opened the right file at call 12 and read the right lines. On the reading side we measured this directly at [five checkpoints along the path from a source to an answer](/writing/retrieval-is-not-delivery/): at baseline the agent *found* 65% of the expected facts while reading, and 22% of that evidence survived to the next stage. Retrieval was the stage that was already working.
 
@@ -42,7 +42,7 @@ The literature has good names for three ways a context fails, and they are about
 
 **Where.** [Lost in the Middle](https://arxiv.org/abs/2307.03172): performance is highest when the relevant information sits at the beginning or the end of the input and *"significantly degrades when models must access relevant information in the middle."* The variable is position.
 
-**What.** Drew Breunig's [taxonomy](https://www.dbreunig.com/2025/06/22/how-contexts-fail-and-how-to-fix-them.html) — poisoning, distraction, confusion, clash — is about content: a hallucination that gets referenced, superfluous material that shapes the answer, accumulated information that conflicts with the prompt. The variable is contamination.
+**What.** Drew Breunig's [taxonomy](https://www.dbreunig.com/2025/06/22/how-contexts-fail-and-how-to-fix-them.html) — poisoning, distraction, confusion, clash — is mostly about content: a hallucination that gets referenced, superfluous material that shapes the answer, accumulated information that conflicts with the prompt. The variable is contamination. (Distraction sits on the border with length; I come back to it under repetition.)
 
 The failure at call 12 is none of these. The context was not long. The fact was not in the middle — it was early, at the good end of the U. It was not wrong. What had changed was **when**: the effectiveness of an observation decays with the number of turns since it was made, even while it stays in the window. I call this **context aging**, and I think it earns its own name for a practical reason: it takes a different fix from the other three.
 
@@ -52,6 +52,8 @@ The failure at call 12 is none of these. The context was not long. The fact was 
 </figure>
 
 The nearest published measurement I know of is a [2026 study of 4,416 trials across 12 models](https://arxiv.org/abs/2604.20911): a prohibition stated early in a conversation loses force as turns pass — complied with 73% of the time at turn 5, 33% at turn 16 — and token-matched controls show length explains only part of it. That study measures constraints, not evidence, so I hold it loosely. But it is decay by turn, with the instruction still present, which is the shape I am describing. [Laban and colleagues](https://arxiv.org/abs/2505.06120) supply the mechanism from the other side: in multi-turn conversation, models *"make assumptions in early turns and prematurely attempt to generate final solutions, on which they overly rely"* — a 39% average drop against the same task asked all at once. Early material is over-relied on as a *conclusion* and under-used as *evidence*. Anchoring and aging are two faces of one failure: the model does not go back and read.
+
+Why would an observation age at all? Two mechanisms, and both predict decay by turn rather than by length. The first is dilution. Attention is a budget — Anthropic's [context-engineering guide](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) uses exactly that word — and every later token takes a share of it; in Gamage's token-matched controls, the *content* that accumulated over the turns, not its token count, accounted for 62–100% of the decay. The second is anchoring: a model that has already drawn a conclusion from an observation prefers the conclusion to the observation, and a conclusion drawn at call 12 is what call 292 reaches for. If aging were only rot in disguise, holding the token count fixed would erase it. It does not.
 
 ## What we instrumented
 
@@ -69,13 +71,21 @@ Same numbers, different lens. That post was about the boundary between two agent
 
 The writer had two ways to hold an observation: draft a sentence from it immediately, or leave it in the conversation. Anything in the second category aged. The fix has three parts, and the third is the one that matters.
 
-**A note, at observation time, with the value.** A tool that appends one row to a findings ledger the moment a document-worthy fact is seen: the finding, its source, and the load-bearing value — the constant, the date, the threshold. Not a summary of the file. The number.
+**A note, at observation time, with the value.** A tool that appends one row to a findings ledger the moment a document-worthy fact is seen: the finding, its source, and the load-bearing value — the constant, the date, the threshold. Not a summary of the file. The number. For the rule from the opening, the row is roughly this:
+
+```text
+finding    fee rate has two eras, not one
+value      0.030 through 2024-03-10 · 0.035 from 2024-03-11
+source     billing/fees.py, lines 142–158
+noted_at   call 12
+status     not yet drafted
+```
 
 **A read-back before drafting.** The prompt tells the writer to page through the ledger before it drafts each section, so a section is written against everything learned rather than against whatever is still vivid. Manus does something structurally similar for goals — rewriting its to-do file so it is [*"reciting its objectives into the end of the context"*](https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus) — and it is worth naming what that is: re-observation. A fact that is re-read is young again.
 
 **A gate, in code, between collected and done.** When the writer declares a section finished, the harness scans whether each value noted while exploring that section appears anywhere in the drafted text. If one does not, the finalize is refused once, with the list. Once: acknowledge-and-proceed, so it cannot loop. The same scan runs over the whole document at final verification and returns anything still unencoded as a revision directive.
 
-The ledger lives on the harness side, on the run's state, not in the conversation. It survives compaction, it survives a crash, and it is written out with the run. That placement is the point of the design: it makes *collected but never encoded* something code refuses at the moment, rather than something an eval finds two weeks later.
+The ledger lives on the harness side, on the run's state, not in the conversation. It survives compaction, it [survives a crash](/writing/completion-is-a-proof/), and it is written out with the run. That placement is the point of the design: it makes *collected but never encoded* something code refuses at the moment, rather than something an eval finds two weeks later.
 
 <figure class="wide">
   <iframe src="/writing/context-aging/figures/run-replay.html" title="Interactive: scrub through a 40-turn run and watch observations age; toggle the ledger to see them reinstated before drafting" loading="lazy" class="fig-run-replay"></iframe>
@@ -88,13 +98,13 @@ I cannot yet give you the delta. The validation is in progress against a locked 
 
 Long runs approach provider limits, and the naive response — summarise the transcript — is Failure 1 applied to the agent's own memory. Everyone I have read who has shipped this says the same thing. Anthropic: [*"the art of compaction lies in the selection of what to keep versus what to discard."*](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) Cognition: compressing a history into *"key details, events, and decisions … is hard to get right"*, they [fine-tuned a model for it](https://cognition.com/blog/dont-build-multi-agents), and it *"will still eventually hit a limit."* A [2026 paper](https://arxiv.org/abs/2606.11213) names four failures of summary-based compaction — unpredictable lossiness, destruction of causal structure, blocking model cost, compression-induced hallucination — and replaces it with a deterministic, LLM-free policy that sheds only *"action episodes whose effects are already persisted."* One session ran 89 sequential tasks across 80 million tokens with no measurable loss against isolated runs.
 
-That last clause is the rule. Our version is a set of compaction instructions that name the tier: preserve which sections are drafted, finalized and pending and what each still needs; preserve open threads; preserve **key facts, numbers and source references not yet noted to the ledger or drafted into a section**. Drop file contents and query bodies that have already been noted, drafted or ruled out. Manus states the same rule for web pages — [*"the content of a web page can be dropped from the context as long as the URL is preserved."*](https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus)
+That last clause is the rule. Our version is a set of compaction instructions that name the tier: preserve which sections are drafted, finalised and pending and what each still needs; preserve open threads; preserve **key facts, numbers and source references not yet noted to the ledger or drafted into a section**. Drop file contents and query bodies that have already been noted, drafted or ruled out. Manus states the same rule for web pages — [*"the content of a web page can be dropped from the context as long as the URL is preserved."*](https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus)
 
 Compaction is only safe if there is somewhere for facts to go other than the summary. Design the durable tier first; then *drop the file contents* becomes a safe instruction by construction, for everything the tier holds.
 
 ## Failure 4: re-reading what you have already seen
 
-After compaction wipes the history, the agent cannot know it has read a file before. The cheapest primitive we built is an already-read cache: a second read of the same file returns a pointer — *you read this twelve calls ago; here is its shape* — instead of the bytes. The agent can recognise that it is re-asking, and behave accordingly. The same record doubles as the read-set that later gates consult.
+After compaction wipes the history, the agent cannot know it has read a file before. The cheapest primitive we built is an already-read cache: a second read of the same file returns a pointer — *you read this twelve calls ago; here is its shape* — instead of the bytes. The agent can recognise that it is re-asking, and behave accordingly. The same record doubles as the read-set that later gates consult. It matters for aging in a second way: a full re-read is the opposite of compaction — it puts bytes the tier already holds back into the window, where they start aging all over again.
 
 ## Failure 5: aging shows up as repetition
 
@@ -135,6 +145,10 @@ The two studies I leaned on for the aging claim measure constraints and conversa
 External memory is not free of loss; it moves the loss to the write. In Mem0's [own paper](https://arxiv.org/abs/2504.19413) the memory system scores 66.9 against 72.9 for the full transcript on the same benchmark, winning on latency and tokens rather than accuracy. A [2026 cost-performance study](https://arxiv.org/abs/2603.04814) finds long context beats fact memory on recall for two of three benchmarks and that memory suits *"stable, factual attributes suited to flat-typed extraction."* The case for a durable tier is long runs and survival through compaction — not accuracy in the small. If your run fits in the window and ends before anything ages, keep the transcript.
 
 And a wrong fact in the tier is a wrong fact with provenance. A ledger makes poisoning more durable, not less. The gate checks that noted values were *used*; it does not check that they were *right*.
+
+The ledger is not free either. Every note is a tool call, and a writer that notes everything has replaced aging with bloat — a second transcript, with better formatting. *Document-worthy, with a load-bearing value* is a judgment the model still has to make, and I have not measured how often it gets that judgment wrong in either direction.
+
+I have not replayed the failing run on a stronger model, so a better model is not ruled out. What is ruled out is the reason to expect one to help: the observation was read correctly, and the loss happened afterwards.
 
 All numbers are self-measured, on one internal evaluation of 45 questions and a handful of writing runs, on one model family.
 
