@@ -1,6 +1,6 @@
-# srijansk.github.io
+# srijansaket.com
 
-Source for [srijansk.github.io](https://srijansk.github.io) — Srijan Saket's
+Source for [srijansaket.com](https://srijansaket.com) — Srijan Saket's
 personal site. Astro + Markdown content collections, deployed to GitHub Pages
 via Actions on push to `main`.
 

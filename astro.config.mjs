@@ -14,7 +14,7 @@ const draftSlugs = readdirSync('./src/content/writing')
   .map((file) => file.replace(/\.md$/, '').replace(/^\d{4}-\d{2}-/, ''));
 
 export default defineConfig({
-  site: 'https://srijansk.github.io',
+  site: 'https://srijansaket.com',
   integrations: [
     sitemap({
       filter: (page) =>

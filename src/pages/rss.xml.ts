@@ -9,7 +9,7 @@ import { getPublishedWriting, hrefFor, byline } from '../lib/writing';
  * subscribing to "Srijan's writing" wants the off-site pieces too. Drafts
  * are excluded by getPublishedWriting.
  */
-const SITE = 'https://srijansk.github.io';
+const SITE = 'https://srijansaket.com';
 
 /** XML text nodes cannot carry raw &, <, > or quotes. */
 function esc(value: string): string {

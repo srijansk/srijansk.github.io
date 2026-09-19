@@ -24,7 +24,7 @@ const {
   ogImage,
 } = Astro.props;
 
-const site = Astro.site?.toString().replace(/\/$/, '') ?? 'https://srijansk.github.io';
+const site = Astro.site?.toString().replace(/\/$/, '') ?? 'https://srijansaket.com';
 const canonicalUrl = canonical ?? new URL(Astro.url.pathname, site).toString();
 const isHome = pageType === 'home';
 const isPost = pageType === 'post';
@@ -61,8 +61,8 @@ const isPost = pageType === 'post';
       '@context': 'https://schema.org',
       '@type': 'Person',
       name: 'Srijan Saket',
-      url: 'https://srijansk.github.io',
-      image: 'https://srijansk.github.io/srijan.png',
+      url: 'https://srijansaket.com',
+      image: 'https://srijansaket.com/srijan.png',
       jobTitle: 'Founding Engineer',
       worksFor: { '@type': 'Organization', name: 'Pavo AI' },
       alumniOf: [
