@@ -22,7 +22,8 @@ const papers = allPubs
 const patents = allPubs.filter((p) => p.data.type === 'patent');
 const books = allPubs.filter((p) => p.data.type === 'book');
 
-const writing = (await getPublishedWriting({ includeDrafts: import.meta.env.DEV })).filter((w) => w.data.featured);
+// A shelf, not an archive: the six most recent featured pieces. /writing/ has everything.
+const writing = (await getPublishedWriting({ includeDrafts: import.meta.env.DEV })).filter((w) => w.data.featured).slice(0, 6);
 
 const dateShort = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', timeZone: 'UTC' });
 const talkTypeLabel: Record<string, string> = {
@@ -35,7 +36,7 @@ const talkTypeLabel: Record<string, string> = {
 };
 ---
 
-<Layout title="Srijan Saket — Tribal knowledge layer for LLM agents" pageType="home">
+<Layout title="Srijan Saket — Tribal knowledge layer for LLM agents" pageType="home" ogImage="/card.png">
   <section class="section lede">
     <h1 class="hero-thesis">Building the tribal knowledge layer for LLM agents.</h1>
     <p class="hero-sub">
@@ -44,71 +45,9 @@ const talkTypeLabel: Record<string, string> = {
       to a problem the agent-memory world has not recognized as a recommendation problem.
     </p>
     <p class="hero-sub">
-      <em>Open to conversations on agents, retrieval, and evaluation &mdash; collaborations,
-      research, and interesting problems. Seattle/PNW or remote-US.</em>
+      <em>I write here about agents, retrieval, and evaluation. If you are working on the
+      same problems, get in touch.</em>
     </p>
-  </section>
-
-  <section class="section" id="now">
-    <span class="section-kicker">August 2026</span>
-    <h2>What I'm working on</h2>
-    <p>
-      I'm a founding engineer at <strong>Pavo AI</strong> in Seattle, building the tribal
-      knowledge layer for LLM agents. My day-to-day is a mix of staged agentic composition,
-      conflict-as-knowledge resolution, and bridging the recommender-systems playbook to
-      agent context. I'm writing essays on these themes and submitting research to 2026
-      conferences and workshops.
-    </p>
-    <p>
-      Before Pavo, seven years at <strong>ShareChat</strong> scaling the recommender system
-      from 1M to 200M users, then LLM-driven ranking and retrieval for code search at
-      <strong>Sourcegraph</strong> (IC-5), and an undergrad &amp; master's at <strong>IIT Kanpur</strong> in
-      Mathematics and Scientific Computing.
-    </p>
-    <p>
-      I've built global engineering teams twice &mdash; at <strong>ShareChat</strong> and now
-      the founding team at <strong>Pavo</strong>, spanning the US, London, and India &mdash; and
-      have run 200+ hiring interviews in the process.
-    </p>
-  </section>
-
-  <section class="section" id="career">
-    <h2>Career</h2>
-    <ul class="timeline">
-      <li>
-        <span class="dates">2025 &mdash;</span>
-        <span class="role">
-          <strong>Pavo AI</strong><span class="sep">&middot;</span><span class="role-title">Founding Engineer</span>
-          <span class="desc">Tribal knowledge layer for LLM agents; building the founding engineering team across the US, London, and India. Seattle, WA.</span>
-        </span>
-      </li>
-      <li>
-        <span class="dates">Nov 2024 &mdash; Mar 2025</span>
-        <span class="role">
-          <strong>Sourcegraph</strong><span class="sep">&middot;</span><span class="role-title">IC-5 MLE</span>
-          <span class="desc">LLM-driven ranking and retrieval for code search over large codebases &mdash; agentic search over code; shipped relevance and quality changes to external users.</span>
-        </span>
-      </li>
-      <li>
-        <span class="dates">2017 &mdash; 2024</span>
-        <span class="role">
-          <strong>ShareChat</strong><span class="sep">&middot;</span><span class="role-title">Staff MLE</span>
-          <span class="desc">Scaled the recommender system from 1M to 200M users; built and led a global team of 18&ndash;20 engineers across 4&ndash;5 charters spanning content moderation, ranking, and feature pipelines.</span>
-        </span>
-      </li>
-      <li>
-        <span class="dates">2016 &mdash; 2017</span>
-        <span class="role">
-          <strong>Fidelity Investments</strong><span class="sep">&middot;</span><span class="role-title">Data Scientist</span>
-        </span>
-      </li>
-      <li>
-        <span class="dates">2011 &mdash; 2016</span>
-        <span class="role">
-          <strong>IIT Kanpur</strong><span class="sep">&middot;</span><span class="role-title">BS &amp; MS, Mathematics and Scientific Computing</span>
-        </span>
-      </li>
-    </ul>
   </section>
 
   <section class="section" id="writing">
@@ -122,7 +61,7 @@ const talkTypeLabel: Record<string, string> = {
     {writing.length === 0 ? (
       <p>First essays are in review &mdash; check back shortly.</p>
     ) : (
-      <div class="writing-stack">
+      <div class="writing-stack writing-stack--home">
         {writing.map((w) => {
           const href = hrefFor(w);
           const attrs = linkAttrs(w);
@@ -152,7 +91,7 @@ const talkTypeLabel: Record<string, string> = {
                 <h3 class="writing-title">
                   <a href={href} {...attrs}>{w.data.title}</a>
                 </h3>
-                <p class="writing-excerpt">{w.data.excerpt ?? w.data.teaser}</p>
+                <p class="writing-excerpt">{w.data.teaser}</p>
                 <p class="writing-cta">
                   <a href={href} {...attrs}>
                     {own ? 'Read' : `Read on ${w.data.publication}`} &rarr;
@@ -164,9 +103,85 @@ const talkTypeLabel: Record<string, string> = {
         })}
       </div>
     )}
+    <p class="follow-line">
+      New essays land in the <a href="/rss.xml">RSS feed</a>. I post short summaries on
+      <a href="https://www.linkedin.com/in/srijansaket/" target="_blank" rel="noopener">LinkedIn</a> and
+      <a href="https://x.com/srijanskt2" target="_blank" rel="noopener">X</a>.
+    </p>
     <p class="archive-line">
       <a href="/writing/">All writing &rarr;</a>
     </p>
+  </section>
+
+  <section class="section" id="now">
+    <span class="section-kicker">September 2026</span>
+    <h2>What I'm working on</h2>
+    <p>
+      I'm a founding engineer at <strong>Pavo AI</strong> in Seattle, building the tribal
+      knowledge layer for LLM agents. My day-to-day is a mix of staged agentic composition,
+      conflict-as-knowledge resolution, and bridging the recommender-systems playbook to
+      agent context. The essays above are the public half of that work &mdash; two series so
+      far, on evidence-carrying systems and on context as a ranking problem &mdash; alongside
+      research submissions to 2026 conferences and workshops.
+    </p>
+    <p>
+      Before Pavo, seven years at <strong>ShareChat</strong> scaling the recommender system
+      from 1M to 200M users, then LLM-driven ranking and retrieval for code search at
+      <strong>Sourcegraph</strong> (IC-5), and an undergrad &amp; master's at <strong>IIT Kanpur</strong> in
+      Mathematics and Scientific Computing.
+    </p>
+    <p>
+      I've built global engineering teams twice &mdash; at <strong>ShareChat</strong> and now
+      the founding team at <strong>Pavo</strong>, spanning the US, London, and India &mdash; and
+      have run 200+ hiring interviews in the process.
+    </p>
+  </section>
+
+  <section class="section" id="projects">
+    <h2>Projects</h2>
+    <p class="section-lede">
+      OSS projects and study forks. Everything on
+      <a href="https://github.com/srijansk" target="_blank" rel="noopener">GitHub</a>.
+    </p>
+    <ul class="projects">
+      <li>
+        <span class="project-header">
+          <a class="project-name" href="https://github.com/srijansk/crewlore" target="_blank" rel="noopener">crewlore</a>
+          <span class="flagship-badge">flagship</span>
+        </span>
+        <span class="desc">
+          A local-first compiler that turns AI-coding-agent (Claude Code) sessions into a
+          versioned, plaintext, citable team-knowledge layer in your git repo. The compiler
+          refuses to emit a claim it cannot anchor: every claim ships with a verbatim source
+          anchor that resolves back to the session line it came from. Compiled end-to-end on
+          the public pydantic-ai repo (18 claims). Alpha, on PyPI &mdash;
+          <code>pipx install crewlore</code>.
+        </span>
+      </li>
+      <li>
+        <span class="project-header">
+          <a class="project-name" href="https://github.com/srijansk/agent-relay" target="_blank" rel="noopener">agent-relay</a>
+        </span>
+        <span class="desc">
+          Multi-agent workflows that learn from their own past runs. Plans, reviews, build logs,
+          and audits live in your git repo as markdown; <code>relay distill --llm</code> compresses
+          past reviewer rejections into forward-looking lessons the next planner reads automatically.
+          Alpha (v0.2).
+        </span>
+      </li>
+      <li>
+        <span class="project-header">
+          <a class="project-name" href="https://github.com/srijansk/claude-ui" target="_blank" rel="noopener">claude-ui</a>
+        </span>
+        <span class="desc">Web interface for Claude with document analysis and conversation history.</span>
+      </li>
+      <li>
+        <span class="project-header">
+          <a class="project-name" href="https://github.com/srijansk/LLMs-from-scratch" target="_blank" rel="noopener">LLMs-from-scratch</a>
+        </span>
+        <span class="desc">Study fork — building GPT-style models in PyTorch, from the ground up.</span>
+      </li>
+    </ul>
   </section>
 
   <section class="section" id="publications">
@@ -228,7 +243,7 @@ const talkTypeLabel: Record<string, string> = {
   <section class="section" id="talks">
     <h2>Speaking</h2>
     <p class="section-lede">
-      Keynotes, paper presentations, and conference service. Each entry links to a page with
+      Keynotes, paper presentations, and conference service. Most entries link to a page with
       the slide deck embedded.
     </p>
     <ul class="talk-list">
@@ -258,49 +273,41 @@ const talkTypeLabel: Record<string, string> = {
     </p>
   </section>
 
-  <section class="section" id="projects">
-    <h2>Projects</h2>
-    <p class="section-lede">
-      OSS projects and study forks. Everything on
-      <a href="https://github.com/srijansk" target="_blank" rel="noopener">GitHub</a>.
-    </p>
-    <ul class="projects">
+  <section class="section" id="career">
+    <h2>Career</h2>
+    <ul class="timeline">
       <li>
-        <span class="project-header">
-          <a class="project-name" href="https://github.com/srijansk/crewlore" target="_blank" rel="noopener">crewlore</a>
-          <span class="flagship-badge">flagship</span>
-        </span>
-        <span class="desc">
-          A local-first compiler that turns AI-coding-agent (Claude Code) sessions into a
-          versioned, plaintext, citable team-knowledge layer in your git repo. The compiler
-          refuses to emit a claim it cannot anchor: every claim ships with a verbatim source
-          anchor that resolves back to the session line it came from. Compiled end-to-end on
-          the public pydantic-ai repo (18 claims). Alpha, on PyPI &mdash;
-          <code>pipx install crewlore</code>.
+        <span class="dates">2025 &mdash;</span>
+        <span class="role">
+          <strong>Pavo AI</strong><span class="sep">&middot;</span><span class="role-title">Founding Engineer</span>
+          <span class="desc">Tribal knowledge layer for LLM agents; building the founding engineering team across the US, London, and India. Seattle, WA.</span>
         </span>
       </li>
       <li>
-        <span class="project-header">
-          <a class="project-name" href="https://github.com/srijansk/agent-relay" target="_blank" rel="noopener">agent-relay</a>
-        </span>
-        <span class="desc">
-          Multi-agent workflows that learn from their own past runs. Plans, reviews, build logs,
-          and audits live in your git repo as markdown; <code>relay distill --llm</code> compresses
-          past reviewer rejections into forward-looking lessons the next planner reads automatically.
-          Alpha (v0.2).
+        <span class="dates">Nov 2024 &mdash; Mar 2025</span>
+        <span class="role">
+          <strong>Sourcegraph</strong><span class="sep">&middot;</span><span class="role-title">IC-5 MLE</span>
+          <span class="desc">LLM-driven ranking and retrieval for code search over large codebases &mdash; agentic search over code; shipped relevance and quality changes to external users.</span>
         </span>
       </li>
       <li>
-        <span class="project-header">
-          <a class="project-name" href="https://github.com/srijansk/claude-ui" target="_blank" rel="noopener">claude-ui</a>
+        <span class="dates">2017 &mdash; 2024</span>
+        <span class="role">
+          <strong>ShareChat</strong><span class="sep">&middot;</span><span class="role-title">Staff MLE</span>
+          <span class="desc">Scaled the recommender system from 1M to 200M users; built and led a global team of 18&ndash;20 engineers across 4&ndash;5 charters spanning content moderation, ranking, and feature pipelines.</span>
         </span>
-        <span class="desc">Web interface for Claude with document analysis and conversation history.</span>
       </li>
       <li>
-        <span class="project-header">
-          <a class="project-name" href="https://github.com/srijansk/LLMs-from-scratch" target="_blank" rel="noopener">LLMs-from-scratch</a>
+        <span class="dates">2016 &mdash; 2017</span>
+        <span class="role">
+          <strong>Fidelity Investments</strong><span class="sep">&middot;</span><span class="role-title">Data Scientist</span>
         </span>
-        <span class="desc">Study fork — building GPT-style models in PyTorch, from the ground up.</span>
+      </li>
+      <li>
+        <span class="dates">2011 &mdash; 2016</span>
+        <span class="role">
+          <strong>IIT Kanpur</strong><span class="sep">&middot;</span><span class="role-title">BS &amp; MS, Mathematics and Scientific Computing</span>
+        </span>
       </li>
     </ul>
   </section>
@@ -313,11 +320,6 @@ const talkTypeLabel: Record<string, string> = {
       and <a href="https://www.linkedin.com/in/srijansaket/" target="_blank" rel="noopener">LinkedIn</a>,
       and I'm happy to talk about applied research, retrieval and evaluation for agents, and
       production ML.
-    </p>
-    <p>
-      I'm always open to a conversation &mdash; research collaboration, comparing notes on
-      retrieval, memory, and evaluation for agents, or an interesting problem in the space.
-      I'm based in Seattle and work well with distributed teams across the US.
     </p>
   </section>
 </Layout>
