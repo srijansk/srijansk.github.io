@@ -150,11 +150,12 @@ const talkTypeLabel: Record<string, string> = {
           <span class="flagship-badge">flagship</span>
         </span>
         <span class="desc">
-          A local-first compiler that turns AI-coding-agent (Claude Code) sessions into a
-          versioned, plaintext, citable team-knowledge layer in your git repo. The compiler
-          refuses to emit a claim it cannot anchor: every claim ships with a verbatim source
-          anchor that resolves back to the session line it came from. Compiled end-to-end on
-          the public pydantic-ai repo (18 claims). Alpha, on PyPI &mdash;
+          A local-first compiler that turns coding-agent sessions and agent-authored pull
+          requests into a plaintext, citable team-knowledge book in your git repo. Every
+          claim quotes the exact source line it came from, and records whether the team
+          adopted it or tried it and declined &mdash; a field added after measuring, on 120
+          real agent PRs, that without it the rejected approach was stored as current
+          practice in roughly half of the declined ones. Alpha, on PyPI &mdash;
           <code>pipx install crewlore</code>.
         </span>
       </li>
