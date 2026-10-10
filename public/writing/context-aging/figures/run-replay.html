@@ -12,7 +12,7 @@
   .toggle button[aria-pressed="true"] { background: var(--accent); color: #FFFFFF; font-weight: 600; }
 
   /* the run */
-  .strip { position: relative; height: 54px; margin: 6px 0 2px; }
+  .strip { position: relative; height: 62px; margin: 6px 0 2px; }
   .cells { display: grid; grid-template-columns: repeat(40, 1fr); gap: 2px; height: 22px; }
   .cell { border-radius: 2px; background: var(--hairline); }
   .cell.past { background: #D8D8D2; }
@@ -20,9 +20,9 @@
   .cell.obs.aged { background: rgba(10,92,56,0.28); }
   .cell.draft { background: var(--text); }
   .cell.now { outline: 2px solid var(--text); outline-offset: 1px; }
-  .marks { position: relative; height: 26px; }
+  .marks { position: relative; height: 34px; }
   .mark { position: absolute; top: 4px; transform: translateX(-50%); font-size: 10px; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
-  .mark.d { color: var(--text); font-weight: 600; }
+  .mark.d { top: 18px; color: var(--text); font-weight: 600; }
 
   .controls { display: flex; align-items: center; gap: 12px; margin: 8px 0 16px; }
   .controls label { font-size: 11px; color: var(--muted); white-space: nowrap; }
@@ -31,9 +31,9 @@
 
   /* the four observations */
   .facts { display: grid; grid-template-columns: 1fr; gap: 6px; }
-  .fact { display: grid; grid-template-columns: 172px 1fr 56px; gap: 10px; align-items: center; font-size: 12px; }
+  .fact { display: grid; grid-template-columns: 200px 1fr 56px; gap: 10px; align-items: center; font-size: 12px; }
   .f-name { color: var(--soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .f-name small { display: block; font-size: 10px; color: var(--muted); font-family: var(--mono); }
+  .f-name small { display: block; font-size: 10px; color: var(--muted); font-family: var(--mono); white-space: normal; }
   .f-bar { height: 10px; background: var(--hairline); border-radius: 2px; position: relative; overflow: hidden; }
   .f-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent); border-radius: 2px; transition: width 90ms linear, background 120ms; }
   .f-fill.low { background: var(--warn); }
@@ -95,13 +95,13 @@
   <p class="verdict-b" id="verdictText"></p>
 </div>
 
-<p class="fig-hint">Effectiveness here is a schematic exponential in turns since the observation was made — an illustration of the shape, not a measured curve. Drafts happen at turns 14, 28 and 40. With a ledger, each draft is preceded by a read-back that reinstates every noted value, and closed by a gate that refuses once if a noted value is missing from the text.</p>
+<p class="fig-hint">Effectiveness here is a schematic exponential in turns since the observation was made — an illustration of the shape, not a measured curve. Drafts happen at turns 14, 28 and 40. With a ledger, each draft is preceded by a read-back that reinstates every noted value, and closed by a gate that refuses once if a noted value is missing from the text. The counts come from the schematic: the ledger arm is perfect by construction, not a measured effect.</p>
 
 <script>
   var N = 40, DRAFTS = [14, 28, 40], TAU = 9, KEEP = 0.35;
   var OBS = [
-    { t: 3,  name: 'fee constant, era 2',      val: '0.035' },
-    { t: 9,  name: 'cutover date',              val: '2024-03-11' },
+    { t: 3,  name: 'score cutoff',              val: 'keep ≥ p60' },
+    { t: 9,  name: 'cut to the top k',          val: 'k = 5' },
     { t: 17, name: 'retry exclusion',           val: 'before aggregate' },
     { t: 26, name: 'eligibility threshold',     val: '≥ 3 sessions' }
   ];
@@ -196,12 +196,12 @@
     } else if (ledger) {
       v.className = 'verdict good';
       h.textContent = landed + ' of ' + expected + ' expected values in the drafts';
-      b.textContent = (gated ? gated + ' of them had aged below the threshold by draft time and came back only because the read-back re-observed them. ' : '') + 'The ledger does not stop values ageing in the conversation. It makes the conversation stop being where they live.';
+      b.textContent = (gated ? gated + ' of them had aged below the threshold by draft time and came back only because the read-back re-observed them. ' : '') + 'The ledger does not stop values aging in the conversation. It stops the conversation being where they live.';
     } else {
       v.className = 'verdict' + (landed < expected ? ' bad' : '');
       h.textContent = landed + ' of ' + expected + ' expected values in the drafts';
       b.textContent = landed < expected
-        ? 'Every missing value was observed correctly and is still in the context. It was drafted from whatever was vivid at turn ' + DRAFTS.filter(function (d) { return d <= now; }).pop() + '.'
+        ? 'Every missing value was observed and is still in the context. The section was drafted from whatever was vivid at turn ' + DRAFTS.filter(function (d) { return d <= now; }).pop() + '.'
         : 'So far every draft happened while its values were still fresh.';
     }
   }
@@ -217,5 +217,6 @@
   range.addEventListener('input', render);
   render();
 </script>
+<script src="../../_figure.js"></script>
 </body>
 </html>

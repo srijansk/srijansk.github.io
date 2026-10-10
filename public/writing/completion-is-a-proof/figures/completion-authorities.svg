@@ -57,7 +57,7 @@
 
   <text class="join" x="198" y="332">1</text><text class="item" x="216" y="332">seal admission</text>
   <text class="join" x="198" y="352">2</text><text class="item" x="216" y="352">settle every admitted session</text>
-  <text class="join" x="198" y="372">3</text><text class="item" x="216" y="372">advance publication past the largest terminal mutation</text>
+  <text class="join" x="198" y="372">3</text><text class="item" x="216" y="372">advance publication through the largest terminal mutation</text>
   <text class="join" x="198" y="392">4</text><text class="item" x="216" y="392">write the manifest last, then read back that exact version</text>
 
   <!-- outcome -->

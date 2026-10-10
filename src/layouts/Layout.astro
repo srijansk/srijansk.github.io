@@ -12,6 +12,10 @@ interface Props {
   ogType?: 'profile' | 'article';
   /** Path relative to the site root, e.g. /writing/foo/card.png */
   ogImage?: string;
+  /** Link-preview title, when it should differ from the tab title. */
+  ogTitle?: string;
+  /** Describes ogImage for previews that expose alt text. */
+  ogImageAlt?: string;
 }
 
 const {
@@ -22,6 +26,8 @@ const {
   noindex = false,
   ogType = 'profile',
   ogImage,
+  ogTitle,
+  ogImageAlt,
 } = Astro.props;
 
 const site = Astro.site?.toString().replace(/\/$/, '') ?? 'https://srijansaket.com';
@@ -42,13 +48,17 @@ const isPost = pageType === 'post';
     <link rel="canonical" href={canonicalUrl} />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
 
-    <meta property="og:title" content={title} />
+    <meta property="og:title" content={ogTitle ?? title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content={ogType} />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:site_name" content="Srijan Saket" />
     <meta property="og:image" content={ogImage ? `${site}${ogImage}` : `${site}/srijan.png`} />
+    {ogImage && <meta property="og:image:width" content="1200" />}
+    {ogImage && <meta property="og:image:height" content="630" />}
+    {ogImage && ogImageAlt && <meta property="og:image:alt" content={ogImageAlt} />}
     <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
+    <meta name="twitter:site" content="@srijanskt2" />
     <meta name="twitter:creator" content="@srijanskt2" />
 
     <link rel="alternate" type="application/rss+xml" title="Srijan Saket — Writing" href="/rss.xml" />

@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 420" width="1000" height="420" role="img"
      aria-labelledby="title desc" font-family="Inter, system-ui, -apple-system, 'Segoe UI', sans-serif">
   <title id="title">Effective use of an item by its position in a long context</title>
-  <desc id="desc">A curve showing that an item placed near the start or the end of a long context is used far more effectively than the identical item placed in the middle. The same shape describes position bias in ranked lists, where top-of-list items receive disproportionate engagement regardless of quality.</desc>
+  <desc id="desc">A curve showing that an item placed near the start or the end of a long context is used far more effectively than the identical item placed in the middle. A schematic, not data: the U-shape follows Liu et al. (2023). Position bias in ranked lists is a related effect that decays from the top rather than recovering.</desc>
 
   <style>
     .kicker { font-size: 11.75px; fill: #595959; letter-spacing: .11em; text-transform: uppercase; }
@@ -72,7 +72,7 @@
 
   <!-- footer mapping -->
   <line x1="30" y1="358" x2="890" y2="358" stroke="#E5E5E0"/>
-  <text class="lede" x="30" y="380">Recommender systems named this <tspan font-weight="600">position bias</tspan> in the mid-2000s and correct for it with</text>
-  <text class="lede" x="30" y="398">randomised exposure and propensity weighting. Agent context met it again as <tspan font-style="italic">lost in the middle</tspan>.</text>
+  <text class="lede" x="30" y="380">Web search measured <tspan font-weight="600">position bias</tspan> in ranked lists in the mid-2000s and corrects for it with</text>
+  <text class="lede" x="30" y="398">randomised exposure and propensity weighting. Agent context met a cousin of it as <tspan font-style="italic">lost in the middle</tspan>.</text>
   </g>
 </svg>

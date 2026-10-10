@@ -38,14 +38,14 @@ export const GET: APIRoute = async () => {
       <guid isPermaLink="true">${esc(link)}</guid>
       <pubDate>${entry.data.date.toUTCString()}</pubDate>
       <description>${esc(description)}</description>
-      <author>${esc(byline(entry))}</author>
+      <dc:creator>${esc(byline(entry))}</dc:creator>
 ${entry.data.tags.map((tag) => `      <category>${esc(tag)}</category>`).join('\n')}
     </item>`;
     })
     .join('\n');
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
     <title>Srijan Saket — Writing</title>
     <link>${SITE}/writing/</link>

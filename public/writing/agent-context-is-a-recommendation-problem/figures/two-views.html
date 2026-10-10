@@ -82,11 +82,11 @@
 <script>
   var VIEWS = {
     rec: {
-      hint: 'By 2016, YouTube\'s architecture paper could already call candidate generation followed by ranking "the classic two-stage dichotomy".',
+      hint: 'By 2016, YouTube\'s architecture paper could already describe its candidate-generation-then-ranking split as "the classic two-stage information retrieval dichotomy".',
       stages: [
         { name: 'Catalogue', sub: 'everything that could be shown', vol: '10⁶–10⁹ items',
           d: 'The full inventory. Far too large to score item by item, which is the entire reason the next two stages are separate.' },
-        { name: 'Candidate generation', sub: 'cheap recall over everything', vol: '→ ~10³',
+        { name: 'Candidate generation', sub: 'cheap recall over everything', vol: '→ ~10²–10³',
           d: 'Optimised for recall, not precision. Its job is to not lose the good item; deciding which of the survivors is best is explicitly somebody else\'s problem.' },
         { name: 'Ranking', sub: 'expensive, feature-rich, precision', vol: '→ ~10¹',
           d: 'A second pass using features similarity cannot see: recency, authority, interaction history, context. This is where a recommender spends its intelligence.' },
@@ -97,18 +97,18 @@
       ]
     },
     agent: {
-      hint: 'Most agent-context stacks ship the candidate generator straight to the prompt and call it retrieval.',
+      hint: 'Most agent-context stacks stop at query relevance: retrieve, perhaps rerank, concatenate.',
       stages: [
         { name: 'Everything the org knows', sub: 'code, docs, warehouse, history', vol: 'unbounded',
           d: 'Heterogeneous and mostly unwritten. The knowledge that matters most is frequently the knowledge nobody documented.' },
         { name: 'Vector search', sub: 'top-k by similarity', vol: '→ k ≈ 5–20',
           d: 'Recall-oriented, exactly like candidate generation — but here its output goes straight into the prompt, so it is asked to do a precision job it was never designed for.' },
-        { name: 'Ranking', sub: 'usually absent', vol: 'no second pass', absent: true,
-          d: 'The missing stage. Nothing re-scores candidates using recency, source authority, contradiction history, or which entities this specific task actually touches.' },
+        { name: 'Ranking', sub: 'relevance only, if any', vol: 'no task-aware pass', absent: true,
+          d: 'The missing stage. A cross-encoder may rescore candidates for query relevance; nothing scores them against the task: recency, source authority, contradiction history, which entities this task touches, what else is already in the prompt.' },
         { name: 'Prompt assembly', sub: 'usually concatenation', vol: 'a hard budget',
-          d: 'Slate construction under a much tighter budget, with position effects that are known and largely uncorrected. Redundancy here costs you the task, not just a scroll.' },
+          d: 'Slate construction under a much tighter budget, with position effects that are known, have off-the-shelf mitigations, and are rarely measured. Redundancy here costs you the task, not just a scroll.' },
         { name: 'Model', sub: 'did the task succeed?', vol: 'one weak signal',
-          d: 'Sparse, delayed, expensive, and nearly impossible to attribute back to a single injected claim. This is where the analogy genuinely breaks.' }
+          d: 'Sparse, delayed, expensive, and nearly impossible to attribute back to a single injected claim. This is one of the places the analogy breaks.' }
       ]
     }
   };
@@ -118,7 +118,19 @@
   var hint = document.getElementById('hint');
   var current = 'rec', selected = 1;
 
-  function render() {
+  // Selecting a stage updates the existing buttons in place, so keyboard
+  // focus stays where the reader put it. Only a vocabulary switch rebuilds.
+  function select(i) {
+    selected = i;
+    Array.prototype.forEach.call(flow.children, function (b, j) {
+      b.setAttribute('aria-selected', String(j === i));
+    });
+    var stage = VIEWS[current].stages[i];
+    dH.textContent = stage.name;
+    dP.textContent = stage.d;
+  }
+
+  function build() {
     var view = VIEWS[current];
     hint.textContent = view.hint;
     flow.innerHTML = '';
@@ -126,30 +138,29 @@
       var b = document.createElement('button');
       b.className = 'node' + (s.absent ? ' absent' : '');
       b.setAttribute('role', 'tab');
-      b.setAttribute('aria-selected', String(i === selected));
       b.innerHTML =
         '<span class="n-step">' + String(i + 1).padStart(2, '0') + '</span>' +
         '<span class="n-name">' + s.name + '</span>' +
         '<span class="n-sub">' + s.sub + '</span>' +
         '<span class="n-vol">' + s.vol + '</span>';
-      b.addEventListener('click', function () { selected = i; render(); });
-      b.addEventListener('mouseenter', function () { selected = i; render(); });
+      b.addEventListener('click', function () { select(i); });
+      b.addEventListener('mouseenter', function () { select(i); });
       flow.appendChild(b);
     });
-    dH.textContent = view.stages[selected].name;
-    dP.textContent = view.stages[selected].d;
+    select(selected);
   }
 
   function setView(v) {
     current = v;
     document.getElementById('vRec').setAttribute('aria-pressed', String(v === 'rec'));
     document.getElementById('vAgent').setAttribute('aria-pressed', String(v === 'agent'));
-    render();
+    build();
   }
 
   document.getElementById('vRec').addEventListener('click', function () { setView('rec'); });
   document.getElementById('vAgent').addEventListener('click', function () { setView('agent'); });
   setView('rec');
 </script>
+<script src="../../_figure.js"></script>
 </body>
 </html>

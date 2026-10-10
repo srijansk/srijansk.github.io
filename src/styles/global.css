@@ -1051,8 +1051,9 @@ strong { font-weight: 600; color: var(--text); }
  * container query, not the viewport: the article measure and the .wide
  * break-out mean the two diverge substantially.
  *
- * Heights are measured, with a small buffer. If you edit a figure's
- * content, re-measure.
+ * These heights are the first-paint size and the no-script fallback. Each
+ * figure also loads public/writing/_figure.js, which reports its real height
+ * to the post page, so the live size always fits the content.
  */
 .prose figure {
   container-type: inline-size;
@@ -1078,6 +1079,29 @@ strong { font-weight: 600; color: var(--text); }
   .fig-evidence-path { height: 340px; }
   .fig-noise-floor   { height: 345px; }
   .fig-two-views     { height: 370px; }
+}
+
+/* Static diagrams are drawn on a 1000-unit canvas; on a phone their labels
+ * shrink below reading size. Each one links to its own SVG, so a tap opens
+ * it full size where the reader can zoom. */
+.prose figure a.fig-zoom {
+  display: block;
+  cursor: zoom-in;
+  text-decoration: none;
+}
+.prose figure a.fig-zoom:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+@media (max-width: 700px) {
+  .prose figure a.fig-zoom::after {
+    content: 'Tap to open full size';
+    display: block;
+    margin-top: 0.45rem;
+    font-family: var(--font-heading);
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
 }
 
 .prose figcaption {

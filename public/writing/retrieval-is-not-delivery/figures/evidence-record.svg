@@ -44,7 +44,7 @@
   <text class="k" x="46" y="326">What did not</text>
   <text class="lost" x="46" y="348">— the retry exclusion</text>
   <text class="lost" x="46" y="370">— the source and location</text>
-  <text class="lost" x="46" y="392">— the eligibility condition</text>
+  <text class="lost" x="46" y="392">— the verbatim wording</text>
   <text class="lost" x="46" y="414">— any signal that something is missing</text>
 
   <rect x="46" y="434" width="378" height="34" rx="2" fill="rgba(155,74,47,0.07)" stroke="rgba(155,74,47,0.28)"/>
@@ -78,6 +78,6 @@
 
   <!-- ── footer ───────────────────────────────────────────────── -->
   <line x1="30" y1="500" x2="890" y2="500" stroke="#E5E5E0"/>
-  <text class="note" x="30" y="516">Exact excerpts surviving the handoff: 22% with summaries, 60% with structured records.</text>
+  <text class="note" x="30" y="516">Excerpts the agent read that reached the handoff: 22% at baseline, 60% after the structured record and related changes.</text>
   </g>
 </svg>
