@@ -97,18 +97,18 @@
       ]
     },
     agent: {
-      hint: 'Most agent-context stacks stop at query relevance: retrieve, perhaps rerank, concatenate.',
+      hint: 'The agent-context stacks I have seen stop at query relevance: retrieve, perhaps rerank, concatenate.',
       stages: [
         { name: 'Everything the org knows', sub: 'code, docs, warehouse, history', vol: 'unbounded',
           d: 'Heterogeneous and mostly unwritten. The knowledge that matters most is frequently the knowledge nobody documented.' },
-        { name: 'Vector search', sub: 'top-k by similarity', vol: '→ k ≈ 5–20',
-          d: 'Recall-oriented, exactly like candidate generation — but here its output goes straight into the prompt, so it is asked to do a precision job it was never designed for.' },
+        { name: 'Vector search', sub: 'top-k by similarity', vol: '→ top k',
+          d: 'Recall-oriented, exactly like candidate generation. Its top k, reranked or not, usually goes straight into the prompt, so it is asked to do a precision job it was never designed for.' },
         { name: 'Ranking', sub: 'relevance only, if any', vol: 'no task-aware pass', absent: true,
           d: 'The missing stage. A cross-encoder may rescore candidates for query relevance; nothing scores them against the task: recency, source authority, contradiction history, which entities this task touches, what else is already in the prompt.' },
         { name: 'Prompt assembly', sub: 'usually concatenation', vol: 'a hard budget',
           d: 'Slate construction under a much tighter budget, with position effects that are known, have off-the-shelf mitigations, and are rarely measured. Redundancy here costs you the task, not just a scroll.' },
         { name: 'Model', sub: 'did the task succeed?', vol: 'one weak signal',
-          d: 'Sparse, delayed, expensive, and nearly impossible to attribute back to a single injected claim. This is one of the places the analogy breaks.' }
+          d: 'Sparse, delayed, expensive, and costly to attribute back to a single injected claim. This is one of the places the analogy breaks.' }
       ]
     }
   };

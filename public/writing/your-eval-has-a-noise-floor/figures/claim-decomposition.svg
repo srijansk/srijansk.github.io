@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 440" width="1000" height="440" role="img"
      aria-labelledby="title desc" font-family="Inter, system-ui, -apple-system, 'Segoe UI', sans-serif">
   <title id="title">One compound rubric claim scored three ways</title>
-  <desc id="desc">A single rubric claim is decomposed into four atomic assertions, and an artifact satisfies three of them. Scored whole, all-or-nothing, the claim earns zero. Credited by the fraction of assertions met, it earns seventy-five percent. Requiring every assertion, it earns zero again, from the same four verdicts. The same output produces a different headline number depending on the ruler.</desc>
+  <desc id="desc">A single rubric claim is decomposed into four atomic assertions, and an artifact satisfies three of them. Scored whole, all-or-nothing, the claim earns zero, unless the judge rounds up. Credited by the fraction of assertions met, it earns seventy-five percent. Requiring every assertion, it earns zero again, from the same four verdicts. The same output produces a different headline number depending on the ruler.</desc>
 
   <style>
     .kicker { font-size: 11.75px; fill: #595959; letter-spacing: .11em; text-transform: uppercase; }
@@ -57,7 +57,7 @@
   <rect x="620" y="128" width="270" height="49" rx="3" fill="rgba(155,74,47,0.05)" stroke="rgba(155,74,47,0.3)"/>
   <text class="slabel" x="636" y="146">Whole claim, all-or-nothing</text>
   <text class="score" x="636" y="170" fill="#9B4A2F">0%</text>
-  <text class="note" x="690" y="170" fill="#9B4A2F">one verdict on the compound</text>
+  <text class="note" x="690" y="170" fill="#9B4A2F">unless the judge rounds up</text>
 
   <rect x="620" y="183" width="270" height="49" rx="3" fill="rgba(10,92,56,0.06)" stroke="rgba(10,92,56,0.35)"/>
   <text class="slabel" x="636" y="201">Fraction of assertions met</text>
@@ -71,7 +71,7 @@
 
   <!-- footer -->
   <line x1="30" y1="322" x2="890" y2="322" stroke="#E5E5E0"/>
-  <text class="note" x="30" y="346">Same artifact. Same evidence. Three headline numbers, because the ruler changed, not the work.</text>
+  <text class="note" x="30" y="346">Same artifact. Same evidence. The headline depends on the ruler, not the work.</text>
   <text class="note" x="30" y="368">Decomposition changes what a verdict means: each assertion asks one question instead of several.</text>
   <text class="note" x="30" y="386">The aggregation rule decides which way the number moves.</text>
 

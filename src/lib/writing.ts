@@ -99,6 +99,7 @@ export function readingTime(body: string | undefined): string | undefined {
   if (!body) return undefined;
   const words = body
     .replace(/```[\s\S]*?```/g, ' ')
+    .replace(/<svg[\s\S]*?<\/svg>/g, ' ')
     .replace(/<[^>]+>/g, ' ')
     .split(/\s+/)
     .filter(Boolean).length;
@@ -122,7 +123,7 @@ export const SERIES_THESIS: Record<string, string> = {
   'Evidence-carrying systems':
     'You cannot improve what you cannot locate. Three posts on making evidence, completion, and measurement legible enough to fix.',
   'Context as a ranking problem':
-    'Getting the right knowledge to the right agent at the right moment is a recommendation problem, and the field has two decades of answers.',
+    'Getting the right knowledge to the right agent at the right moment is a ranking problem, and search and recommendation have spent two decades on close cousins of it.',
 };
 
 /** Sibling posts in the same series, in reading order. */

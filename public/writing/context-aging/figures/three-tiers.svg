@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 590" width="1000" height="590" role="img"
      aria-labelledby="title desc" font-family="Inter, system-ui, -apple-system, 'Segoe UI', sans-serif">
   <title id="title">Three memory tiers and the four moves between the top two</title>
-  <desc id="desc">Three stacked bands. Working context at the top: what the model reasons over now, small, expensive, aging. Task memory in the middle: durable, structured, each row with provenance — the findings ledger, evidence records, workspace, already-read set. Long-term memory at the bottom: the reference document and its index, which outlive the task. Four moves between the top two tiers: note at observation with the value, review by reading back before drafting, draft from the tier, and a gate in code that checks every noted value is present before a section closes. A right-hand column lists which published systems keep which tier.</desc>
+  <desc id="desc">Three stacked bands. Working context at the top: what the model reasons over now, small, expensive, aging. Task memory in the middle: durable, structured, each row with provenance — the findings ledger, evidence records, workspace, already-read set. Long-term memory at the bottom: the reference document and its index, which outlive the task. Four moves between the top two tiers: note at observation with the value, review by reading back before drafting, draft from the tier, and a gate in code that checks noted entries against the text before a section closes. A right-hand column lists which published systems keep which tier.</desc>
   <style>
     .kicker { font-size: 11.75px; fill: #595959; letter-spacing: .11em; text-transform: uppercase; }
     .h { font-size: 15.25px; fill: #1A1A1A; font-weight: 600; }  .sub { font-size: 12.9px; fill: #595959; }
@@ -55,7 +55,7 @@
   <text class="arrowsub" x="455" y="220.0">from the tier</text>
   <rect x="547" y="186" width="156" height="28" rx="3" fill="#FFFFFF" stroke="#0A5C38" stroke-width="1.25"/>
   <text class="arrow" x="625" y="204" text-anchor="middle" style="fill:#0A5C38">gate · code, not model</text>
-  <text class="arrowsub" x="625" y="232" text-anchor="middle">every noted value present</text>
+  <text class="arrowsub" x="625" y="232" text-anchor="middle">noted entries in the text</text>
   <text class="arrowsub" x="625" y="246" text-anchor="middle">before a section closes?</text>
   <line x1="300" y1="374" x2="300" y2="432" stroke="#595959" stroke-width="1.25"/>
   <path d="M300 440 l -5 -8 l 10 0 z" fill="#595959"/>

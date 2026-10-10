@@ -27,7 +27,7 @@ This class of bug matters because coding agents do more than call short APIs. Th
 
 What follows is the contract <b>Vivek Sharma</b> and I arrived at, the probes we used to qualify it, and the parts we still cannot prove.
 
-None of the parts is new. The thesis is the [end-to-end argument](https://web.mit.edu/Saltzer/www/publications/endtoend/endtoend.pdf): in Saltzer, Reed and Clark's careful file transfer, the transfer is declared committed only after the receiver reads the file back from disk and the checksums match. The rules are settled practice: idempotency keys, cursor-based log replay, systemd's TERM-then-KILL across a control group, Kubernetes' Unknown pod phase and at-most-one StatefulSets, and durable execution, which I have [written about before](https://bitsnneurons.substack.com/p/crash-proof-custom-agents). What is easy to skip in an agent runtime is the join at the end of a run.
+None of the parts is new. The thesis is the [end-to-end argument](https://web.mit.edu/Saltzer/www/publications/endtoend/endtoend.pdf): in Saltzer, Reed and Clark's careful file transfer, the transfer is declared committed only after the receiver reads the file back from disk and the checksums match. The rules are settled practice: idempotency keys, cursor-based log replay, systemd's TERM-then-KILL across a control group, Kubernetes' Unknown pod phase and at-most-one StatefulSets, and durable execution, which Vivek Chandela and I have [written about before](https://bitsnneurons.substack.com/p/crash-proof-custom-agents). What is easy to skip in an agent runtime is the join at the end of a run.
 
 ## One status hides four clocks
 
@@ -38,13 +38,13 @@ Many agent products compress the end of a run into a single state: running, succ
 3. **Output**: have stdout and stderr been drained to a known final byte?
 4. **Workspace**: are the resulting files present in a verified, restorable checkpoint?
 
-They can settle in any order. A request can vanish while the command continues. A parent can exit while a child holds a pipe open. Output can drain before an asynchronous upload finishes. The model can emit a final response anywhere on that timeline, and that response is an intent to close, not proof that closing is safe.
+Their order is not fixed. A request can vanish while the command continues. A parent can exit while a child holds a pipe open. Output can drain before an asynchronous upload finishes. The model can emit a final response anywhere on that timeline, and that response is an intent to close, not proof that closing is safe.
 
 <figure class="wide">
   <!-- Inlined from figures/four-clocks.svg (canonical; edit there, then re-inline).
        Inline rather than <img> so the page's print and reduced-motion rules apply:
        an <img> sub-document would print at frame zero, i.e. empty. -->
-  <a class="fig-zoom" href="/writing/completion-is-a-proof/figures/four-clocks.svg">
+  <a class="fig-zoom" href="/writing/zoom.html?f=/writing/completion-is-a-proof/figures/four-clocks.svg">
   <svg xmlns="http://www.w3.org/2000/svg" id="fc" viewBox="0 0 1000 420" width="1000" height="420" role="img"
        aria-labelledby="title desc" font-family="Inter, system-ui, -apple-system, 'Segoe UI', sans-serif">
     <title id="title">Four clocks settling independently at the end of an agent run</title>
@@ -126,7 +126,7 @@ The useful abstraction is a small set of evidence receipts, each produced by the
 - The **close protocol** freezes admission, settles every admitted session, verifies that the checkpoint covers their terminal mutations, and only then publishes success and releases compute.
 
 <figure class="wide">
-  <a class="fig-zoom" href="/writing/completion-is-a-proof/figures/completion-authorities.svg"><img src="/writing/completion-is-a-proof/figures/completion-authorities.svg" alt="Diagram showing three authorities (session runtime, workspace service, close protocol), each certifying only facts it can observe, joined into a single completion decision." width="1000" height="500" loading="lazy" decoding="async" /></a>
+  <a class="fig-zoom" href="/writing/zoom.html?f=/writing/completion-is-a-proof/figures/completion-authorities.svg"><img src="/writing/completion-is-a-proof/figures/completion-authorities.svg" alt="Diagram showing three authorities (session runtime, workspace service, close protocol), each certifying only facts it can observe, joined into a single completion decision." width="1000" height="500" loading="lazy" decoding="async" /></a>
   <figcaption><b>FIG. 02</b> — No component is asked to certify a fact it cannot observe. The close protocol exposes success only after joining the runtime and workspace receipts.</figcaption>
 </figure>
 
@@ -206,7 +206,7 @@ If the answers reduce to *the stream ended*, *the exit code was zero*, or *the m
 
 Evidence-carrying completion is a safety contract under explicit assumptions: the authority store is not corrupt, exact-version object reads can be trusted, and the sandbox provider either reports process state correctly or can attest that a dedicated runtime was destroyed. It is not formal verification, not a promise of continuous availability, and not exactly-once execution: after positive death evidence, a retry may run the command again on top of whatever the first attempt left behind. If an isolated runtime cannot be inspected or destroyed, close may remain blocked; that is the intended behaviour, and it is still an outage. Bytes lost before reaching any durable surface cannot be reconstructed. Effects outside the managed workspace — an API call, a database write, an email — need their own transaction or compensation mechanism, and nothing here provides one.
 
-The evidence is also narrower than a finished benchmark. The traces above are qualification records rather than a public corpus. High-concurrency remote stress and several provider-specific recovery paths remain unmeasured. We have not published a latency distribution from process exit through verified task success. Those are the next experiments, not numbers to infer from the probes.
+The evidence is also narrower than a finished benchmark. The traces above are qualification records rather than a public corpus. High-concurrency remote stress is not yet qualified, and several provider-specific recovery paths remain unmeasured. We have not published a latency distribution from process exit through verified task success. Those are the next experiments, not numbers to infer from the probes.
 
 ## The larger shift
 

@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<title>Figure — Srijan Saket</title>
+<style>
+  /* Full-size view of one static figure. The figures are drawn on a 1000-unit
+     canvas; inline on a phone their labels shrink below reading size, and a
+     bare SVG opened without a viewport tag is scaled down just as far. Here the
+     figure keeps its drawn width and the reader scrolls sideways instead. */
+  html, body { margin: 0; background: #FAFAF7; color: #1A1A1A; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; }
+  header { display: flex; align-items: center; gap: 16px; padding: 12px 16px; border-bottom: 1px solid #E5E5E0; font-size: 14px; }
+  a { color: #0A5C38; }
+  .hint { margin: 12px 16px 0; font-size: 13px; color: #595959; }
+  .scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 12px 16px 24px; }
+  img { display: block; width: 1000px; max-width: none; height: auto; background: #FFFFFF; border: 1px solid #E5E5E0; border-radius: 3px; }
+  @media (min-width: 1040px) { .hint { display: none; } }
+</style>
+</head>
+<body>
+<header><a id="back" href="/writing/">&larr; Back to the post</a></header>
+<p class="hint">Scroll sideways to read the whole figure.</p>
+<div class="scroll" id="wrap"><img id="fig" alt="" /></div>
+<script>
+  (function () {
+    var f = new URLSearchParams(location.search).get('f') || '';
+    var wrap = document.getElementById('wrap'), img = document.getElementById('fig');
+    // Only this site's own figure SVGs, by path.
+    if (/^\/writing\/[a-z0-9-]+\/figures\/[a-z0-9-]+\.svg$/.test(f)) {
+      img.src = f;
+      img.alt = 'Figure ' + f.split('/').pop().replace('.svg', '') + ', full size';
+      document.title = f.split('/').pop().replace('.svg', '').replace(/-/g, ' ') + ' — figure';
+    } else {
+      wrap.textContent = 'Figure not found.';
+    }
+    var back = document.getElementById('back');
+    try {
+      if (document.referrer && new URL(document.referrer).origin === location.origin) {
+        back.href = document.referrer;
+        back.addEventListener('click', function (e) {
+          if (history.length > 1) { e.preventDefault(); history.back(); }
+        });
+      }
+    } catch (err) {}
+  })();
+</script>
+</body>
+</html>
