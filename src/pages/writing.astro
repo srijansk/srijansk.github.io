@@ -30,24 +30,23 @@ const years = [...groupedByYear.keys()].sort((a, b) => b - a);
 
 <Layout
   title="Writing — Srijan Saket"
-  description="Essays, engineering war stories, and technical deep-dives by Srijan Saket on retrieval, agent systems, and evaluation."
+  description="Essays by Srijan Saket on agents, retrieval and evaluation, plus older engineering stories."
   pageType="inner"
 >
-  <section class="section lede">
-    <h1>Writing</h1>
-    <p class="hero-sub">
-      Essays on retrieval, agent systems, and evaluation &mdash; plus older engineering war
-      stories. Long-form pieces where the argument is mine are published here; I also co-write
-      the infra + AI newsletter
+  <section class="page-intro">
+    <h1 class="page-title">Writing</h1>
+    <p class="page-lede">
+      Essays on agents, retrieval and evaluation, plus older engineering stories. Long-form pieces
+      are published here. I also co-write the infrastructure and AI newsletter
       <a href="https://bitsnneurons.substack.com" target="_blank" rel="noopener">Bits &amp; Neurons</a>
-      with Vivek Chandela. Earlier posts appeared on the ShareChat engineering blog and Medium.
+      with Vivek Chandela, and earlier posts appeared on the ShareChat engineering blog and Medium.
     </p>
   </section>
 
   {series.map((s) => (
     <section class="section series-block" aria-labelledby={`series-${s.posts[0].id}`}>
-      <span class="section-kicker">Series</span>
-      <h2 id={`series-${s.posts[0].id}`}>{s.name}</h2>
+      <p class="series-label">Series · {s.posts.length} parts</p>
+      <h2 class="series-title" id={`series-${s.posts[0].id}`}>{s.name}</h2>
       {s.thesis && <p class="series-thesis">{s.thesis}</p>}
       <ol class="series-list">
         {s.posts.map((w) => {
@@ -74,67 +73,51 @@ const years = [...groupedByYear.keys()].sort((a, b) => b - a);
     </section>
   ))}
 
-  {series.length > 0 && (
-    <section class="section">
-      <span class="section-kicker">Everything</span>
-      <h2>All writing</h2>
-    </section>
-  )}
-
-  {years.map((y) => (
-    <section class="section year-group">
-      <h2 class="year-label">{y}</h2>
-      <ul class="writing-full-list">
-        {groupedByYear.get(y)!.map((w) => {
-          const href = hrefFor(w);
-          const attrs = linkAttrs(w);
-          const own = isSelfHosted(w);
-          const minutes = own ? readingTime(w.body) : undefined;
-          return (
-            <li>
-              {w.data.thumbnail && (
-                <a class="writing-full-thumb" href={href} aria-label={`Open: ${w.data.title}`} {...attrs}>
-                  <img
-                    src={w.data.thumbnail}
-                    alt=""
-                    width="480"
-                    height="270"
-                    loading="lazy"
-                    decoding="async"
-                  />
+  <section class="section" aria-labelledby="all-writing">
+    <h2 class="section-title" id="all-writing">All writing</h2>
+    {years.map((y) => (
+      <div class="year-group">
+        <h3 class="year-label">{y}</h3>
+        <ul class="list-cards">
+          {groupedByYear.get(y)!.map((w) => {
+            const own = isSelfHosted(w);
+            const minutes = own ? readingTime(w.body)?.replace(' read', '') : undefined;
+            const image = w.data.cover ?? w.data.thumbnail;
+            return (
+              <li>
+                <a class="list-card" href={hrefFor(w)} {...linkAttrs(w)}>
+                  {image && (
+                    <span class:list={['list-media', w.data.cover && 'list-media--figure']}>
+                      <img src={image} alt="" width="400" height="250" loading="lazy" decoding="async" />
+                    </span>
+                  )}
+                  <span class="list-body">
+                    <span class="work-title">
+                      {w.data.title}
+                      {w.data.draft && <span class="draft-pill">draft</span>}
+                    </span>
+                    <span class="work-meta">
+                      {dateShort.format(w.data.date)}
+                      {minutes && <> · {minutes}</>}
+                      {w.data.coauthors.length > 0 && <> · with {w.data.coauthors.join(' and ')}</>}
+                      {own ? (w.data.series && <> · {w.data.series}</>) : <> · {w.data.publication}</>}
+                    </span>
+                    <span class="work-text work-text--3">{w.data.excerpt ?? w.data.teaser}</span>
+                  </span>
                 </a>
-              )}
-              <div class="writing-full-body">
-                <span class="writing-meta">
-                  {own ? byline(w) : w.data.publication}
-                  <span class="sep">&middot;</span>
-                  {dateShort.format(w.data.date)}
-                  {minutes && <><span class="sep">&middot;</span>{minutes}</>}
-                  {w.data.series && <><span class="sep">&middot;</span><span class="writing-series">{w.data.series}</span></>}
-                  {w.data.draft && <span class="draft-pill">draft</span>}
-                </span>
-                <h3 class="writing-title">
-                  <a href={href} {...attrs}>{w.data.title}</a>
-                </h3>
-                <p class="writing-excerpt">{w.data.excerpt ?? w.data.teaser}</p>
-                <p class="writing-cta">
-                  <a href={href} {...attrs}>
-                    {own ? 'Read' : `Read on ${w.data.publication}`} &rarr;
-                  </a>
-                </p>
-              </div>
-            </li>
-          );
-        })}
-      </ul>
-    </section>
-  ))}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    ))}
+  </section>
 
-  <section class="section">
-    <h2>Subscribe</h2>
-    <p>
-      New posts here land in the <a href="/rss.xml">RSS feed</a>. For the newsletter, subscribe to
-      <a href="https://bitsnneurons.substack.com" target="_blank" rel="noopener">Bits &amp; Neurons on Substack &rarr;</a>
+  <section class="section" aria-labelledby="subscribe">
+    <h2 class="section-title" id="subscribe">Subscribe</h2>
+    <p class="page-text">
+      New essays land in the <a href="/rss.xml">RSS feed</a>. The newsletter is
+      <a href="https://bitsnneurons.substack.com" target="_blank" rel="noopener">Bits &amp; Neurons on Substack</a>.
     </p>
   </section>
 </Layout>

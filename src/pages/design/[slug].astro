@@ -1,0 +1,47 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection, render } from 'astro:content';
+import { readingTime } from '../../lib/writing';
+
+/** Design pieces read like essays: the post layout, one column, figures break out. */
+export async function getStaticPaths() {
+  const pieces = await getCollection('design');
+  return pieces.map((piece) => ({ params: { slug: piece.id }, props: { piece } }));
+}
+
+const { piece } = Astro.props;
+const { Content } = await render(piece);
+
+const dateLong = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+const kindLabel: Record<string, string> = { concept: 'Concept', principle: 'Principle', study: 'Study' };
+const minutes = readingTime(piece.body);
+---
+
+<Layout
+  title={`${piece.data.title} — Srijan Saket`}
+  description={piece.data.summary}
+  pageType="post"
+  noindex={piece.data.draft}
+  ogType="article"
+  ogTitle={piece.data.title}
+>
+  <article class="post">
+    <header class="post-header">
+      <p class="post-series-kicker"><a href="/design/">Design</a> · {kindLabel[piece.data.kind]}</p>
+      <h1>{piece.data.title}</h1>
+      <p class="post-dek">{piece.data.summary}</p>
+      <p class="post-meta">
+        <span>Srijan Saket</span>
+        <span class="sep">&middot;</span>
+        <time datetime={piece.data.date.toISOString()}>{dateLong.format(piece.data.date)}</time>
+        {minutes && <><span class="sep">&middot;</span><span>{minutes}</span></>}
+      </p>
+    </header>
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    <p class="post-back"><a href="/design/">&larr; All design</a></p>
+  </article>
+</Layout>

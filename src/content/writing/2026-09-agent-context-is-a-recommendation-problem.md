@@ -9,6 +9,7 @@ tags: [retrieval, agents, recsys, context-engineering]
 series: "Context as a ranking problem"
 seriesOrder: 1
 thumbnail: "/writing/agent-context-is-a-recommendation-problem/plate.svg"
+cover: "/writing/agent-context-is-a-recommendation-problem/figures/position-effect.svg"
 socialImage: "/writing/agent-context-is-a-recommendation-problem/card.png"
 featured: true
 draft: false

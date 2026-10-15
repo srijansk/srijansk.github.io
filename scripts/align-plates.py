@@ -27,7 +27,7 @@ PLATES = sorted((ROOT / "public/writing").glob("*/plate.svg"))
 
 # The shared frame. Plates are 1200x630; the ink sits centred on this point.
 CENTRE_X, CENTRE_Y = 600, 315
-BACKGROUND = (250, 250, 247)
+BACKGROUND = (255, 255, 255)
 TOLERANCE = 2          # px of drift we accept before reporting a plate as off
 PROBE = 2              # render at 1/PROBE scale to measure; offsets scale back
 
@@ -92,7 +92,7 @@ def ink_box(svg: Path) -> tuple[int, int, int, int]:
         png = Path(tmp) / "probe.png"
         subprocess.run(
             ["rsvg-convert", "-w", str(1200 // PROBE), "-h", str(630 // PROBE),
-             "-b", "#FAFAF7", "-o", str(png), str(svg)],
+             "-b", "#FFFFFF", "-o", str(png), str(svg)],
             check=True, capture_output=True,
         )
         rows, width, height, channels = decode_png(png)

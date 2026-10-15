@@ -9,6 +9,7 @@ tags: [evaluation, benchmarks, agents]
 series: "Evidence-carrying systems"
 seriesOrder: 3
 thumbnail: "/writing/your-eval-has-a-noise-floor/plate.svg"
+cover: "/writing/your-eval-has-a-noise-floor/figures/claim-decomposition.svg"
 socialImage: "/writing/your-eval-has-a-noise-floor/card.png"
 featured: true
 draft: false

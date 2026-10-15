@@ -1,0 +1,40 @@
+---
+import Layout from '../layouts/Layout.astro';
+import DesignPreview from '../components/DesignPreview.astro';
+import { getCollection } from 'astro:content';
+
+const pieces = (await getCollection('design'))
+  .filter((d) => import.meta.env.DEV || !d.data.draft)
+  .sort((a, b) => a.data.order - b.data.order);
+
+const monthYear = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', timeZone: 'UTC' });
+const kindLabel: Record<string, string> = { concept: 'Concept', principle: 'Principle', study: 'Study' };
+---
+
+<Layout
+  title="Design — Srijan Saket"
+  description="How Srijan Saket thinks about interfaces for AI: concepts with working prototypes, and the principles behind them."
+  pageType="inner"
+>
+  <section class="page-intro">
+    <h1 class="page-title">Design</h1>
+    <p class="page-lede">
+      How I think about interfaces for AI: concepts with working prototypes, and the principles
+      behind them. Most of it comes from one question I work on every day: how does a person check,
+      correct and trust what an agent produced?
+    </p>
+  </section>
+
+  <section class="section">
+    <div class="work-grid">
+      {pieces.map((d) => (
+        <a class="work-card" href={`/design/${d.id}/`}>
+          <span class="work-media work-media--live"><DesignPreview kind={d.data.preview} /></span>
+          <span class="work-title">{d.data.title}</span>
+          <span class="work-meta">{kindLabel[d.data.kind]} · {monthYear.format(d.data.date)}</span>
+          <span class="work-text">{d.data.summary}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+</Layout>

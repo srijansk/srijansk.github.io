@@ -2,11 +2,11 @@
   <title id="t">Retrieval Is Not Delivery</title>
   <!--
     PLATE GRAMMAR (shared by every plate; keep these in step)
-      canvas    1200x630, ground #FAFAF7
+      canvas    1200x630, ground #FFFFFF
       ink box   ~920 x ~340, optically centred on (600, 315)
       strokes   hairline 2 · structure 7 · emphasis 9
       dots      r7 small · r10 mid · r13 large · seal r20 + ring r30
-      colours   #1A1A1A ink · #0A5C38 accent · #9B4A2F loss
+      colours   #111113 ink · #2443D6 accent · #C2410C loss
     Everything sits inside g.ink; scripts/align-plates.py rewrites that
     transform so all four plates share one centre. Do not hand-tune it.
 
@@ -14,12 +14,12 @@
     reading, and four in a single handoff. Two arrive. The biggest loss comes
     after the evidence was found.
   -->
-  <rect width="1200" height="630" fill="#FAFAF7"/>
+  <rect width="1200" height="630" fill="#FFFFFF"/>
 
   <g class="ink" transform="translate(2,1)">
     <g stroke-linecap="round" fill="none">
       <!-- boundaries between stages -->
-      <g stroke="#1A1A1A" stroke-width="2" opacity=".28">
+      <g stroke="#111113" stroke-width="2" opacity=".28">
         <line x1="300" y1="130" x2="300" y2="500"/>
         <line x1="480" y1="130" x2="480" y2="500"/>
         <line x1="660" y1="130" x2="660" y2="500"/>
@@ -27,7 +27,7 @@
       </g>
 
       <!-- lost along the path: 8 → 7 → 6 → 2 → 2; the handoff takes four -->
-      <g stroke="#1A1A1A" stroke-width="7" opacity=".30">
+      <g stroke="#111113" stroke-width="7" opacity=".30">
         <line x1="178" y1="158" x2="300" y2="158"/>
         <line x1="178" y1="473" x2="480" y2="473"/>
         <line x1="178" y1="203" x2="660" y2="203"/>
@@ -37,14 +37,14 @@
       </g>
 
       <!-- the two that survive the whole path -->
-      <g stroke="#0A5C38" stroke-width="9">
+      <g stroke="#2443D6" stroke-width="9">
         <line x1="178" y1="293" x2="1046" y2="293"/>
         <line x1="178" y1="338" x2="1046" y2="338"/>
       </g>
     </g>
 
     <!-- where a strand was lost -->
-    <g stroke="#9B4A2F" stroke-width="4" stroke-linecap="round">
+    <g stroke="#C2410C" stroke-width="4" stroke-linecap="round">
       <g transform="translate(300,158)"><line x1="-9" y1="-9" x2="9" y2="9"/><line x1="9" y1="-9" x2="-9" y2="9"/></g>
       <g transform="translate(480,473)"><line x1="-9" y1="-9" x2="9" y2="9"/><line x1="9" y1="-9" x2="-9" y2="9"/></g>
       <g transform="translate(660,203)"><line x1="-9" y1="-9" x2="9" y2="9"/><line x1="9" y1="-9" x2="-9" y2="9"/></g>
@@ -54,10 +54,10 @@
     </g>
 
     <!-- arrival -->
-    <circle cx="1046" cy="293" r="13" fill="#0A5C38"/>
-    <circle cx="1046" cy="338" r="13" fill="#0A5C38"/>
+    <circle cx="1046" cy="293" r="13" fill="#2443D6"/>
+    <circle cx="1046" cy="338" r="13" fill="#2443D6"/>
 
     <!-- the source -->
-    <path d="M156 158 L142 158 L142 473 L156 473" stroke="#1A1A1A" stroke-width="5" fill="none" stroke-linecap="round" opacity=".55"/>
+    <path d="M156 158 L142 158 L142 473 L156 473" stroke="#111113" stroke-width="5" fill="none" stroke-linecap="round" opacity=".55"/>
   </g>
 </svg>

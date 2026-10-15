@@ -10,11 +10,11 @@
     argument, so it is the only thing in the mark that is dashed. Gaps widen
     left to right so the mark reads as a narrowing.
   -->
-  <rect width="1200" height="630" fill="#FAFAF7"/>
+  <rect width="1200" height="630" fill="#FFFFFF"/>
 
   <g class="ink" transform="translate(46,1)">
     <!-- the corpus -->
-    <g fill="#1A1A1A" opacity=".34">
+    <g fill="#111113" opacity=".34">
       <circle cx="116" cy="164" r="8"/>
       <circle cx="165" cy="165" r="8"/>
       <circle cx="206" cy="169" r="8"/>
@@ -60,13 +60,13 @@
     </g>
 
     <!-- gate one: candidate generation, real -->
-    <g fill="none" stroke="#0A5C38" stroke-width="7" stroke-linecap="round">
+    <g fill="none" stroke="#2443D6" stroke-width="7" stroke-linecap="round">
       <path d="M447 160 L465 160 L465 470 L447 470"/>
       <path d="M483 160 L465 160 M483 470 L465 470"/>
     </g>
 
     <!-- survivors -->
-    <g fill="#1A1A1A" opacity=".52">
+    <g fill="#111113" opacity=".52">
       <circle cx="565" cy="204" r="10"/>
       <circle cx="620" cy="212" r="10"/>
       <circle cx="565" cy="279" r="10"/>
@@ -78,14 +78,14 @@
     </g>
 
     <!-- gate two: ranking, missing -->
-    <g fill="none" stroke="#9B4A2F" stroke-width="6" stroke-linecap="round" stroke-dasharray="12 10">
+    <g fill="none" stroke="#C2410C" stroke-width="6" stroke-linecap="round" stroke-dasharray="12 10">
       <path d="M772 160 L790 160 L790 470 L772 470"/>
       <path d="M808 160 L790 160 M808 470 L790 470"/>
     </g>
 
     <!-- the slate -->
-    <line x1="990" y1="240" x2="990" y2="429" stroke="#0A5C38" stroke-width="2" opacity=".45"/>
-    <g fill="#0A5C38">
+    <line x1="990" y1="240" x2="990" y2="429" stroke="#2443D6" stroke-width="2" opacity=".45"/>
+    <g fill="#2443D6">
       <circle cx="990" cy="240" r="13"/>
       <circle cx="990" cy="303" r="13"/>
       <circle cx="990" cy="366" r="13"/>

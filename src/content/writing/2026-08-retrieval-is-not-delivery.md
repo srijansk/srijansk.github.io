@@ -10,6 +10,7 @@ tags: [retrieval, agents, evaluation]
 series: "Evidence-carrying systems"
 seriesOrder: 1
 thumbnail: "/writing/retrieval-is-not-delivery/plate.svg"
+cover: "/writing/retrieval-is-not-delivery/figures/evidence-record.svg"
 socialImage: "/writing/retrieval-is-not-delivery/card.png"
 featured: true
 draft: false

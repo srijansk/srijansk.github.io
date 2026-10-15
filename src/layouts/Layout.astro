@@ -20,7 +20,7 @@ interface Props {
 
 const {
   title,
-  description = 'Srijan Saket — building the tribal knowledge layer for LLM agents. Founding Engineer at Pavo AI. Ex-Sourcegraph, ex-ShareChat. Applied research at the intersection of recommender systems and agentic AI.',
+  description = 'Srijan Saket builds the knowledge layer AI agents work from, as a founding engineer at Pavo AI. Before that, seven years scaling recommendation at ShareChat and code search at Sourcegraph. Essays on agents, retrieval and evaluation; design work on interfaces for AI.',
   canonical,
   pageType = 'home',
   noindex = false,
@@ -32,8 +32,17 @@ const {
 
 const site = Astro.site?.toString().replace(/\/$/, '') ?? 'https://srijansaket.com';
 const canonicalUrl = canonical ?? new URL(Astro.url.pathname, site).toString();
-const isHome = pageType === 'home';
 const isPost = pageType === 'post';
+
+// One list drives both navs; the current section is derived from the URL, so
+// a post under /writing/ marks Writing and a piece under /design/ marks Design.
+const path = Astro.url.pathname;
+const NAV = [
+  { href: '/', label: 'Home' },
+  { href: '/writing/', label: 'Writing' },
+  { href: '/design/', label: 'Design' },
+  { href: '/talks/', label: 'Speaking' },
+].map((n) => ({ ...n, current: n.href === '/' ? path === '/' : path.startsWith(n.href) }));
 ---
 
 <!doctype html>
@@ -101,9 +110,7 @@ const isPost = pageType === 'post';
             <span class="topbar-name">Srijan Saket</span>
           </a>
           <nav class="topbar-nav" aria-label="Pages">
-            <a href="/">Home</a>
-            <a href="/writing/" aria-current="page">Writing</a>
-            <a href="/talks/">Speaking</a>
+            {NAV.map((n) => <a href={n.href} aria-current={n.current ? 'page' : undefined}>{n.label}</a>)}
           </nav>
         </header>
       )}
@@ -114,66 +121,50 @@ const isPost = pageType === 'post';
             class="sidebar-avatar"
             src="/srijan.png"
             alt="Portrait of Srijan Saket"
-            width="200"
-            height="200"
+            width="96"
+            height="96"
             decoding="async"
             fetchpriority="high"
           />
         </a>
         <a class="sidebar-name" href="/">Srijan Saket</a>
-        <p class="sidebar-role">
-          Founding Engineer at <strong>Pavo AI</strong>
-        </p>
-        <p class="sidebar-sub">Retrieval, agents &amp; evaluation &middot; recommender systems</p>
-        <p class="sidebar-location">
-          <span aria-hidden="true">📍</span> Seattle, WA
-        </p>
+        <p class="sidebar-role">Founding engineer, Pavo AI</p>
+        <p class="sidebar-location">Seattle</p>
 
         <nav class="sidebar-nav" aria-label="Pages">
-          <a href="/">Home</a>
-          <a href="/writing/">Writing</a>
-          <a href="/talks/">Speaking</a>
+          {NAV.map((n) => <a href={n.href} aria-current={n.current ? 'page' : undefined}>{n.label}</a>)}
         </nav>
 
-        <nav class="sidebar-links" aria-label="Social profiles">
-          <a href="https://www.linkedin.com/in/srijansaket/" target="_blank" rel="noopener" aria-label="LinkedIn">
-            <svg class="icon" aria-hidden="true"><use href="#i-linkedin" /></svg>
-            <span>LinkedIn</span>
-          </a>
-          <a href="https://x.com/srijanskt2" target="_blank" rel="noopener" aria-label="X (Twitter)">
-            <svg class="icon" aria-hidden="true"><use href="#i-x" /></svg>
-            <span>X <span class="muted-aside">/ Twitter</span></span>
-          </a>
-          <a href="https://github.com/srijansk" target="_blank" rel="noopener" aria-label="GitHub">
-            <svg class="icon" aria-hidden="true"><use href="#i-github" /></svg>
-            <span>GitHub</span>
-          </a>
-          <a href="https://scholar.google.com/citations?user=hheK6oIAAAAJ&hl=en" target="_blank" rel="noopener" aria-label="Google Scholar">
-            <svg class="icon" aria-hidden="true"><use href="#i-scholar" /></svg>
-            <span>Google Scholar</span>
-          </a>
-          <a href="https://bitsnneurons.substack.com" target="_blank" rel="noopener" aria-label="Bits & Neurons on Substack">
-            <svg class="icon" aria-hidden="true"><use href="#i-substack" /></svg>
-            <span>Bits &amp; Neurons</span>
-          </a>
-          <a href="mailto:srijanskt@gmail.com" aria-label="Email">
-            <svg class="icon" aria-hidden="true"><use href="#i-email" /></svg>
-            <span>srijanskt@gmail.com</span>
-          </a>
+        <nav class="sidebar-links" aria-label="Elsewhere">
+          <a href="https://www.linkedin.com/in/srijansaket/" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="https://x.com/srijanskt2" target="_blank" rel="noopener">X</a>
+          <a href="https://github.com/srijansk" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://scholar.google.com/citations?user=hheK6oIAAAAJ&hl=en" target="_blank" rel="noopener">Scholar</a>
+          <a href="https://bitsnneurons.substack.com" target="_blank" rel="noopener">Newsletter</a>
         </nav>
-
-        {!isHome && (
-          <p class="sidebar-back"><a href="/">&larr; Back to home</a></p>
-        )}
+        <a class="sidebar-mail" href="mailto:srijanskt@gmail.com">srijanskt@gmail.com</a>
       </aside>
       )}
 
       <main id="content">
+        <script is:inline>
+          // Interactive figures post their content height (public/writing/_figure.js);
+          // size each iframe to fit so no viewport width or figure state clips it.
+          window.addEventListener('message', function (e) {
+            if (e.origin !== location.origin || !e.data || e.data.type !== 'figure-height') return;
+            var frames = document.querySelectorAll('figure iframe');
+            for (var i = 0; i < frames.length; i++) {
+              var f = frames[i];
+              if (f.contentWindow !== e.source) continue;
+              f.style.height = (e.data.height + (f.offsetHeight - f.clientHeight)) + 'px';
+            }
+          });
+        </script>
         <slot />
         <footer class="site-footer">
-          Built with <a href="https://astro.build" target="_blank" rel="noopener">Astro</a>
-          <span>&middot;</span>
-          <a href="https://github.com/srijansk/srijansk.github.io" target="_blank" rel="noopener">source &rarr;</a>
+          <span>Srijan Saket, Seattle</span>
+          <a href="mailto:srijanskt@gmail.com">Email</a>
+          <a href="/rss.xml">RSS</a>
         </footer>
       </main>
     </div>

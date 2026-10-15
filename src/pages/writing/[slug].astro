@@ -67,7 +67,7 @@ const position = showSeries ? siblings.findIndex((s) => s.id === post.id) + 1 : 
 
       {showSeries && (
         <p class="post-series-kicker">
-          {post.data.series} &middot; part {position} of {siblings.length}
+          <a href="/writing/">{post.data.series}</a> &middot; part {position} of {siblings.length}
         </p>
       )}
 
@@ -82,11 +82,6 @@ const position = showSeries ? siblings.findIndex((s) => s.id === post.id) + 1 : 
         {minutes && <><span class="sep">&middot;</span><span>{minutes}</span></>}
       </p>
 
-      {post.data.tags.length > 0 && (
-        <ul class="post-tags">
-          {post.data.tags.map((tag) => <li>{tag}</li>)}
-        </ul>
-      )}
     </header>
 
     {post.data.thumbnail && (
@@ -109,20 +104,6 @@ const position = showSeries ? siblings.findIndex((s) => s.id === post.id) + 1 : 
         </ol>
       </nav>
     )}
-
-    <script is:inline>
-      // Interactive figures post their content height (public/writing/_figure.js);
-      // size each iframe to fit so no viewport width or figure state clips it.
-      window.addEventListener('message', function (e) {
-        if (e.origin !== location.origin || !e.data || e.data.type !== 'figure-height') return;
-        var frames = document.querySelectorAll('.prose figure iframe');
-        for (var i = 0; i < frames.length; i++) {
-          var f = frames[i];
-          if (f.contentWindow !== e.source) continue;
-          f.style.height = (e.data.height + (f.offsetHeight - f.clientHeight)) + 'px';
-        }
-      });
-    </script>
 
     <div class="prose">
       <Content />

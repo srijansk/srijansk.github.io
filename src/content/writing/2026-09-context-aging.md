@@ -10,6 +10,7 @@ coauthors: ["Susnato Dhar"]
 series: "Context as a ranking problem"
 seriesOrder: 2
 thumbnail: "/writing/context-aging/plate.svg"
+cover: "/writing/context-aging/figures/four-variables.svg"
 socialImage: "/writing/context-aging/card.png"
 featured: true
 draft: false

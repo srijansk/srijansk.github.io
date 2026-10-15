@@ -9,15 +9,15 @@
     single mark that rises clearly out of it. Everything inside the band is
     weather.
   -->
-  <rect width="1200" height="630" fill="#FAFAF7"/>
+  <rect width="1200" height="630" fill="#FFFFFF"/>
 
   <g class="ink" transform="translate(1,2)">
     <!-- the band: what an unchanged configuration already does -->
-    <rect x="175" y="372" width="850" height="98" fill="rgba(155,74,47,0.09)"/>
-    <line x1="175" y1="372" x2="1025" y2="372" stroke="#9B4A2F" stroke-width="3" stroke-dasharray="10 8" opacity=".75"/>
+    <rect x="175" y="372" width="850" height="98" fill="rgba(194,65,12,0.09)"/>
+    <line x1="175" y1="372" x2="1025" y2="372" stroke="#C2410C" stroke-width="3" stroke-dasharray="10 8" opacity=".75"/>
 
     <!-- noise -->
-    <g stroke="#1A1A1A" stroke-width="7" stroke-linecap="round" opacity=".32">
+    <g stroke="#111113" stroke-width="7" stroke-linecap="round" opacity=".32">
       <line x1="175" y1="470" x2="175" y2="420"/>
       <line x1="208" y1="470" x2="208" y2="411"/>
       <line x1="240" y1="470" x2="240" y2="384"/>
@@ -47,10 +47,10 @@
     </g>
 
     <!-- the result that clears the floor -->
-    <line x1="600" y1="470" x2="600" y2="168" stroke="#0A5C38" stroke-width="13" stroke-linecap="round"/>
-    <circle cx="600" cy="168" r="17" fill="#0A5C38"/>
+    <line x1="600" y1="470" x2="600" y2="168" stroke="#2443D6" stroke-width="13" stroke-linecap="round"/>
+    <circle cx="600" cy="168" r="17" fill="#2443D6"/>
 
     <!-- baseline -->
-    <line x1="145" y1="470" x2="1055" y2="470" stroke="#1A1A1A" stroke-width="2" opacity=".55"/>
+    <line x1="145" y1="470" x2="1055" y2="470" stroke="#111113" stroke-width="2" opacity=".55"/>
   </g>
 </svg>

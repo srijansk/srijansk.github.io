@@ -4,13 +4,13 @@
   <desc id="desc">Left: a short summary preserving only the gist, with four fields shown as lost. Right: a structured record preserving the finding, a verbatim excerpt, its source, the conditions attached, and any open gap.</desc>
 
   <style>
-    .lbl { font-size: 12.9px; fill: #595959; letter-spacing: .09em; text-transform: uppercase; }
-    .h   { font-size: 15.25px; fill: #1A1A1A; font-weight: 600; }
-    .k   { font-size: 11.75px; fill: #595959; letter-spacing: .06em; text-transform: uppercase; }
-    .v   { font-size: 14.1px; fill: #2F2F2F; }
-    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 14.1px; fill: #1A1A1A; }
-    .lost{ font-size: 14.1px; fill: #9B4A2F; }
-    .note{ font-size: 12.9px; fill: #595959; }
+    .lbl { font-size: 12.9px; fill: #62646C; letter-spacing: .09em; text-transform: uppercase; }
+    .h   { font-size: 15.25px; fill: #111113; font-weight: 600; }
+    .k   { font-size: 11.75px; fill: #62646C; letter-spacing: .06em; text-transform: uppercase; }
+    .v   { font-size: 14.1px; fill: #2C2D32; }
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 14.1px; fill: #111113; }
+    .lost{ font-size: 14.1px; fill: #C2410C; }
+    .note{ font-size: 12.9px; fill: #62646C; }
   </style>
 
   <rect width="1000" height="520" fill="#FFFFFF"/>
@@ -19,23 +19,23 @@
 
   <!-- ── source ─────────────────────────────────────────────── -->
   <text class="lbl" x="30" y="30">What the source says</text>
-  <rect x="30" y="42" width="860" height="58" rx="3" fill="#FAFAF7" stroke="#D8D8D2"/>
+  <rect x="30" y="42" width="860" height="58" rx="3" fill="#F7F7F8" stroke="#DCDCE0"/>
   <text class="mono" x="46" y="66">Daily active is computed over eligible records only, aggregated per calendar day,</text>
   <text class="mono" x="46" y="86">after retried events are excluded.  — ops-runbook.md, §4.2</text>
 
   <!-- connector -->
-  <path d="M300 100 L300 122 M300 122 L180 122 L180 146" stroke="#D8D8D2" stroke-width="1.25" fill="none"/>
-  <path d="M620 100 L620 122 M620 122 L700 122 L700 146" stroke="#0A5C38" stroke-width="1.25" fill="none" opacity=".55"/>
-  <polygon points="180,152 176,144 184,144" fill="#D8D8D2"/>
-  <polygon points="700,152 696,144 704,144" fill="#0A5C38" opacity=".55"/>
+  <path d="M300 100 L300 122 M300 122 L180 122 L180 146" stroke="#DCDCE0" stroke-width="1.25" fill="none"/>
+  <path d="M620 100 L620 122 M620 122 L700 122 L700 146" stroke="#2443D6" stroke-width="1.25" fill="none" opacity=".55"/>
+  <polygon points="180,152 176,144 184,144" fill="#DCDCE0"/>
+  <polygon points="700,152 696,144 704,144" fill="#2443D6" opacity=".55"/>
 
   <!-- ── LEFT: free-form summary ───────────────────────────────── -->
-  <rect x="30" y="156" width="410" height="330" rx="3" fill="#FFFFFF" stroke="#D8D8D2"/>
-  <rect x="30" y="156" width="410" height="34" rx="3" fill="#FAFAF7"/>
-  <rect x="30" y="186" width="410" height="4" fill="#FAFAF7"/>
+  <rect x="30" y="156" width="410" height="330" rx="3" fill="#FFFFFF" stroke="#DCDCE0"/>
+  <rect x="30" y="156" width="410" height="34" rx="3" fill="#F7F7F8"/>
+  <rect x="30" y="186" width="410" height="4" fill="#F7F7F8"/>
   <text class="h" x="46" y="179">Free-form summary</text>
 
-  <rect x="46" y="206" width="378" height="34" rx="2" fill="#FAFAF7" stroke="#E5E5E0"/>
+  <rect x="46" y="206" width="378" height="34" rx="2" fill="#F7F7F8" stroke="#EBEBEE"/>
   <text class="mono" x="58" y="228">"aggregate eligible records by day"</text>
 
   <text class="k" x="46" y="272">What survived</text>
@@ -47,13 +47,13 @@
   <text class="lost" x="46" y="392">— the verbatim wording</text>
   <text class="lost" x="46" y="414">— any signal that something is missing</text>
 
-  <rect x="46" y="434" width="378" height="34" rx="2" fill="rgba(155,74,47,0.07)" stroke="rgba(155,74,47,0.28)"/>
-  <text class="note" x="58" y="455" fill="#9B4A2F">The receiving agent cannot tell this is incomplete.</text>
+  <rect x="46" y="434" width="378" height="34" rx="2" fill="rgba(194,65,12,0.07)" stroke="rgba(194,65,12,0.28)"/>
+  <text class="note" x="58" y="455" fill="#C2410C">The receiving agent cannot tell this is incomplete.</text>
 
   <!-- ── RIGHT: structured record ──────────────────────────────── -->
-  <rect x="480" y="156" width="410" height="330" rx="3" fill="#FFFFFF" stroke="#0A5C38" stroke-opacity=".45"/>
-  <rect x="480" y="156" width="410" height="34" rx="3" fill="rgba(10,92,56,0.08)"/>
-  <rect x="480" y="186" width="410" height="4" fill="rgba(10,92,56,0.08)"/>
+  <rect x="480" y="156" width="410" height="330" rx="3" fill="#FFFFFF" stroke="#2443D6" stroke-opacity=".45"/>
+  <rect x="480" y="156" width="410" height="34" rx="3" fill="rgba(36,67,214,0.08)"/>
+  <rect x="480" y="186" width="410" height="4" fill="rgba(36,67,214,0.08)"/>
   <text class="h" x="496" y="179">Structured evidence record</text>
 
   <g>
@@ -73,11 +73,11 @@
     <text class="v" x="496" y="424">not yet checked against the live table</text>
   </g>
 
-  <rect x="496" y="434" width="378" height="34" rx="2" fill="rgba(10,92,56,0.07)" stroke="rgba(10,92,56,0.28)"/>
-  <text class="note" x="508" y="455" fill="#0A5C38">Interpretation is separable from what the source actually said.</text>
+  <rect x="496" y="434" width="378" height="34" rx="2" fill="rgba(36,67,214,0.07)" stroke="rgba(36,67,214,0.28)"/>
+  <text class="note" x="508" y="455" fill="#2443D6">Interpretation is separable from what the source actually said.</text>
 
   <!-- ── footer ───────────────────────────────────────────────── -->
-  <line x1="30" y1="500" x2="890" y2="500" stroke="#E5E5E0"/>
+  <line x1="30" y1="500" x2="890" y2="500" stroke="#EBEBEE"/>
   <text class="note" x="30" y="516">Excerpts the agent read that reached the handoff: 22% at baseline, 60% after the structured record and related changes.</text>
   </g>
 </svg>

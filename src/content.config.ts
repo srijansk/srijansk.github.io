@@ -55,6 +55,8 @@ const writing = defineCollection({
     teaser: z.string(),
     excerpt: z.string().optional(),
     thumbnail: z.string().optional(),
+    /** A real figure from the piece, shown on cards in place of the plate. */
+    cover: z.string().optional(),
     /** Raster twin of `thumbnail` for og:image — most platforms will not
         render an SVG social card, so the plate is shipped both ways. */
     socialImage: z.string().optional(),
@@ -73,4 +75,23 @@ const writing = defineCollection({
   }),
 });
 
-export const collections = { talks, publications, writing };
+/**
+ * Design: how I think about interfaces for AI, shown as concepts with working
+ * prototypes. Each entry renders at /design/<slug>/ in the post layout; the
+ * `prototype` path, when set, is an iframed interactive figure under /design/.
+ */
+const design = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/design' }),
+  schema: z.object({
+    title: z.string(),
+    summary: z.string(),
+    date: z.coerce.date(),
+    kind: z.enum(['concept', 'principle', 'study']),
+    order: z.number().default(0),
+    /** Which mini preview the cards draw for this piece. */
+    preview: z.enum(['review', 'tally', 'figures']),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { talks, publications, writing, design };

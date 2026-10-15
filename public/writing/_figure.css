@@ -9,19 +9,19 @@
  * figure would be a real bandwidth cost for a caption-sized gain.
  */
 :root {
-  --bg: #FAFAF7;
+  --bg: #F7F7F8;
   --surface: #FFFFFF;
-  --text: #1A1A1A;
-  --muted: #595959;
-  --soft: #2F2F2F;
-  --accent: #0A5C38;
-  --accent-soft: rgba(10, 92, 56, 0.08);
-  --accent-mid: rgba(10, 92, 56, 0.42);
-  --warn: #9B4A2F;
-  --warn-soft: rgba(155, 74, 47, 0.09);
-  --hairline: #E5E5E0;
-  --hairline-strong: #D8D8D2;
-  --font: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --text: #111113;
+  --muted: #62646C;
+  --soft: #2C2D32;
+  --accent: #2443D6;
+  --accent-soft: rgba(36, 67, 214, 0.08);
+  --accent-mid: rgba(36, 67, 214, 0.42);
+  --warn: #C2410C;
+  --warn-soft: rgba(194, 65, 12, 0.09);
+  --hairline: #EBEBEE;
+  --hairline-strong: #DCDCE0;
+  --font: system-ui, -apple-system, 'Segoe UI', sans-serif;
   --mono: ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, monospace;
 }
 
@@ -43,9 +43,8 @@ body {
 }
 
 .fig-kicker {
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.11em;
+  font-size: 12px;
+  font-weight: 600;
   color: var(--muted);
   margin: 0 0 10px;
 }

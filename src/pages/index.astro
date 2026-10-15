@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import DesignPreview from '../components/DesignPreview.astro';
 import { getCollection } from 'astro:content';
 import {
   getPublishedWriting,
@@ -7,320 +8,271 @@ import {
   linkAttrs,
   isSelfHosted,
   readingTime,
-  byline,
 } from '../lib/writing';
 
 const allTalks = await getCollection('talks');
 const talks = allTalks
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
-  .slice(0, 6);
+  .slice(0, 4);
 
 const allPubs = await getCollection('publications');
 const papers = allPubs
   .filter((p) => p.data.type === 'paper')
   .sort((a, b) => b.data.year - a.data.year);
-const patents = allPubs.filter((p) => p.data.type === 'patent');
-const books = allPubs.filter((p) => p.data.type === 'book');
+const otherPubs = allPubs.filter((p) => p.data.type !== 'paper');
 
-// A shelf, not an archive: the six most recent featured pieces. /writing/ has everything.
-const writing = (await getPublishedWriting({ includeDrafts: import.meta.env.DEV })).filter((w) => w.data.featured).slice(0, 6);
+// A shelf, not an archive: the four most recent featured pieces. /writing/ has everything.
+const allWriting = await getPublishedWriting({ includeDrafts: import.meta.env.DEV });
+const writing = allWriting.filter((w) => w.data.featured).slice(0, 4);
 
-const dateShort = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', timeZone: 'UTC' });
-const talkTypeLabel: Record<string, string> = {
+const design = (await getCollection('design'))
+  .filter((d) => import.meta.env.DEV || !d.data.draft)
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 2);
+
+const monthYear = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', timeZone: 'UTC' });
+const talkType: Record<string, string> = {
   keynote: 'Keynote',
   talk: 'Talk',
   panel: 'Panel',
   tutorial: 'Tutorial',
-  'pc-service': 'Service',
+  'pc-service': 'Programme committee',
   webinar: 'Webinar',
 };
+const designKind: Record<string, string> = { concept: 'Concept', principle: 'Principle', study: 'Study' };
+
+// What the essays argue, one line each. Every belief links to the piece that
+// makes the case, and the note under it gives the number or finding behind it.
+const beliefs = [
+  {
+    text: 'Evidence is only useful if it survives every handoff.',
+    href: '/writing/retrieval-is-not-delivery/',
+    source: 'Retrieval Is Not Delivery',
+    note: 'Of the excerpts one agent had read, 22% reached the next agent. A structured record took that to 60%.',
+  },
+  {
+    text: 'An agent is finished when it can prove it, not when it says so.',
+    href: '/writing/completion-is-a-proof/',
+    source: 'Completion Is a Proof, Not a Status',
+    note: 'A tool call can end while the command it started is still running. Four clocks have to settle first.',
+  },
+  {
+    text: 'Measure how much a benchmark moves before claiming it improved.',
+    href: '/writing/your-eval-has-a-noise-floor/',
+    source: 'Your Eval Has a Noise Floor',
+    note: 'One unchanged configuration scored 33, 27, 17 and 25 claims out of sixty.',
+  },
+  {
+    text: 'Choosing what an agent sees is a ranking problem.',
+    href: '/writing/agent-context-is-a-recommendation-problem/',
+    source: 'Agent Context Is a Recommendation Problem',
+    note: 'Picking a small, ordered set under a hard budget, without being asked, is what recommenders have worked on for twenty years.',
+  },
+  {
+    text: 'An agent forgets things it is still holding, so write them down when it sees them.',
+    href: '/writing/context-aging/',
+    source: 'Context Aging',
+    note: 'An agent read a two-step rule in its first minute and drafted it, twenty minutes later, as one step.',
+  },
+  {
+    text: 'Anything an agent writes should show what each claim is made from.',
+    href: '/design/reviewing-what-an-agent-wrote/',
+    source: 'Reviewing what an agent wrote',
+    note: 'Citations that open the exact source line, and human edits that survive the next regeneration.',
+  },
+];
 ---
 
-<Layout title="Srijan Saket — Tribal knowledge layer for LLM agents" pageType="home" ogImage="/card.png">
-  <section class="section lede">
-    <h1 class="hero-thesis">Building the tribal knowledge layer for LLM agents.</h1>
-    <p class="hero-sub">
-      The context engine agents need to reason reliably over enterprise data — with principles
-      that extend to personal-scale context too. Bringing the recommender-systems playbook
-      to a problem the agent-memory world has not recognized as a recommendation problem.
+<Layout title="Srijan Saket" pageType="home" ogImage="/card.png">
+  <section class="intro">
+    <h1 class="intro-title">I build the knowledge layer AI agents work from.</h1>
+    <p class="intro-text">
+      Founding engineer at Pavo AI. Before that, seven years scaling recommendation at ShareChat
+      from one million users to two hundred million, then code search at Sourcegraph. I write
+      about what agents lose between finding something and using it, and I design the interfaces
+      people use to check an agent's work.
     </p>
-    <p class="hero-sub">
-      <em>I write here about agents, retrieval, and evaluation. If you are working on the
-      same problems, get in touch.</em>
-    </p>
-  </section>
-
-  <section class="section" id="writing">
-    <h2>Selected writing</h2>
-    <p class="section-lede">
-      Essays on retrieval, agent systems, and evaluation. I also co-write the infra + AI
-      newsletter
-      <a href="https://bitsnneurons.substack.com" target="_blank" rel="noopener">Bits &amp; Neurons</a>
-      with Vivek Chandela.
-    </p>
-    {writing.length === 0 ? (
-      <p>First essays are in review &mdash; check back shortly.</p>
-    ) : (
-      <div class="writing-stack writing-stack--home">
-        {writing.map((w) => {
-          const href = hrefFor(w);
-          const attrs = linkAttrs(w);
-          const own = isSelfHosted(w);
-          const minutes = own ? readingTime(w.body) : undefined;
-          return (
-            <article class="writing-card">
-              {w.data.thumbnail && (
-                <a class="writing-thumb" href={href} aria-label={`Open: ${w.data.title}`} {...attrs}>
-                  <img
-                    src={w.data.thumbnail}
-                    alt=""
-                    width="480"
-                    height="270"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </a>
-              )}
-              <div class="writing-body">
-                <span class="writing-meta">
-                  {own ? byline(w) : w.data.publication}
-                  <span class="sep">&middot;</span>
-                  {dateShort.format(w.data.date)}
-                  {minutes && <><span class="sep">&middot;</span>{minutes}</>}
-                </span>
-                <h3 class="writing-title">
-                  <a href={href} {...attrs}>{w.data.title}</a>
-                </h3>
-                <p class="writing-excerpt">{w.data.teaser}</p>
-                <p class="writing-cta">
-                  <a href={href} {...attrs}>
-                    {own ? 'Read' : `Read on ${w.data.publication}`} &rarr;
-                  </a>
-                </p>
-              </div>
-            </article>
-          );
-        })}
-      </div>
-    )}
-    <p class="follow-line">
-      New essays land in the <a href="/rss.xml">RSS feed</a>. I post short summaries on
-      <a href="https://www.linkedin.com/in/srijansaket/" target="_blank" rel="noopener">LinkedIn</a> and
-      <a href="https://x.com/srijanskt2" target="_blank" rel="noopener">X</a>.
-    </p>
-    <p class="archive-line">
-      <a href="/writing/">All writing &rarr;</a>
+    <p class="intro-facts">
+      <a href="#papers">Papers at WWW, RecSys, SIGIR and CIKM</a>
+      <span aria-hidden="true">·</span>
+      <a href="/talks/2023-12-fire-keynote/">Keynote at FIRE 2023</a>
+      <span aria-hidden="true">·</span>
+      <a href="#open-source">Open source: crewlore</a>
     </p>
   </section>
 
-  <section class="section" id="now">
-    <span class="section-kicker">September 2026</span>
-    <h2>What I'm working on</h2>
-    <p>
-      I'm a founding engineer at <strong>Pavo AI</strong> in Seattle, building the tribal
-      knowledge layer for LLM agents. My day-to-day is a mix of staged agentic composition,
-      conflict-as-knowledge resolution, and bridging the recommender-systems playbook to
-      agent context. The essays above are the public half of that work &mdash; two series so
-      far, on evidence-carrying systems and on context as a ranking problem &mdash; alongside
-      research submissions to 2026 conferences and workshops.
-    </p>
-    <p>
-      Before Pavo, seven years at <strong>ShareChat</strong> scaling the recommender system
-      from 1M to 200M users, then LLM-driven ranking and retrieval for code search at
-      <strong>Sourcegraph</strong> (IC-5), and an undergrad &amp; master's at <strong>IIT Kanpur</strong> in
-      Mathematics and Scientific Computing.
-    </p>
-    <p>
-      I've built global engineering teams twice &mdash; at <strong>ShareChat</strong> and now
-      the founding team at <strong>Pavo</strong>, spanning the US, London, and India &mdash; and
-      have run 200+ hiring interviews in the process.
-    </p>
-  </section>
-
-  <section class="section" id="projects">
-    <h2>Projects</h2>
-    <p class="section-lede">
-      OSS projects and study forks. Everything on
-      <a href="https://github.com/srijansk" target="_blank" rel="noopener">GitHub</a>.
-    </p>
-    <ul class="projects">
-      <li>
-        <span class="project-header">
-          <a class="project-name" href="https://github.com/srijansk/crewlore" target="_blank" rel="noopener">crewlore</a>
-          <span class="flagship-badge">flagship</span>
-        </span>
-        <span class="desc">
-          A local-first compiler that turns coding-agent sessions and agent-authored pull
-          requests into a plaintext, citable team-knowledge book in your git repo. Every
-          claim quotes the exact source line it came from, and records whether the team
-          adopted it or tried it and declined &mdash; a field added after measuring, on 120
-          real agent PRs, that without it the rejected approach was stored as current
-          practice in roughly half of the declined ones. Alpha, on PyPI &mdash;
-          <code>pipx install crewlore</code>.
-        </span>
-      </li>
-      <li>
-        <span class="project-header">
-          <a class="project-name" href="https://github.com/srijansk/agent-relay" target="_blank" rel="noopener">agent-relay</a>
-        </span>
-        <span class="desc">
-          Multi-agent workflows that learn from their own past runs. Plans, reviews, build logs,
-          and audits live in your git repo as markdown; <code>relay distill --llm</code> compresses
-          past reviewer rejections into forward-looking lessons the next planner reads automatically.
-          Alpha (v0.2).
-        </span>
-      </li>
-      <li>
-        <span class="project-header">
-          <a class="project-name" href="https://github.com/srijansk/claude-ui" target="_blank" rel="noopener">claude-ui</a>
-        </span>
-        <span class="desc">Web interface for Claude with document analysis and conversation history.</span>
-      </li>
-      <li>
-        <span class="project-header">
-          <a class="project-name" href="https://github.com/srijansk/LLMs-from-scratch" target="_blank" rel="noopener">LLMs-from-scratch</a>
-        </span>
-        <span class="desc">Study fork — building GPT-style models in PyTorch, from the ground up.</span>
-      </li>
-    </ul>
-  </section>
-
-  <section class="section" id="publications">
-    <h2>Publications</h2>
-    <p class="section-lede">
-      Published at WWW, RecSys, SIGIR, and CIKM. Full list on
-      <a href="https://scholar.google.com/citations?user=hheK6oIAAAAJ&hl=en" target="_blank" rel="noopener">Google Scholar</a>.
-    </p>
-    <ul class="pubs">
-      {papers.map((p) => (
+  <section class="section beliefs" aria-labelledby="beliefs-title">
+    <h2 class="section-title" id="beliefs-title">What I believe about building with AI</h2>
+    <ol class="belief-list">
+      {beliefs.map((b, i) => (
         <li>
-          <span class="pub-title">{p.data.title}.</span>
-          <span class="pub-meta">
-            {p.data.authors}<span class="sep">&middot;</span>{p.data.venue}.
-          </span>
-          <span class="pub-links">
-            {p.data.url && <a href={p.data.url} target="_blank" rel="noopener">link</a>}
-            {p.data.arxiv && <a href={p.data.arxiv} target="_blank" rel="noopener">arXiv</a>}
-            {p.data.pdf && <a href={p.data.pdf} target="_blank" rel="noopener">PDF</a>}
-            {p.data.doi && <a href={`https://doi.org/${p.data.doi}`} target="_blank" rel="noopener">DOI</a>}
-          </span>
+          <span class="belief-text">{b.text}</span>
+          <a class="cite" href={b.href} aria-describedby={`belief-${i}`}>
+            <span class="cite-n">{i + 1}</span>
+            <span class="cite-pop" role="tooltip" id={`belief-${i}`}>
+              <b>{b.source}</b>
+              {b.note}
+            </span>
+          </a>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="section" id="writing" aria-labelledby="writing-title">
+    <div class="section-head">
+      <h2 class="section-title" id="writing-title">Writing</h2>
+      <a class="section-more" href="/writing/">All writing</a>
+    </div>
+    <div class="work-grid">
+      {writing.map((w) => {
+        const own = isSelfHosted(w);
+        const minutes = own ? readingTime(w.body)?.replace(' read', '') : undefined;
+        const image = w.data.cover ?? w.data.thumbnail;
+        return (
+          <a class="work-card" href={hrefFor(w)} {...linkAttrs(w)}>
+            {image && (
+              <span class:list={['work-media', w.data.cover && 'work-media--figure']}>
+                <img src={image} alt="" width="480" height="300" loading="lazy" decoding="async" />
+              </span>
+            )}
+            <span class="work-title">{w.data.title}</span>
+            <span class="work-meta">
+              {monthYear.format(w.data.date)}
+              {minutes && <> · {minutes}</>}
+              {w.data.coauthors.length > 0 && <> · with {w.data.coauthors.join(' and ')}</>}
+              {!own && <> · {w.data.publication}</>}
+            </span>
+            <span class="work-text">{w.data.teaser}</span>
+          </a>
+        );
+      })}
+    </div>
+  </section>
+
+  {design.length > 0 && (
+    <section class="section" id="design" aria-labelledby="design-title">
+      <div class="section-head">
+        <h2 class="section-title" id="design-title">Design</h2>
+        <a class="section-more" href="/design/">All design</a>
+      </div>
+      <div class="work-grid">
+        {design.map((d) => (
+          <a class="work-card" href={`/design/${d.id}/`}>
+            <span class="work-media work-media--live"><DesignPreview kind={d.data.preview} /></span>
+            <span class="work-title">{d.data.title}</span>
+            <span class="work-meta">{designKind[d.data.kind]} · {monthYear.format(d.data.date)}</span>
+            <span class="work-text">{d.data.summary}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <section class="section" id="open-source" aria-labelledby="oss-title">
+    <div class="section-head">
+      <h2 class="section-title" id="oss-title">Open source</h2>
+      <a class="section-more" href="https://github.com/srijansk" target="_blank" rel="noopener">GitHub</a>
+    </div>
+    <ul class="row-list">
+      <li>
+        <a class="row-title" href="https://github.com/srijansk/crewlore" target="_blank" rel="noopener">crewlore</a>
+        <p class="row-text">
+          A local-first compiler that turns coding-agent sessions and agent-authored pull requests
+          into a plaintext, citable team-knowledge book in your git repo. Every claim quotes the
+          exact source line it came from, and records whether the team adopted it or tried it and
+          declined: a field added after measuring, on 120 real agent pull requests, that without it
+          the rejected approach was stored as current practice in roughly half of the declined ones.
+          Alpha, on PyPI: <code>pipx install crewlore</code>.
+        </p>
+      </li>
+      <li>
+        <a class="row-title" href="https://github.com/srijansk/agent-relay" target="_blank" rel="noopener">agent-relay</a>
+        <p class="row-text">
+          Multi-agent workflows that learn from their own past runs. Plans, reviews, build logs and
+          audits live in your git repo as markdown, and <code>relay distill --llm</code> turns past
+          reviewer rejections into lessons the next planner reads. Alpha.
+        </p>
+      </li>
+    </ul>
+  </section>
+
+  <section class="section" id="papers" aria-labelledby="papers-title">
+    <div class="section-head">
+      <h2 class="section-title" id="papers-title">Papers</h2>
+      <a class="section-more" href="https://scholar.google.com/citations?user=hheK6oIAAAAJ&hl=en" target="_blank" rel="noopener">Google Scholar</a>
+    </div>
+    <ul class="row-list row-list--tight">
+      {papers.map((p) => {
+        const href = p.data.url ?? p.data.arxiv ?? (p.data.doi ? `https://doi.org/${p.data.doi}` : p.data.pdf);
+        return (
+          <li>
+            {href
+              ? <a class="row-title" href={href} target="_blank" rel="noopener">{p.data.title}</a>
+              : <span class="row-title">{p.data.title}</span>}
+            <span class="row-meta">{p.data.venue}</span>
+          </li>
+        );
+      })}
+      {otherPubs.map((p) => (
+        <li>
+          {p.data.url
+            ? <a class="row-title" href={p.data.url} target="_blank" rel="noopener">{p.data.title}</a>
+            : <span class="row-title">{p.data.title}</span>}
+          <span class="row-meta">{p.data.type === 'patent' ? 'Patent' : 'Book'} · {p.data.venue}</span>
         </li>
       ))}
     </ul>
-
-    {patents.length > 0 && (
-      <>
-        <h3>Patents</h3>
-        <ul class="pubs">
-          {patents.map((p) => (
-            <li>
-              <span class="pub-title"><span class="badge">Patent</span>{p.data.title}.</span>
-              <span class="pub-meta">{p.data.venue}.</span>
-              {p.data.url && (
-                <span class="pub-links"><a href={p.data.url} target="_blank" rel="noopener">link</a></span>
-              )}
-            </li>
-          ))}
-        </ul>
-      </>
-    )}
-
-    {books.length > 0 && (
-      <>
-        <h3>Book</h3>
-        <ul class="pubs">
-          {books.map((p) => (
-            <li>
-              <span class="pub-title"><span class="badge">Book</span>{p.data.title}.</span>
-              <span class="pub-meta">{p.data.venue}.</span>
-              {p.data.note && <span class="pub-note">{p.data.note}</span>}
-            </li>
-          ))}
-        </ul>
-      </>
-    )}
   </section>
 
-  <section class="section" id="talks">
-    <h2>Speaking</h2>
-    <p class="section-lede">
-      Keynotes, paper presentations, and conference service. Most entries link to a page with
-      the slide deck embedded.
-    </p>
-    <ul class="talk-list">
+  <section class="section" id="speaking" aria-labelledby="speaking-title">
+    <div class="section-head">
+      <h2 class="section-title" id="speaking-title">Speaking</h2>
+      <a class="section-more" href="/talks/">All talks</a>
+    </div>
+    <ul class="row-list row-list--tight">
       {talks.map((t) => (
-        <li class="talk-item">
-          <span class="talk-badge">{talkTypeLabel[t.data.type] ?? t.data.type}</span>
-          <div class="talk-body">
-            <h3 class="talk-title">
-              <a href={`/talks/${t.id}/`}>{t.data.title}</a>
-            </h3>
-            <p class="talk-meta">
-              {t.data.venue}{t.data.location ? ` · ${t.data.location}` : ''}
-              <span class="sep">&middot;</span>
-              {dateShort.format(t.data.date)}
-            </p>
-            <p class="talk-micros">
-              <a href={`/talks/${t.id}/`}>page &rarr;</a>
-              {t.data.slides && <a href={t.data.slides} target="_blank" rel="noopener">slides &rarr;</a>}
-              {t.data.video && <a href={t.data.video} target="_blank" rel="noopener">video &rarr;</a>}
-            </p>
-          </div>
+        <li>
+          <a class="row-title" href={`/talks/${t.id}/`}>{t.data.title}</a>
+          <span class="row-meta">{talkType[t.data.type] ?? t.data.type} · {t.data.venue} · {monthYear.format(t.data.date)}</span>
         </li>
       ))}
     </ul>
-    <p class="talks-all-link">
-      <a href="/talks/">Full talks list &rarr;</a>
-    </p>
   </section>
 
-  <section class="section" id="career">
-    <h2>Career</h2>
+  <section class="section" id="career" aria-labelledby="career-title">
+    <h2 class="section-title" id="career-title">Career</h2>
     <ul class="timeline">
       <li>
-        <span class="dates">2025 &mdash;</span>
-        <span class="role">
-          <strong>Pavo AI</strong><span class="sep">&middot;</span><span class="role-title">Founding Engineer</span>
-          <span class="desc">Tribal knowledge layer for LLM agents; building the founding engineering team across the US, London, and India. Seattle, WA.</span>
-        </span>
+        <span class="dates">2025–now</span>
+        <span class="role"><strong>Pavo AI</strong>, founding engineer<span class="desc">The knowledge layer AI agents work from; building the founding engineering team across the US, London and India.</span></span>
       </li>
       <li>
-        <span class="dates">Nov 2024 &mdash; Mar 2025</span>
-        <span class="role">
-          <strong>Sourcegraph</strong><span class="sep">&middot;</span><span class="role-title">IC-5 MLE</span>
-          <span class="desc">LLM-driven ranking and retrieval for code search over large codebases &mdash; agentic search over code; shipped relevance and quality changes to external users.</span>
-        </span>
+        <span class="dates">2024–2025</span>
+        <span class="role"><strong>Sourcegraph</strong>, machine learning engineer<span class="desc">LLM-driven ranking and retrieval for code search over large codebases.</span></span>
       </li>
       <li>
-        <span class="dates">2017 &mdash; 2024</span>
-        <span class="role">
-          <strong>ShareChat</strong><span class="sep">&middot;</span><span class="role-title">Staff MLE</span>
-          <span class="desc">Scaled the recommender system from 1M to 200M users; built and led a global team of 18&ndash;20 engineers across 4&ndash;5 charters spanning content moderation, ranking, and feature pipelines.</span>
-        </span>
+        <span class="dates">2017–2024</span>
+        <span class="role"><strong>ShareChat</strong>, staff machine learning engineer<span class="desc">Scaled the recommender system from one million users to two hundred million; led a team of 18 to 20 engineers across ranking, moderation and feature pipelines.</span></span>
       </li>
       <li>
-        <span class="dates">2016 &mdash; 2017</span>
-        <span class="role">
-          <strong>Fidelity Investments</strong><span class="sep">&middot;</span><span class="role-title">Data Scientist</span>
-        </span>
+        <span class="dates">2016–2017</span>
+        <span class="role"><strong>Fidelity Investments</strong>, data scientist</span>
       </li>
       <li>
-        <span class="dates">2011 &mdash; 2016</span>
-        <span class="role">
-          <strong>IIT Kanpur</strong><span class="sep">&middot;</span><span class="role-title">BS &amp; MS, Mathematics and Scientific Computing</span>
-        </span>
+        <span class="dates">2011–2016</span>
+        <span class="role"><strong>IIT Kanpur</strong>, BS and MS in Mathematics and Scientific Computing</span>
       </li>
     </ul>
   </section>
 
-  <section class="section" id="contact">
-    <h2>Get in touch</h2>
+  <section class="section contact" aria-labelledby="contact-title">
+    <h2 class="section-title" id="contact-title">Get in touch</h2>
     <p>
-      The fastest route is <a href="mailto:srijanskt@gmail.com">srijanskt@gmail.com</a>. I
-      read every DM on <a href="https://x.com/srijanskt2" target="_blank" rel="noopener">X</a>
-      and <a href="https://www.linkedin.com/in/srijansaket/" target="_blank" rel="noopener">LinkedIn</a>,
-      and I'm happy to talk about applied research, retrieval and evaluation for agents, and
-      production ML.
+      Email <a href="mailto:srijanskt@gmail.com">srijanskt@gmail.com</a>, or message me on
+      <a href="https://x.com/srijanskt2" target="_blank" rel="noopener">X</a> or
+      <a href="https://www.linkedin.com/in/srijansaket/" target="_blank" rel="noopener">LinkedIn</a>.
+      I'm glad to talk about agents, retrieval, evaluation, and interfaces for AI.
     </p>
   </section>
 </Layout>

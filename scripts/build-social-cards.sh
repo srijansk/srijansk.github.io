@@ -22,7 +22,7 @@ shopt -s nullglob
 found=0
 for plate in public/writing/*/plate.svg; do
   card="$(dirname "$plate")/card.png"
-  rsvg-convert -w 1200 -h 630 -b '#FAFAF7' -o "$card" "$plate"
+  rsvg-convert -w 1200 -h 630 -b '#FFFFFF' -o "$card" "$plate"
   printf '  %-58s -> %s\n' "$plate" "$(du -h "$card" | cut -f1)"
   found=$((found + 1))
 done

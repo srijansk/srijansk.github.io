@@ -58,13 +58,13 @@ const videoEmbedUrl = youtubeEmbed(talk.data.video);
   description={talk.data.abstract ?? `${talk.data.venue} — ${dateLong.format(talk.data.date)}`}
   pageType="inner"
 >
-  <section class="section lede">
+  <section class="page-intro">
     <p class="eyebrow">
-      <a href="/talks/">&larr; All talks</a>
+      <a href="/talks/">Speaking</a>
       <span class="sep">&middot;</span>
-      <span class="talk-badge inline">{talkTypeLabel[talk.data.type] ?? talk.data.type}</span>
+      <span>{talkTypeLabel[talk.data.type] ?? talk.data.type}</span>
     </p>
-    <h1>{talk.data.title}</h1>
+    <h1 class="page-title">{talk.data.title}</h1>
     <p class="talk-meta big">
       <strong>{talk.data.venue}</strong>
       {talk.data.location && <><span class="sep">&middot;</span>{talk.data.location}</>}
@@ -74,14 +74,14 @@ const videoEmbedUrl = youtubeEmbed(talk.data.video);
 
   {talk.data.abstract && (
     <section class="section">
-      <h2>Abstract</h2>
+      <h2 class="section-title">Abstract</h2>
       <p class="abstract">{talk.data.abstract}</p>
     </section>
   )}
 
   {videoEmbedUrl && (
     <section class="section">
-      <h2>Video</h2>
+      <h2 class="section-title">Video</h2>
       <div class="embed-frame">
         <iframe
           src={videoEmbedUrl}
@@ -96,7 +96,7 @@ const videoEmbedUrl = youtubeEmbed(talk.data.video);
 
   {slidesEmbedUrl && (
     <section class="section">
-      <h2>Slides</h2>
+      <h2 class="section-title">Slides</h2>
       <div class="embed-frame slides">
         <iframe
           src={slidesEmbedUrl}
@@ -113,7 +113,7 @@ const videoEmbedUrl = youtubeEmbed(talk.data.video);
 
   {(talk.data.url || talk.data.tags.length > 0) && (
     <section class="section">
-      <h2>Links &amp; tags</h2>
+      <h2 class="section-title">Links &amp; tags</h2>
       <p>
         {talk.data.url && (
           <a href={talk.data.url} target="_blank" rel="noopener">Canonical page / paper &rarr;</a>

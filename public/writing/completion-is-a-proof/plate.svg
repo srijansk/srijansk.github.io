@@ -10,37 +10,37 @@
     Ellipses rather than circles so the mark fills the same ink box as its
     siblings without growing taller than them.
   -->
-  <rect width="1200" height="630" fill="#FAFAF7"/>
+  <rect width="1200" height="630" fill="#FFFFFF"/>
 
   <g class="ink" transform="translate(-5,-23)">
     <!-- the ground the clocks settle onto -->
-    <line x1="160" y1="470" x2="1040" y2="470" stroke="#1A1A1A" stroke-width="2" opacity=".28"/>
+    <line x1="160" y1="470" x2="1040" y2="470" stroke="#111113" stroke-width="2" opacity=".28"/>
 
     <g fill="none" stroke-linecap="round">
       <!-- transport: settles first -->
-      <path d="M410 470 A 190 130 0 0 1 709 363.5" stroke="#1A1A1A" stroke-width="7" opacity=".30"/>
+      <path d="M410 470 A 190 130 0 0 1 709 363.5" stroke="#111113" stroke-width="7" opacity=".30"/>
       <!-- process -->
-      <path d="M320 470 A 280 190 0 0 1 837.4 369.3" stroke="#1A1A1A" stroke-width="7" opacity=".40"/>
+      <path d="M320 470 A 280 190 0 0 1 837.4 369.3" stroke="#111113" stroke-width="7" opacity=".40"/>
       <!-- output -->
-      <path d="M230 470 A 370 250 0 0 1 957.4 405.3" stroke="#1A1A1A" stroke-width="7" opacity=".52"/>
+      <path d="M230 470 A 370 250 0 0 1 957.4 405.3" stroke="#111113" stroke-width="7" opacity=".52"/>
       <!-- workspace: the only one that closes -->
-      <path d="M180 470 A 420 300 0 0 1 1020 470" stroke="#0A5C38" stroke-width="9"/>
+      <path d="M180 470 A 420 300 0 0 1 1020 470" stroke="#2443D6" stroke-width="9"/>
     </g>
 
     <!-- where each clock stopped -->
-    <circle cx="709" cy="363.5" r="10" fill="#1A1A1A" opacity=".30"/>
-    <circle cx="837.4" cy="369.3" r="10" fill="#1A1A1A" opacity=".40"/>
-    <circle cx="957.4" cy="405.3" r="10" fill="#1A1A1A" opacity=".52"/>
+    <circle cx="709" cy="363.5" r="10" fill="#111113" opacity=".30"/>
+    <circle cx="837.4" cy="369.3" r="10" fill="#111113" opacity=".40"/>
+    <circle cx="957.4" cy="405.3" r="10" fill="#111113" opacity=".52"/>
 
     <!-- the seal: the only point at which completion is provable -->
-    <circle cx="1020" cy="470" r="20" fill="#0A5C38"/>
-    <circle cx="1020" cy="470" r="30" fill="none" stroke="#0A5C38" stroke-width="3" opacity=".45"/>
+    <circle cx="1020" cy="470" r="20" fill="#2443D6"/>
+    <circle cx="1020" cy="470" r="30" fill="none" stroke="#2443D6" stroke-width="3" opacity=".45"/>
 
     <!-- common origin -->
-    <circle cx="180" cy="470" r="13" fill="#1A1A1A"/>
+    <circle cx="180" cy="470" r="13" fill="#111113"/>
 
     <!-- the span that looks finished and is not -->
-    <g stroke="#9B4A2F" stroke-width="3" opacity=".7">
+    <g stroke="#C2410C" stroke-width="3" opacity=".7">
       <line x1="709" y1="388" x2="709" y2="512" stroke-dasharray="8 8"/>
       <line x1="1020" y1="505" x2="1020" y2="512" stroke-dasharray="8 8"/>
       <line x1="709" y1="512" x2="1020" y2="512"/>

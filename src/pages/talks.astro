@@ -17,7 +17,7 @@ const talkTypeLabel: Record<string, string> = {
   talk: 'Talk',
   panel: 'Panel',
   tutorial: 'Tutorial',
-  'pc-service': 'Service',
+  'pc-service': 'Programme committee',
   webinar: 'Webinar',
 };
 
@@ -31,44 +31,40 @@ const years = [...groupedByYear.keys()].sort((a, b) => b - a);
 ---
 
 <Layout
-  title="Talks — Srijan Saket"
-  description="Keynotes, talks, workshop presentations, and program-committee service by Srijan Saket."
+  title="Speaking — Srijan Saket"
+  description="Keynotes, talks, workshop presentations and programme-committee service by Srijan Saket."
   pageType="inner"
 >
-  <section class="section lede">
-    <h1>Speaking</h1>
-    <p class="hero-sub">
-      Keynotes, paper presentations, workshop talks, and conference service.
-      Each entry links to a page with the slide deck embedded.
+  <section class="page-intro">
+    <h1 class="page-title">Speaking</h1>
+    <p class="page-lede">
+      Keynotes, paper presentations, workshop talks and programme-committee service. Each entry
+      links to a page with the slides.
     </p>
   </section>
 
-  {years.map((y) => (
-    <section class="section year-group">
-      <h2 class="year-label">{y}</h2>
-      <ul class="talk-list">
-        {groupedByYear.get(y)!.map((t) => (
-          <li class="talk-item">
-            <span class="talk-badge">{talkTypeLabel[t.data.type] ?? t.data.type}</span>
-            <div class="talk-body">
-              <h3 class="talk-title">
-                <a href={`/talks/${t.id}/`}>{t.data.title}</a>
-              </h3>
-              <p class="talk-meta">
-                {t.data.venue}{t.data.location ? ` · ${t.data.location}` : ''}
-                <span class="sep">&middot;</span>
-                {dateLong.format(t.data.date)}
-              </p>
-              {t.data.abstract && <p class="talk-abstract">{t.data.abstract}</p>}
-              <p class="talk-micros">
-                <a href={`/talks/${t.id}/`}>page &rarr;</a>
-                {t.data.slides && <a href={t.data.slides} target="_blank" rel="noopener">slides &rarr;</a>}
-                {t.data.video && <a href={t.data.video} target="_blank" rel="noopener">video &rarr;</a>}
-              </p>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </section>
-  ))}
+  <section class="section">
+    {years.map((y) => (
+      <div class="year-group">
+        <h2 class="year-label">{y}</h2>
+        <ul class="row-list">
+          {groupedByYear.get(y)!.map((t) => (
+            <li>
+              <a class="row-title" href={`/talks/${t.id}/`}>{t.data.title}</a>
+              <span class="row-meta">
+                {talkTypeLabel[t.data.type] ?? t.data.type} · {t.data.venue}{t.data.location ? `, ${t.data.location}` : ''} · {dateLong.format(t.data.date)}
+              </span>
+              {t.data.abstract && <p class="row-text">{t.data.abstract}</p>}
+              {(t.data.slides || t.data.video) && (
+                <p class="row-links">
+                  {t.data.slides && <a href={t.data.slides} target="_blank" rel="noopener">Slides</a>}
+                  {t.data.video && <a href={t.data.video} target="_blank" rel="noopener">Video</a>}
+                </p>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </section>
 </Layout>

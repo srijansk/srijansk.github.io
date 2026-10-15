@@ -10,6 +10,7 @@ tags: [agents, systems, reliability]
 series: "Evidence-carrying systems"
 seriesOrder: 2
 thumbnail: "/writing/completion-is-a-proof/plate.svg"
+cover: "/writing/completion-is-a-proof/figures/four-clocks.svg"
 socialImage: "/writing/completion-is-a-proof/card.png"
 featured: true
 draft: false
@@ -50,14 +51,14 @@ Their order is not fixed. A request can vanish while the command continues. A pa
     <title id="title">Four clocks settling independently at the end of an agent run</title>
     <desc id="desc">Four horizontal lanes — transport, process, output, workspace — each settling at a different point on the same timeline. In this run, transport settles first. The span between the transport settle and the workspace settle is marked as the window in which a run looks finished but is not, where duplicate execution and lost files occur. Safe completion is only at the last settle.</desc>
     <style>
-      #fc .lane-label { font-size: 14.1px; fill: #1A1A1A; font-weight: 600; }
-      #fc .lane-sub { font-size: 11.75px; fill: #595959; }
-      #fc .kicker { font-size: 11.75px; fill: #595959; letter-spacing: .11em; text-transform: uppercase; }
-      #fc .tick { font-size: 11.75px; fill: #595959; }
-      #fc .flag { font-size: 14.1px; fill: #0A5C38; font-weight: 600; }
-      #fc .danger { font-size: 12.9px; fill: #9B4A2F; font-weight: 600; }
-      #fc .danger-sub { font-size: 12.9px; fill: #9B4A2F; }
-      #fc .bar { fill: #0A5C38; opacity: .82; }
+      #fc .lane-label { font-size: 14.1px; fill: #111113; font-weight: 600; }
+      #fc .lane-sub { font-size: 11.75px; fill: #62646C; }
+      #fc .kicker { font-size: 11.75px; fill: #62646C; letter-spacing: .11em; text-transform: uppercase; }
+      #fc .tick { font-size: 11.75px; fill: #62646C; }
+      #fc .flag { font-size: 14.1px; fill: #2443D6; font-weight: 600; }
+      #fc .danger { font-size: 12.9px; fill: #C2410C; font-weight: 600; }
+      #fc .danger-sub { font-size: 12.9px; fill: #C2410C; }
+      #fc .bar { fill: #2443D6; opacity: .82; }
       #fc .bar { animation: grow .85s cubic-bezier(.4,0,.2,1) both; }
       #fc .late { animation: fade .45s ease-out both; }
       @keyframes grow { from { width: 0; } }
@@ -75,42 +76,42 @@ Their order is not fixed. A request can vanish while the command continues. A pa
     <rect width="1000" height="420" fill="#FFFFFF"/>
     <text class="kicker" x="30" y="28">One run · four independent clocks</text>
     <g class="late" id="zone">
-      <rect x="412" y="52" width="414" height="272" fill="rgba(155,74,47,0.07)"/>
-      <line x1="412" y1="52" x2="412" y2="324" stroke="#9B4A2F" stroke-width="1.25" stroke-dasharray="3 3" opacity=".65"/>
+      <rect x="412" y="52" width="414" height="272" fill="rgba(194,65,12,0.07)"/>
+      <line x1="412" y1="52" x2="412" y2="324" stroke="#C2410C" stroke-width="1.25" stroke-dasharray="3 3" opacity=".65"/>
       <text class="danger" x="424" y="348">The window where a run looks finished and is not</text>
       <text class="danger-sub" x="424" y="366">Retry here duplicates work. Release here discards files.</text>
     </g>
     <g>
       <text class="lane-label" x="30" y="82">Transport</text>
       <text class="lane-sub"   x="30" y="98">did the stream return?</text>
-      <rect x="190" y="68" width="740" height="22" rx="2" fill="#F4F4EF" stroke="#E5E5E0"/>
+      <rect x="190" y="68" width="740" height="22" rx="2" fill="#F4F4F5" stroke="#EBEBEE"/>
       <rect id="b1" class="bar" x="190" y="68" width="222" height="22" rx="2"/>
-      <circle class="late" id="d1" cx="412" cy="79" r="5" fill="#0A5C38"/>
+      <circle class="late" id="d1" cx="412" cy="79" r="5" fill="#2443D6"/>
       <text class="lane-label" x="30" y="147">Process</text>
       <text class="lane-sub"   x="30" y="163">can it still execute?</text>
-      <rect x="190" y="133" width="740" height="22" rx="2" fill="#F4F4EF" stroke="#E5E5E0"/>
+      <rect x="190" y="133" width="740" height="22" rx="2" fill="#F4F4F5" stroke="#EBEBEE"/>
       <rect id="b2" class="bar" x="190" y="133" width="385" height="22" rx="2"/>
-      <circle class="late" id="d2" cx="575" cy="144" r="5" fill="#0A5C38"/>
+      <circle class="late" id="d2" cx="575" cy="144" r="5" fill="#2443D6"/>
       <text class="lane-label" x="30" y="212">Output</text>
       <text class="lane-sub"   x="30" y="228">drained to a final byte?</text>
-      <rect x="190" y="198" width="740" height="22" rx="2" fill="#F4F4EF" stroke="#E5E5E0"/>
+      <rect x="190" y="198" width="740" height="22" rx="2" fill="#F4F4F5" stroke="#EBEBEE"/>
       <rect id="b3" class="bar" x="190" y="198" width="488" height="22" rx="2"/>
-      <circle class="late" id="d3" cx="678" cy="209" r="5" fill="#0A5C38"/>
+      <circle class="late" id="d3" cx="678" cy="209" r="5" fill="#2443D6"/>
       <text class="lane-label" x="30" y="277">Workspace</text>
       <text class="lane-sub"   x="30" y="293">checkpointed and verified?</text>
-      <rect x="190" y="263" width="740" height="22" rx="2" fill="#F4F4EF" stroke="#E5E5E0"/>
+      <rect x="190" y="263" width="740" height="22" rx="2" fill="#F4F4F5" stroke="#EBEBEE"/>
       <rect id="b4" class="bar" x="190" y="263" width="636" height="22" rx="2"/>
-      <circle class="late" id="d4" cx="826" cy="274" r="5" fill="#0A5C38"/>
+      <circle class="late" id="d4" cx="826" cy="274" r="5" fill="#2443D6"/>
     </g>
     <g class="late" id="safe">
-      <line x1="826" y1="52" x2="826" y2="324" stroke="#0A5C38" stroke-width="1.25"/>
-      <polygon points="826,46 820,56 832,56" fill="#0A5C38"/>
+      <line x1="826" y1="52" x2="826" y2="324" stroke="#2443D6" stroke-width="1.25"/>
+      <polygon points="826,46 820,56 832,56" fill="#2443D6"/>
       <text class="flag" x="826" y="38" text-anchor="middle">safe to complete</text>
     </g>
-    <line x1="190" y1="324" x2="930" y2="324" stroke="#D8D8D2"/>
+    <line x1="190" y1="324" x2="930" y2="324" stroke="#DCDCE0"/>
     <text class="tick" x="190" y="342">model emits final response</text>
     <text class="tick" x="930" y="342" text-anchor="end">receipts joined</text>
-    <line x1="30" y1="386" x2="970" y2="386" stroke="#E5E5E0"/>
+    <line x1="30" y1="386" x2="970" y2="386" stroke="#EBEBEE"/>
     <text class="lane-sub" x="30" y="404">A status field can only record one of these. A completion contract joins all four.</text>
   </svg>
   </a>

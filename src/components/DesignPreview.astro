@@ -1,0 +1,101 @@
+---
+/**
+ * A small, live rendering of a design piece for its card: real type and the
+ * site's own colours rather than a screenshot, so it stays crisp, follows the
+ * dark scheme, and shows the idea at a glance. Decorative: the card's title
+ * and summary carry the meaning, so the preview is hidden from screen readers.
+ */
+interface Props {
+  kind: 'review' | 'tally' | 'figures';
+}
+const { kind } = Astro.props;
+---
+
+<div class:list={['dp', `dp--${kind}`]} aria-hidden="true">
+  {kind === 'review' && (
+    <>
+      <div class="dp-actions"><span>Accept</span><span>Comment</span><span>Drop</span></div>
+      <div class="dp-h">Payments ledger</div>
+      <p class="dp-p">
+        A refund posts only after the processor confirms settlement.<span class="dp-cite dp-cite--ok">1 ✓</span>
+        <span class="dp-human">A day’s totals are final at 06:00 UTC</span>, once the nightly rollup
+        finishes.<span class="dp-cite">2</span>
+      </p>
+      <div class="dp-pop">
+        <span class="dp-pop-path">ledger/settle.py · lines 142–151</span>
+        <code>if not event.settled:</code>
+        <code>&nbsp;&nbsp;&nbsp;&nbsp;return defer(entry)</code>
+      </div>
+    </>
+  )}
+  {kind === 'tally' && (
+    <>
+      <div class="dp-counts">
+        <span><b>214</b>cited claims</span>
+        <span class="dp-open"><b>13</b>flagged</span>
+        <span><b>3</b>conflicts</span>
+      </div>
+      <ul class="dp-list">
+        <li>Settlement window stated as 2 days<i>source says 3</i></li>
+        <li>Retry rule missing from section 4<i>noted, not drafted</i></li>
+        <li>Fee change dated 11 March<i>two sources disagree</i></li>
+      </ul>
+    </>
+  )}
+  {kind === 'figures' && (
+    <>
+      <div class="dp-scale">
+        <span class="dp-band"></span>
+        <span class="dp-marker"></span>
+        <span class="dp-axis"></span>
+      </div>
+      <div class="dp-ctrl"><span class="dp-track"><span class="dp-thumb"></span></span><span class="dp-read">+5 / 60</span></div>
+      <div class="dp-verdict">Inside the noise at 1 run each</div>
+    </>
+  )}
+</div>
+
+<style>
+  .dp {
+    position: relative;
+    height: 100%;
+    padding: 1.1rem 1.2rem;
+    font-family: var(--font-sans);
+    color: var(--text);
+    background: var(--surface);
+    overflow: hidden;
+    font-size: 0.78rem;
+    line-height: 1.6;
+  }
+
+  /* review */
+  .dp-actions { position: absolute; right: 0.9rem; top: 0.85rem; display: flex; gap: 0.3rem; }
+  .dp-actions span { font-size: 0.66rem; padding: 0.1rem 0.5rem; border: 1px solid var(--hairline-strong); border-radius: 6px; color: var(--muted); background: var(--bg); }
+  .dp-h { font-weight: 650; font-size: 0.86rem; margin-bottom: 0.35rem; }
+  .dp-p { margin: 0; max-width: 30ch; color: var(--soft); }
+  .dp-cite { display: inline-block; margin-left: 3px; padding: 0 0.38rem; border: 1px solid color-mix(in srgb, var(--accent) 42%, transparent); border-radius: 5px; color: var(--accent); font-size: 0.64rem; font-weight: 650; line-height: 1.45; vertical-align: 1px; }
+  .dp-cite--ok { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+  .dp-human { background: color-mix(in srgb, #F5C400 30%, transparent); border-radius: 3px; padding: 0 2px; }
+  .dp-pop { position: absolute; left: 40%; top: 58%; width: 55%; display: flex; flex-direction: column; gap: 0.1rem; background: var(--bg); border: 1px solid var(--hairline-strong); border-radius: 8px; box-shadow: 0 10px 26px rgba(0, 0, 0, 0.1); padding: 0.5rem 0.65rem; }
+  .dp-pop-path { font-size: 0.64rem; color: var(--muted); }
+  .dp-pop code { font-family: var(--font-mono); font-size: 0.64rem; color: var(--soft); white-space: nowrap; }
+
+  /* tally */
+  .dp-counts { display: flex; gap: 1.4rem; color: var(--muted); font-size: 0.72rem; }
+  .dp-counts b { display: block; font-size: 1.45rem; line-height: 1.15; font-weight: 650; letter-spacing: -0.02em; color: var(--text); }
+  .dp-open b { color: var(--accent); text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
+  .dp-list { list-style: none; margin: 0.8rem 0 0; padding: 0.45rem 0.7rem; border: 1px solid var(--hairline-strong); border-radius: 8px; background: var(--bg); }
+  .dp-list li { font-size: 0.7rem; color: var(--soft); line-height: 1.75; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dp-list i { font-style: normal; color: var(--faint); margin-left: 0.5rem; }
+
+  /* figures */
+  .dp-scale { position: relative; height: 3.4rem; margin-top: 0.4rem; }
+  .dp-band { position: absolute; left: 0; top: 0; width: 70%; height: 2.4rem; border-radius: 3px; background: color-mix(in srgb, var(--loss) 14%, transparent); border-right: 1px dashed var(--loss); }
+  .dp-axis { position: absolute; left: 0; right: 0; top: 2.4rem; border-top: 1px solid var(--hairline-strong); }
+  .dp-marker { position: absolute; left: 30%; top: -0.4rem; height: 3rem; border-left: 2px solid var(--text); }
+  .dp-ctrl { display: flex; align-items: center; gap: 0.7rem; margin-top: 0.5rem; }
+  .dp-track { position: relative; flex: 1; height: 4px; border-radius: 2px; background: var(--hairline-strong); }
+  .dp-thumb { position: absolute; left: 30%; top: -5px; width: 14px; height: 14px; border-radius: 50%; background: var(--accent); }
+  .dp-read { font-weight: 650; font-size: 0.95rem; }
+  .dp-verdict { margin-top: 0.6rem; color: var(--loss); font-weight: 600; font-size: 0.74rem; }
+</style>

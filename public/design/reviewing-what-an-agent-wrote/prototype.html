@@ -1,0 +1,812 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Reviewing what an agent wrote: prototype</title>
+<link rel="stylesheet" href="../../writing/_figure.css" />
+<style>
+  :root {
+    --human: rgba(250, 204, 21, 0.32);
+    --human-ring: rgba(250, 204, 21, 0.28);
+    --human-ink: #7A5B00;
+  }
+  body { padding: 18px 20px 20px; }
+
+  /* The document, its edition, and the layers that can be switched off. */
+  .head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .title { margin: 0; font-size: 17px; font-weight: 650; letter-spacing: -0.01em; }
+  .sub { margin: 2px 0 0; font-size: 12px; color: var(--muted); }
+  .layers { display: flex; flex-wrap: wrap; gap: 6px; }
+  .layer {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 9px 4px 5px;
+    border: 1px solid var(--hairline-strong);
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--soft);
+    background: var(--surface);
+    transition: background 120ms, color 120ms, border-color 120ms;
+  }
+  .layer:hover { border-color: var(--accent-mid); }
+  .layer[aria-pressed="false"] { color: var(--muted); background: var(--bg); }
+  .layer[aria-pressed="false"] .sw { opacity: 0.35; filter: grayscale(1); }
+  .layer-n { color: var(--muted); font-variant-numeric: tabular-nums; }
+  .sw {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 5px;
+    font-size: 10px;
+    font-weight: 650;
+    line-height: 1;
+  }
+  .sw-cite { border: 1px solid var(--accent-mid); color: var(--accent); background: var(--surface); }
+  .sw-ok { border: 1px solid var(--accent); color: #FFFFFF; background: var(--accent); }
+  .sw-human { background: var(--human); color: var(--human-ink); }
+  .sw-issue { border: 1px solid var(--warn); color: var(--warn); background: var(--warn-soft); }
+
+  .changes {
+    margin: 12px 0 0;
+    padding: 7px 11px;
+    border-radius: 8px;
+    background: var(--accent-soft);
+    font-size: 12.5px;
+    color: var(--soft);
+  }
+  .changes b { color: var(--accent); font-weight: 650; }
+
+  .grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0 22px; }
+  @media (min-width: 700px) {
+    .grid { grid-template-columns: minmax(0, 1fr) minmax(240px, 36%); }
+  }
+
+  /* Sections, each reviewed on its own. */
+  .sec { padding: 14px 0; border-bottom: 1px solid var(--hairline); }
+  .sec:last-child { border-bottom: 0; }
+  .sec-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px 12px;
+  }
+  .sec h2 { margin: 0; font-size: 14px; font-weight: 650; }
+  .review { display: inline-flex; gap: 4px; }
+  .review button {
+    padding: 3px 9px;
+    border: 1px solid var(--hairline-strong);
+    border-radius: 6px;
+    font-size: 12px;
+    color: var(--soft);
+    background: var(--surface);
+  }
+  .review button:hover:not(:disabled) { border-color: var(--accent-mid); }
+  .review button[data-act="accept"][aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #FFFFFF; }
+  .review button[data-act="comment"][aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent-mid); color: var(--accent); }
+  .review button[data-act="drop"][aria-pressed="true"] { background: var(--warn-soft); border-color: var(--warn); color: var(--warn); }
+  .review button:disabled { opacity: 0.4; cursor: default; }
+  .sec.is-drop .sec-body { opacity: 0.42; }
+
+  .para { margin: 8px 0 0; font-size: 14px; line-height: 1.7; }
+  .s {
+    border-radius: 3px;
+    transition: background 120ms;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+  .s.sel { background: var(--accent-soft); }
+  .s-issue { text-decoration: underline wavy var(--warn); text-decoration-thickness: 1px; text-underline-offset: 4px; text-decoration-skip-ink: none; }
+  .s-conflict { text-decoration: underline dotted var(--warn); text-decoration-thickness: 1.5px; text-underline-offset: 4px; }
+
+  /* Citation chips. Outline: rests on a source. Filled with a tick: re-checked
+   * against the current source and still holds. Orange: the check disagrees. */
+  .cite {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    height: 17px;
+    min-width: 18px;
+    padding: 0 5px;
+    margin-left: 3px;
+    border: 1px solid var(--accent-mid);
+    border-radius: 5px;
+    background: var(--surface);
+    color: var(--accent);
+    font-size: 10.5px;
+    font-weight: 650;
+    line-height: 1;
+    vertical-align: 1px;
+    font-variant-numeric: tabular-nums;
+  }
+  .cite:hover, .cite[aria-current="true"] { box-shadow: 0 0 0 3px var(--accent-soft); }
+  .cite.st-ok { background: var(--accent); border-color: var(--accent); color: #FFFFFF; }
+  .cite.st-bad, .cite.st-conflict { background: var(--warn-soft); border-color: var(--warn); color: var(--warn); }
+  .cite.st-bad:hover, .cite.st-bad[aria-current="true"],
+  .cite.st-conflict:hover, .cite.st-conflict[aria-current="true"] { box-shadow: 0 0 0 3px var(--warn-soft); }
+  .ck, .bang { font-size: 9.5px; }
+
+  .human {
+    background: var(--human);
+    border-radius: 3px;
+    padding: 0 1px;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+  .htag {
+    display: inline-flex;
+    align-items: center;
+    height: 17px;
+    padding: 0 6px;
+    margin-left: 3px;
+    border-radius: 5px;
+    background: var(--human);
+    color: var(--human-ink);
+    font-size: 10.5px;
+    font-weight: 650;
+    line-height: 1;
+    vertical-align: 1px;
+  }
+  .htag:hover, .htag[aria-current="true"] { box-shadow: 0 0 0 3px var(--human-ring); }
+
+  .tag {
+    display: inline-block;
+    margin-left: 5px;
+    padding: 0 6px;
+    border: 1px solid var(--hairline-strong);
+    border-radius: 5px;
+    background: var(--bg);
+    color: var(--muted);
+    font-size: 10.5px;
+    line-height: 16px;
+    vertical-align: 1px;
+  }
+  del { color: var(--muted); text-decoration-color: var(--warn); }
+  ins { text-decoration: none; background: var(--accent-soft); border-radius: 3px; padding: 0 2px; }
+
+  /* A problem sits on the sentence it concerns, with the disagreement spelled out. */
+  .note {
+    display: flex;
+    gap: 8px;
+    margin: 8px 0 0;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: var(--warn-soft);
+    color: var(--soft);
+    font-size: 12.5px;
+    line-height: 1.5;
+  }
+  .note b { color: var(--warn); font-weight: 650; }
+
+  .prop {
+    display: block;
+    margin: 10px 0 0;
+    padding: 8px 10px;
+    border: 1px dashed var(--hairline-strong);
+    border-radius: 8px;
+    font-size: 13.5px;
+    line-height: 1.6;
+  }
+  .prop-label { display: block; margin-bottom: 2px; font-size: 11.5px; color: var(--muted); }
+  .prop-actions { display: flex; gap: 6px; margin-top: 6px; }
+  .prop-actions button {
+    padding: 2px 9px;
+    border: 1px solid var(--hairline-strong);
+    border-radius: 6px;
+    font-size: 12px;
+    background: var(--surface);
+  }
+  .prop-actions button:hover:not(:disabled) { border-color: var(--accent-mid); }
+  .prop-actions button:disabled { opacity: 0.4; cursor: default; }
+  .prop-done { margin: 8px 0 0; font-size: 12px; color: var(--muted); }
+
+  .cbox { margin: 10px 0 0; }
+  .cbox label { display: block; margin-bottom: 4px; font-size: 11.5px; color: var(--muted); }
+  .cbox textarea {
+    width: 100%;
+    padding: 7px 9px;
+    border: 1px solid var(--hairline-strong);
+    border-radius: 8px;
+    font: inherit;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text);
+    background: var(--surface);
+    resize: vertical;
+  }
+  .sec-status { margin: 8px 0 0; font-size: 12px; line-height: 1.5; color: var(--muted); }
+  .sec-status.st-acc, .sec-status.st-pub { color: var(--accent); }
+  .sec-status.st-warn, .sec-status.st-drop { color: var(--warn); }
+
+  /* The source a citation rests on: exact lines, path, position, and state. */
+  .pane {
+    align-self: start;
+    margin-top: 14px;
+    padding: 12px 14px 13px;
+    border: 1px solid var(--hairline-strong);
+    border-radius: 10px;
+    background: var(--surface);
+    box-shadow: 0 1px 2px rgba(17, 17, 19, 0.04);
+    transition: transform 180ms ease;
+  }
+  .pane.inline { margin: 10px 0 2px; }
+  .pane-kicker { margin: 0 0 8px; font-size: 11.5px; color: var(--muted); }
+  .pane-head { display: flex; align-items: center; gap: 7px; }
+  .pane-head .cite, .pane-head .htag { margin-left: 0; box-shadow: none; }
+  .pane-kind { font-size: 12.5px; font-weight: 650; }
+  .pane-path { margin: 5px 0 8px; font-family: var(--mono); font-size: 11.5px; color: var(--soft); overflow-wrap: anywhere; }
+  .pane-code {
+    margin: 0;
+    padding: 7px 0;
+    border: 1px solid var(--hairline);
+    border-radius: 7px;
+    background: var(--bg);
+    font-family: var(--mono);
+    font-size: 11px;
+    line-height: 1.6;
+    overflow-x: auto;
+  }
+  .pane-code code { display: block; min-width: max-content; }
+  .pane-code .ln { display: block; padding: 0 12px 0 10px; white-space: pre; }
+  .pane-code .ln.hl { background: var(--accent-soft); box-shadow: inset 2px 0 0 var(--accent); }
+  .pane-code .ln-n { display: inline-block; width: 26px; margin-right: 10px; text-align: right; color: var(--muted); user-select: none; }
+  .pane-quote {
+    margin: 0;
+    padding: 7px 10px;
+    border-left: 2px solid var(--accent-mid);
+    border-radius: 0 7px 7px 0;
+    background: var(--bg);
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--soft);
+  }
+  .pane-ql { display: block; margin-bottom: 2px; font-size: 11.5px; color: var(--muted); }
+  .pane-state { margin: 9px 0 0; font-size: 12px; line-height: 1.5; color: var(--soft); }
+  .ps-ok { color: var(--accent); }
+  .ps-bad, .ps-conflict { color: var(--warn); }
+  .ps-human { color: var(--human-ink); }
+  .pane-off { display: none; margin: 0; font-size: 12.5px; color: var(--muted); }
+
+  .bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding-top: 14px;
+    border-top: 1px solid var(--hairline-strong);
+  }
+  .bar-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .btn {
+    padding: 7px 13px;
+    border: 1px solid var(--hairline-strong);
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    background: var(--surface);
+  }
+  .btn:hover:not(:disabled) { border-color: var(--accent-mid); }
+  .btn-primary { background: var(--accent); border-color: var(--accent); color: #FFFFFF; }
+  .btn-primary:hover:not(:disabled) { border-color: var(--accent); filter: brightness(1.1); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-link { font-size: 12.5px; color: var(--muted); text-decoration: underline; text-underline-offset: 2px; }
+  .btn-link:hover { color: var(--text); }
+  .receipt { margin: 10px 0 0; min-height: 1.5em; font-size: 12.5px; line-height: 1.5; color: var(--soft); }
+
+  /* Switching a layer off shows the same page without that idea. */
+  .no-sources .sec-body .cite { display: none; }
+  .no-sources .pane-body { display: none; }
+  .no-sources .pane-off { display: block; }
+  .no-checks .sec-body .cite.st-ok { background: var(--surface); border-color: var(--accent-mid); color: var(--accent); }
+  .no-checks .cite .ck, .no-checks .ps-ok { display: none; }
+  .no-issues .sec-body .cite.st-bad, .no-issues .sec-body .cite.st-conflict { background: var(--surface); border-color: var(--accent-mid); color: var(--accent); }
+  .no-issues .cite .bang, .no-issues .note, .no-issues .ps-bad, .no-issues .ps-conflict { display: none; }
+  .no-issues .s-issue, .no-issues .s-conflict { text-decoration: none; }
+  .no-human .human { background: none; padding: 0; }
+  .no-human .sec-body .htag { display: none; }
+
+  @media (max-width: 699px) {
+    body { padding: 16px 14px 18px; }
+    .cite, .htag { height: 20px; min-width: 22px; }
+  }
+</style>
+</head>
+<body>
+<div class="proto" id="proto">
+  <header class="head">
+    <div>
+      <p class="fig-kicker">Prototype · invented content</p>
+      <h1 class="title">Payments ledger</h1>
+      <p class="sub" id="sub"></p>
+    </div>
+    <div class="layers" role="group" aria-label="Layers">
+      <button type="button" class="layer" data-layer="sources" aria-pressed="true"><span class="sw sw-cite" aria-hidden="true">1</span>Sources <span class="layer-n"></span></button>
+      <button type="button" class="layer" data-layer="checks" aria-pressed="true"><span class="sw sw-ok" aria-hidden="true">&#10003;</span>Re-checked <span class="layer-n"></span></button>
+      <button type="button" class="layer" data-layer="human" aria-pressed="true"><span class="sw sw-human" aria-hidden="true">&#9998;</span>Human edits <span class="layer-n"></span></button>
+      <button type="button" class="layer" data-layer="issues" aria-pressed="true"><span class="sw sw-issue" aria-hidden="true">!</span>Issues <span class="layer-n"></span></button>
+    </div>
+  </header>
+
+  <p class="changes" id="changes" hidden></p>
+
+  <div class="grid" id="grid">
+    <div class="doc" id="doc"></div>
+    <aside class="pane" id="pane" aria-live="polite">
+      <div class="pane-body" id="pane-body"></div>
+      <p class="pane-off">Sources are switched off. Without them, every sentence asks to be trusted.</p>
+    </aside>
+  </div>
+
+  <div class="bar">
+    <div class="bar-actions">
+      <button type="button" class="btn btn-primary" id="publish">Publish accepted</button>
+      <button type="button" class="btn" id="regen">Regenerate with comments</button>
+    </div>
+    <button type="button" class="btn-link" id="reset">Start over</button>
+  </div>
+  <p class="receipt" id="receipt" role="status"></p>
+
+  <p class="fig-hint">Everything here is invented, including the agent&rsquo;s rewrites, which are scripted. Turn a layer off to see the same page without that idea.</p>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var SETTLE_CODE = [
+    'def post_refund(entry, event):',
+    '    """Post a refund only once the processor has settled it."""',
+    '    if not event.settled:',
+    '        return defer(entry, until="settlement")',
+    '    if event.is_retry:',
+    '        return skip(entry, reason="retry")',
+    '    entry.settled_at = event.settled_at',
+    '    ledger.post(entry)',
+    '    audit.record(entry, event_id=event.id)',
+    '    return entry'
+  ];
+
+  // Every source a sentence can rest on. `state` is what the reader is told
+  // about it: cited (pointed at when drafted), ok (re-checked and still holds),
+  // bad (the check disagrees with the sentence), conflict (sources disagree).
+  var SRC = {
+    s1: { n: 1, kind: 'Code', path: 'ledger/settle.py', pos: 'lines 142–151', start: 142, code: SETTLE_CODE, hl: [2, 3, 7],
+          state: 'ok', note: 'Re-checked against the current code today. Still holds.' },
+    s2: { n: 2, kind: 'Document', path: 'docs/ledger.md', pos: 'section 3, paragraph 2',
+          quote: 'A chargeback never writes a negative amount. It reverses the original entry and links the reversal to it, so the payment’s history reads in order.',
+          state: 'cited', note: 'Cited when this edition was written, 12 Oct. Not re-checked since.' },
+    s3: { n: 3, kind: 'Code', path: 'ledger/config.py', pos: 'line 37', start: 37,
+          code: ['SETTLEMENT_WINDOW_DAYS = 3  # business days after capture'], hl: [0],
+          state: 'bad', note: 'The automated check disagrees: the sentence says two days, and this line says three.' },
+    s3r: { n: 3, kind: 'Code', path: 'ledger/config.py', pos: 'line 37', start: 37,
+          code: ['SETTLEMENT_WINDOW_DAYS = 3  # business days after capture'], hl: [0],
+          state: 'ok', note: 'Re-checked after the rewrite. The sentence now matches this line.' },
+    s4: { n: 4, kind: 'Query', path: 'jobs/rollup.sql', pos: 'lines 18–24', start: 18,
+          code: ['SELECT merchant_id,', '       DATE(settled_at) AS day,', '       SUM(amount)      AS total', 'FROM ledger_entries',
+                 'WHERE is_retry = FALSE', "  AND status = 'posted'", 'GROUP BY merchant_id, day;'], hl: [4],
+          state: 'ok', note: 'Re-checked against the current query today. Still holds.' },
+    s5: { n: 5, kind: 'Document', path: 'CHANGELOG.md', pos: 'release 2.8.0',
+          quote: '11 March: new fee schedule for card-present payments.',
+          state: 'conflict', note: 'Disagrees with source 6 about the date. The page shows both.' },
+    s6: { n: 6, kind: 'Change history', path: 'config/fees.yaml', pos: 'commit 4e1a9c0',
+          code: ['4e1a9c0  14 Mar  fees: move card_present to schedule B'], hl: [0],
+          state: 'conflict', note: 'Disagrees with source 5 about the date. The page shows both.' },
+    s7: { n: 7, kind: 'Code', path: 'workers/retry.py', pos: 'line 12', start: 12,
+          code: ['    # give up after five attempts'], hl: [0],
+          state: 'cited', note: 'Cited when this edition was written. It is a comment, not code, so the sentence is hedged.' },
+    s7r: { n: 7, kind: 'Code', path: 'workers/retry.py', pos: 'line 4', start: 4,
+          code: ['MAX_ATTEMPTS = 5'], hl: [0],
+          state: 'ok', note: 'Found during the rewrite and re-checked. The hedge is no longer needed.' },
+    s8: { n: 8, kind: 'Code', path: 'ledger/events.py', pos: 'lines 55–58', start: 55,
+          code: ['def retry(event):', '    return replace(event,', '                   attempt=event.attempt + 1,',
+                 '                   idempotency_key=event.idempotency_key)'], hl: [3],
+          state: 'cited', note: 'Read during research. The sentence was proposed, not written, and waits for a person.' },
+    h1: { human: true, kind: 'Person', path: 'Dana, payments team', pos: 'edited 9 Oct',
+          quoteLabel: 'Replaced the agent’s sentence:', quote: 'Daily totals are final at midnight UTC.',
+          state: 'human', note: 'Written by a person. Regenerating keeps it exactly as written: the agent can propose a change to it, never make one.' }
+  };
+
+  var SECTIONS = [
+    { title: 'When a refund posts',
+      comment: 'Check the settlement window against the config.',
+      draft: [
+        { t: 'A refund posts to the ledger only after the payment processor confirms settlement.', src: ['s1'] },
+        { t: 'Chargebacks reverse the original entry instead of adding a negative one, so the payment’s history stays in order.', src: ['s2'] },
+        { t: 'Settlement closes two business days after capture.', src: ['s3'], issue: 'The text says two days. The cited source says three.' }
+      ],
+      regen: [
+        { t: 'A refund posts to the ledger only after the payment processor confirms settlement.', src: ['s1'] },
+        { t: 'Chargebacks reverse the original entry instead of adding a negative one, so the payment’s history stays in order.', src: ['s2'] },
+        { pre: 'Settlement closes ', del: 'two', ins: 'three', post: ' business days after capture.', src: ['s3r'], tag: 'rewritten' }
+      ],
+      rewrites: 1,
+      regenMsg: 'Rewritten from your comment: one sentence changed and its citation was re-checked. Review the section again.' },
+    { title: 'Daily totals',
+      comment: 'Which fee date is right?',
+      draft: [
+        { t: 'Daily totals exclude retried events, so a payment retried three times counts once.', src: ['s4'] },
+        { t: 'A day’s totals are final at 06:00 UTC, once the nightly rollup finishes; anything read earlier can still change.', human: 'h1' },
+        { t: 'The new fee schedule took effect on 11 March or 14 March.', src: ['s5', 's6'],
+          conflict: 'The changelog says 11 March. The change history says 14 March. The page shows both until someone settles it.' }
+      ],
+      regen: null,
+      rewrites: 0,
+      regenMsg: 'Nothing rewritten. Neither source outranks the other, so the conflict stays on the page, and Dana’s edit is kept as written.' },
+    { title: 'Retries',
+      comment: 'Find where the retry limit is set.',
+      draft: [
+        { t: 'Retries appear to stop after five attempts, though the only source is a code comment.', src: ['s7'] },
+        { t: 'A retried event keeps the original event’s idempotency key, which is how the rollup recognises it.', src: ['s8'], proposed: true }
+      ],
+      regen: [
+        { pre: 'Retries ', del: 'appear to stop after five attempts, though the only source is a code comment.', ins: 'stop after five attempts.', post: '', src: ['s7r'], tag: 'rewritten' },
+        { t: 'A retried event keeps the original event’s idempotency key, which is how the rollup recognises it.', src: ['s8'], proposed: true }
+      ],
+      rewrites: 1,
+      regenMsg: 'Rewritten from your comment: the agent found the setting, so the hedge is gone. The proposal still waits for you.' }
+  ];
+
+  var STATE_LABEL = { ok: 're-checked', cited: 'cited', bad: 'the check disagrees', conflict: 'sources disagree' };
+  var INTRO = 'Review each section: accept it, comment on it, or drop it. Then publish what you accepted, or send your comments back to the agent.';
+
+  var root = document.getElementById('proto');
+  var docEl = document.getElementById('doc');
+  var grid = document.getElementById('grid');
+  var pane = document.getElementById('pane');
+  var paneBody = document.getElementById('pane-body');
+  var subEl = document.getElementById('sub');
+  var changesEl = document.getElementById('changes');
+  var receipt = document.getElementById('receipt');
+  var pubBtn = document.getElementById('publish');
+  var regenBtn = document.getElementById('regen');
+  var narrow = window.matchMedia('(max-width: 699px)');
+
+  var state, edition, selKey;
+
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+  function each(list, fn) { Array.prototype.forEach.call(list, fn); }
+
+  function fresh() {
+    edition = 4;
+    selKey = 's1';
+    state = SECTIONS.map(function (sec) {
+      return { review: null, comment: sec.comment, draft: 'draft', regenerated: false,
+               published: false, publishedIn: 0, discarded: false, msg: '', kept: false, prop: null };
+    });
+  }
+
+  var secEls = SECTIONS.map(function (sec, i) {
+    var el = document.createElement('section');
+    el.className = 'sec';
+    el.dataset.i = i;
+    el.setAttribute('aria-labelledby', 'h-' + i);
+    el.innerHTML =
+      '<div class="sec-head"><h2 id="h-' + i + '">' + esc(sec.title) + '</h2>' +
+      '<div class="review" role="group" aria-label="Review: ' + esc(sec.title) + '">' +
+      '<button type="button" data-act="accept" aria-pressed="false">Accept</button>' +
+      '<button type="button" data-act="comment" aria-pressed="false">Comment</button>' +
+      '<button type="button" data-act="drop" aria-pressed="false">Drop</button></div></div>' +
+      '<div class="sec-body"></div>' +
+      '<div class="cbox" hidden><label for="c-' + i + '">Comment for the agent</label>' +
+      '<textarea id="c-' + i + '" rows="2" placeholder="What should change?"></textarea></div>' +
+      '<p class="sec-status"></p>';
+    docEl.appendChild(el);
+    return el;
+  });
+
+  function chip(key) {
+    var s = SRC[key];
+    var mark = s.state === 'ok' ? '<span class="ck" aria-hidden="true">&#10003;</span>'
+      : (s.state === 'bad' || s.state === 'conflict') ? '<span class="bang" aria-hidden="true">!</span>' : '';
+    var label = 'Source ' + s.n + ', ' + STATE_LABEL[s.state] + ': ' + s.path + ', ' + s.pos;
+    return '<button type="button" class="cite st-' + s.state + '" data-src="' + key + '" aria-label="' + esc(label) + '">' + s.n + mark + '</button>';
+  }
+
+  function sentence(s, st) {
+    var body = s.del
+      ? esc(s.pre) + '<del>' + esc(s.del) + '</del> <ins>' + esc(s.ins) + '</ins>' + esc(s.post)
+      : esc(s.t);
+    if (s.human) body = '<span class="human">' + body + '</span>';
+    var tail = (s.src || []).map(chip).join('');
+    if (s.human) {
+      tail += '<button type="button" class="htag" data-src="' + s.human + '" aria-label="Written by a person: Dana, 9 Oct">&#9998; Dana' + (st.kept ? ' · kept' : '') + '</button>';
+    }
+    if (s.tag) tail += '<span class="tag">' + esc(s.tag) + '</span>';
+    var cls = 's' + (s.issue ? ' s-issue' : '') + (s.conflict ? ' s-conflict' : '');
+    return '<span class="' + cls + '">' + body + tail + '</span>';
+  }
+
+  function openIssues(i) {
+    return SECTIONS[i][state[i].draft].filter(function (s) { return !s.proposed && (s.issue || s.conflict); }).length;
+  }
+
+  function status(i) {
+    var st = state[i], open = openIssues(i);
+    if (st.published) return ['Published from edition ' + st.publishedIn + '.', 'st-pub'];
+    if (st.discarded) return ['Draft discarded. The last published version stays.', 'st-drop'];
+    if (st.review === 'accept') {
+      return open
+        ? ['Accepted with ' + open + ' open issue' + (open > 1 ? 's' : '') + '. Publishing signs off on ' + (open > 1 ? 'them' : 'it') + ' as written.', 'st-warn']
+        : ['Accepted. It goes out when you publish.', 'st-acc'];
+    }
+    if (st.review === 'comment') return ['Your comment goes back to the agent when you regenerate. Everything else stays as it is.', ''];
+    if (st.review === 'drop') return ['Dropped. Publishing discards this draft and keeps the last published version.', 'st-drop'];
+    if (st.msg) return [st.msg, ''];
+    return ['Not reviewed yet.', ''];
+  }
+
+  // Once published, a rewritten sentence reads as plain text: the diff was for the reviewer.
+  function clean(s) {
+    if (!s.del && !s.tag) return s;
+    var c = {};
+    Object.keys(s).forEach(function (k) { if (k !== 'del' && k !== 'tag') c[k] = s[k]; });
+    if (s.del) c.t = s.pre + s.ins + s.post;
+    return c;
+  }
+
+  function renderSection(i) {
+    var sec = SECTIONS[i], st = state[i];
+    var sents = st.published ? sec[st.draft].map(clean) : sec[st.draft];
+    var main = sents.filter(function (s) { return !s.proposed; });
+    var prop = sents.filter(function (s) { return s.proposed; })[0];
+    var html = '<p class="para">' + main.map(function (s) { return sentence(s, st); }).join(' ');
+    if (prop && st.prop === 'approve') html += ' ' + sentence({ t: prop.t, src: prop.src, tag: 'approved by you' }, st);
+    html += '</p>';
+    main.forEach(function (s) {
+      if (s.issue) html += '<p class="note"><b aria-hidden="true">!</b><span>' + esc(s.issue) + '</span></p>';
+      if (s.conflict) html += '<p class="note"><b aria-hidden="true">&ne;</b><span>' + esc(s.conflict) + '</span></p>';
+    });
+    if (prop && !st.prop) {
+      html += '<div class="prop"><span class="prop-label">Proposed by the agent, waiting for approval</span>' +
+        '<span class="s">' + esc(prop.t) + prop.src.map(chip).join('') + '</span>' +
+        '<span class="prop-actions"><button type="button" data-prop="approve">Approve</button>' +
+        '<button type="button" data-prop="reject">Reject</button></span></div>';
+    }
+    if (prop && st.prop === 'reject') {
+      html += '<p class="prop-done">Proposal rejected. The agent will not suggest it again unless its source changes.</p>';
+    }
+    secEls[i].querySelector('.sec-body').innerHTML = html;
+    renderReview(i);
+  }
+
+  function renderReview(i) {
+    var st = state[i], el = secEls[i];
+    var locked = st.published || st.discarded;
+    el.classList.toggle('is-drop', st.review === 'drop' || st.discarded);
+    each(el.querySelectorAll('[data-act]'), function (b) {
+      b.setAttribute('aria-pressed', String(st.review === b.dataset.act));
+      b.disabled = locked;
+    });
+    each(el.querySelectorAll('[data-prop]'), function (b) { b.disabled = locked; });
+    var box = el.querySelector('.cbox');
+    box.hidden = st.review !== 'comment';
+    var ta = box.querySelector('textarea');
+    if (ta.value !== st.comment) ta.value = st.comment;
+    var s = status(i);
+    var stEl = el.querySelector('.sec-status');
+    stEl.textContent = s[0];
+    stEl.className = 'sec-status' + (s[1] ? ' ' + s[1] : '');
+  }
+
+  function updateBar() {
+    var acc = 0, com = 0;
+    state.forEach(function (st) {
+      if (st.review === 'accept') acc++;
+      if (st.review === 'comment' && st.comment.trim()) com++;
+    });
+    pubBtn.disabled = acc === 0;
+    pubBtn.textContent = acc ? 'Publish accepted (' + acc + ')' : 'Publish accepted';
+    regenBtn.disabled = com === 0;
+    regenBtn.textContent = com ? 'Regenerate with comments (' + com + ')' : 'Regenerate with comments';
+  }
+
+  function updateCounts() {
+    function n(sel) { return docEl.querySelectorAll(sel).length; }
+    var counts = { sources: n('.sec-body .cite'), checks: n('.sec-body .cite.st-ok'), human: n('.sec-body .human'), issues: n('.sec-body .note') };
+    Object.keys(counts).forEach(function (k) {
+      document.querySelector('[data-layer="' + k + '"] .layer-n').textContent = counts[k];
+    });
+  }
+
+  function renderPane(key) {
+    var s = SRC[key];
+    var kicker = s.human ? 'Who wrote this sentence' : 'What this sentence rests on';
+    var head = s.human
+      ? '<span class="htag" aria-hidden="true">&#9998;</span>'
+      : '<span class="cite st-' + s.state + '" aria-hidden="true">' + s.n + (s.state === 'ok' ? '<span class="ck">&#10003;</span>' : (s.state === 'bad' || s.state === 'conflict') ? '<span class="bang">!</span>' : '') + '</span>';
+    var excerpt;
+    if (s.code) {
+      excerpt = '<pre class="pane-code"><code>' + s.code.map(function (line, j) {
+        var num = s.start != null ? '<span class="ln-n">' + (s.start + j) + '</span>' : '';
+        return '<span class="ln' + (s.hl.indexOf(j) > -1 ? ' hl' : '') + '">' + num + esc(line) + '</span>';
+      }).join('') + '</code></pre>';
+    } else {
+      excerpt = '<blockquote class="pane-quote">' + (s.quoteLabel ? '<span class="pane-ql">' + esc(s.quoteLabel) + '</span>' : '') + esc(s.quote) + '</blockquote>';
+    }
+    paneBody.innerHTML =
+      '<p class="pane-kicker">' + kicker + '</p>' +
+      '<div class="pane-head">' + head + '<span class="pane-kind">' + esc(s.kind) + '</span></div>' +
+      '<p class="pane-path">' + esc(s.path) + ' · ' + esc(s.pos) + '</p>' +
+      excerpt +
+      '<p class="pane-state ps-' + s.state + '">' + esc(s.note) + '</p>';
+  }
+
+  function chipFor(key) { return docEl.querySelector('.sec-body [data-src="' + key + '"]'); }
+
+  function select(key) {
+    var c = chipFor(key);
+    if (!c) return;
+    selKey = key;
+    each(docEl.querySelectorAll('.sec-body [aria-current]'), function (n) { n.removeAttribute('aria-current'); });
+    each(docEl.querySelectorAll('.s.sel'), function (n) { n.classList.remove('sel'); });
+    c.setAttribute('aria-current', 'true');
+    var s = c.closest('.s');
+    if (s) s.classList.add('sel');
+    renderPane(key);
+    place(c);
+  }
+
+  // Wide: the source sits in the margin, level with the sentence it supports.
+  // Narrow: it opens under the section, where the reader's thumb already is.
+  function place(c) {
+    if (narrow.matches) {
+      var body = c.closest('.sec').querySelector('.sec-body');
+      if (body.nextElementSibling !== pane) body.insertAdjacentElement('afterend', pane);
+      pane.classList.add('inline');
+      pane.style.transform = '';
+      return;
+    }
+    if (pane.parentNode !== grid) grid.appendChild(pane);
+    pane.classList.remove('inline');
+    var anchor = c.closest('.s') || c;
+    var y = anchor.getBoundingClientRect().top - grid.getBoundingClientRect().top - 14;
+    var max = docEl.getBoundingClientRect().height - pane.offsetHeight - 14;
+    pane.style.transform = 'translateY(' + Math.round(Math.max(0, Math.min(y, max))) + 'px)';
+  }
+
+  function reAlign() {
+    var c = chipFor(selKey);
+    if (c) place(c);
+  }
+
+  function renderAll() {
+    SECTIONS.forEach(function (_, i) { renderSection(i); });
+    subEl.textContent = 'Edition ' + edition + ' · written by an agent from 31 sources · 3 of 14 sections shown';
+    updateBar();
+    updateCounts();
+    select(chipFor(selKey) ? selKey : 's1');
+  }
+
+  function act(i, a) {
+    var st = state[i];
+    if (st.published || st.discarded) return;
+    st.review = st.review === a ? null : a;
+    st.msg = '';
+    renderReview(i);
+    updateBar();
+    if (st.review === 'comment') secEls[i].querySelector('textarea').focus();
+    reAlign();
+  }
+
+  function proposal(i, p) {
+    var st = state[i];
+    if (st.published || st.discarded) return;
+    st.prop = p;
+    receipt.textContent = p === 'approve'
+      ? 'Approved. The sentence joins the section, marked as agent text you signed off on.'
+      : 'Rejected. The section stays as it was.';
+    renderSection(i);
+    updateCounts();
+    select(chipFor(selKey) ? selKey : 's1');
+  }
+
+  function publish() {
+    var n = 0, gone = 0, left = 0;
+    state.forEach(function (st) {
+      if (st.review === 'accept') { st.published = true; st.publishedIn = edition; st.review = null; n++; }
+      else if (st.review === 'drop') { st.discarded = true; st.review = null; gone++; }
+    });
+    state.forEach(function (st) { if (!st.published && !st.discarded) left++; });
+    var msg = 'Published ' + n + ' section' + (n === 1 ? '' : 's') + ' from edition ' + edition + '.';
+    if (gone) msg += ' Discarded ' + gone + ' dropped draft' + (gone === 1 ? '' : 's') + '.';
+    msg += left
+      ? ' ' + left + ' section' + (left === 1 ? ' stays' : 's stay') + ' as last published.'
+      : ' Every section is decided. Start over to try another path.';
+    receipt.textContent = msg;
+    renderAll();
+  }
+
+  function regenerate() {
+    var rewritten = 0, count = 0;
+    edition += 1;
+    state.forEach(function (st, i) {
+      if (st.review !== 'comment' || !st.comment.trim()) return;
+      var sec = SECTIONS[i];
+      if (!st.regenerated) {
+        st.regenerated = true;
+        if (sec.regen) { st.draft = 'regen'; rewritten += sec.rewrites; }
+        st.msg = sec.regenMsg;
+      } else {
+        st.msg = 'Regenerated again: the agent found nothing more to change from this comment.';
+      }
+      if (sec.draft.some(function (s) { return s.human; })) st.kept = true;
+      st.review = null;
+      st.comment = '';
+      count++;
+    });
+    changesEl.innerHTML = '<b>Edition ' + edition + '</b> · ' + rewritten + ' sentence' + (rewritten === 1 ? '' : 's') +
+      ' rewritten · 0 added · 0 dropped · accepted sections and human edits unchanged';
+    changesEl.hidden = false;
+    receipt.textContent = 'Regenerated ' + count + ' section' + (count === 1 ? '' : 's') + ' from your comments. Review ' +
+      (count === 1 ? 'it' : 'them') + ' again before publishing.';
+    renderAll();
+  }
+
+  function reset() {
+    fresh();
+    changesEl.hidden = true;
+    receipt.textContent = INTRO;
+    renderAll();
+  }
+
+  docEl.addEventListener('click', function (e) {
+    var c = e.target.closest('[data-src]');
+    if (c) { select(c.dataset.src); return; }
+    var a = e.target.closest('[data-act]');
+    if (a) { act(Number(a.closest('.sec').dataset.i), a.dataset.act); return; }
+    var p = e.target.closest('[data-prop]');
+    if (p) proposal(Number(p.closest('.sec').dataset.i), p.dataset.prop);
+  });
+  docEl.addEventListener('mouseover', function (e) {
+    if (narrow.matches) return;
+    var c = e.target.closest('[data-src]');
+    if (c && c.dataset.src !== selKey) select(c.dataset.src);
+  });
+  docEl.addEventListener('focusin', function (e) {
+    var c = e.target.closest('[data-src]');
+    if (c && c.dataset.src !== selKey) select(c.dataset.src);
+  });
+  docEl.addEventListener('input', function (e) {
+    if (e.target.tagName !== 'TEXTAREA') return;
+    state[Number(e.target.closest('.sec').dataset.i)].comment = e.target.value;
+    updateBar();
+  });
+
+  each(document.querySelectorAll('[data-layer]'), function (b) {
+    b.addEventListener('click', function () {
+      var on = b.getAttribute('aria-pressed') !== 'true';
+      b.setAttribute('aria-pressed', String(on));
+      root.classList.toggle('no-' + b.dataset.layer, !on);
+      reAlign();
+    });
+  });
+  pubBtn.addEventListener('click', publish);
+  regenBtn.addEventListener('click', regenerate);
+  document.getElementById('reset').addEventListener('click', reset);
+  window.addEventListener('resize', reAlign);
+  if (narrow.addEventListener) narrow.addEventListener('change', reAlign);
+
+  reset();
+})();
+</script>
+<script src="../../writing/_figure.js"></script>
+</body>
+</html>
