@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import HandoffLoop from '../components/HandoffLoop.astro';
 import {
   getPublishedWriting,
   hrefFor,
@@ -41,6 +42,7 @@ const years = [...groupedByYear.keys()].sort((a, b) => b - a);
       <a href="https://bitsnneurons.substack.com" target="_blank" rel="noopener">Bits &amp; Neurons</a>
       with Vivek Chandela, and earlier posts appeared on the ShareChat engineering blog and Medium.
     </p>
+    <HandoffLoop />
   </section>
 
   {series.map((s) => (

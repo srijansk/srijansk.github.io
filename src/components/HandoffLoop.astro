@@ -1,0 +1,194 @@
+---
+/**
+ * The site's one piece of ambient motion: the argument of Retrieval Is Not
+ * Delivery, acted out. Ten pieces of evidence travel from "read" to "answer".
+ * Passed on as a free-form summary, most are dropped at the handoff; passed on
+ * as a structured record, most arrive. It is a schematic: the split (2 and 6
+ * of 10) mirrors the measured 22% and 60%, and the caption gives the real
+ * numbers with their caveat.
+ *
+ * Slow (a ten-second cycle), the only moving thing on its page, a pause
+ * control because it loops for longer than five seconds (WCAG 2.2.2), and
+ * frozen mid-flow for readers who ask their system to reduce motion.
+ */
+const DOTS = 10;
+const lanes = [
+  { label: 'Free-form summary', lost: [0, 1, 3, 4, 5, 6, 8, 9], tally: '2 of 10 arrive', tone: 'loss' },
+  { label: 'Structured evidence record', lost: [1, 4, 6, 9], tally: '6 of 10 arrive', tone: 'kept' },
+];
+---
+
+<figure class="handoff" data-handoff>
+  <div
+    class="handoff-stage"
+    role="img"
+    aria-label="Schematic. Ten pieces of evidence travel from read, through a handoff between agents, to the answer. Passed on as a free-form summary, eight are dropped at the handoff. Passed on as a structured evidence record, four are."
+  >
+    <div class="handoff-gates" aria-hidden="true">
+      <span style="--at: 0">read</span>
+      <span style="--at: 0.5">hand off</span>
+      <span style="--at: 1">answer</span>
+    </div>
+    {lanes.map((lane) => (
+      <div class="handoff-lane" aria-hidden="true">
+        <span class="handoff-label">{lane.label}</span>
+        <span class="handoff-track">
+          {Array.from({ length: DOTS }, (_, i) => (
+            <span class:list={['handoff-dot', lane.lost.includes(i) && 'is-lost']} style={`--i: ${i}`} />
+          ))}
+        </span>
+        <span class:list={['handoff-tally', `handoff-tally--${lane.tone}`]}>{lane.tally}</span>
+      </div>
+    ))}
+  </div>
+  <figcaption class="handoff-caption">
+    <span>
+      A schematic, not data. In the study behind
+      <a href="/writing/retrieval-is-not-delivery/">Retrieval Is Not Delivery</a>, 22% of the
+      excerpts one agent had read reached the next agent intact; a structured evidence record, with
+      the changes around it, took that to 60%.
+    </span>
+    <button type="button" class="handoff-pause" aria-pressed="false">Pause</button>
+  </figcaption>
+</figure>
+
+<script>
+  for (const fig of document.querySelectorAll<HTMLElement>('[data-handoff]')) {
+    const button = fig.querySelector<HTMLButtonElement>('.handoff-pause');
+    button?.addEventListener('click', () => {
+      const paused = fig.toggleAttribute('data-paused');
+      button.setAttribute('aria-pressed', String(paused));
+      button.textContent = paused ? 'Play' : 'Pause';
+    });
+  }
+</script>
+
+<style>
+  .handoff {
+    margin: 2.25rem 0 0;
+    container: handoff / inline-size;
+  }
+  .handoff-stage {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr) max-content;
+    column-gap: 1.5rem;
+    row-gap: 0.5rem;
+    align-items: center;
+    padding: 1rem 1.4rem 1.1rem;
+    border: 1px solid var(--hairline);
+    border-radius: 12px;
+    background: var(--surface);
+  }
+  .handoff-gates {
+    grid-column: 2;
+    position: relative;
+    height: 1.1rem;
+    font-size: 0.78rem;
+    color: var(--faint);
+  }
+  .handoff-gates span {
+    position: absolute;
+    left: calc(var(--at) * 100%);
+    transform: translateX(-50%);
+    white-space: nowrap;
+  }
+  .handoff-gates span:first-child { transform: translateX(-4px); }
+  .handoff-gates span:last-child { transform: translateX(calc(-100% + 4px)); }
+
+  .handoff-lane { display: contents; }
+  .handoff-label { grid-column: 1; font-size: 0.9rem; color: var(--soft); }
+  .handoff-tally {
+    grid-column: 3;
+    font-size: 0.86rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .handoff-tally--loss { color: var(--loss); }
+  .handoff-tally--kept { color: var(--accent); }
+
+  /* The track: a baseline and three gates, drawn as backgrounds so they stay
+   * exactly at 0, 50% and 100% of whatever width the column gets. */
+  .handoff-track {
+    grid-column: 2;
+    position: relative;
+    display: block;
+    height: 36px;
+    container-type: inline-size;
+    background:
+      linear-gradient(var(--hairline-strong), var(--hairline-strong)) 0 50% / 100% 1px no-repeat,
+      linear-gradient(var(--hairline-strong), var(--hairline-strong)) 0 0 / 1px 100% no-repeat,
+      linear-gradient(var(--hairline-strong), var(--hairline-strong)) 50% 0 / 1px 100% no-repeat,
+      linear-gradient(var(--hairline-strong), var(--hairline-strong)) 100% 0 / 1px 100% no-repeat;
+  }
+
+  .handoff-dot {
+    position: absolute;
+    left: -4px;
+    top: calc(50% - 4px);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: 0;
+    animation: handoff-pass 10s linear infinite;
+    animation-delay: calc(var(--i) * -1s);
+  }
+  .handoff-dot.is-lost { animation-name: handoff-lose; }
+  .handoff[data-paused] .handoff-dot { animation-play-state: paused; }
+
+  /* Same speed in both: a dot crosses the track in six seconds. */
+  @keyframes handoff-pass {
+    0% { transform: translateX(0); opacity: 0; }
+    4% { opacity: 1; }
+    60% { transform: translateX(100cqi); opacity: 1; }
+    66%, 100% { transform: translateX(100cqi); opacity: 0; }
+  }
+  @keyframes handoff-lose {
+    0% { transform: translateX(0); opacity: 0; background: var(--accent); }
+    4% { opacity: 1; }
+    30% { transform: translateX(50cqi); opacity: 1; background: var(--accent); }
+    33% { transform: translateX(50cqi); opacity: 1; background: var(--loss); }
+    46%, 100% { transform: translate(calc(50cqi + 10px), 18px); opacity: 0; background: var(--loss); }
+  }
+
+  .handoff-caption {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 0.7rem;
+    font-size: 0.86rem;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+  .handoff-caption a { color: var(--soft); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  .handoff-caption a:hover { color: var(--accent); }
+  .handoff-pause {
+    flex: none;
+    padding: 0.2rem 0.65rem;
+    border: 1px solid var(--hairline-strong);
+    border-radius: 7px;
+    background: var(--surface);
+    color: var(--soft);
+    font: inherit;
+    font-size: 0.8rem;
+    cursor: pointer;
+  }
+  .handoff-pause:hover { border-color: var(--faint); color: var(--text); }
+  .handoff-pause:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* Narrow: each lane's name and tally sit above its track. */
+  @container handoff (max-width: 560px) {
+    /* Dense packing lets each tally fill the cell beside its label, above the track. */
+    .handoff-stage { grid-template-columns: minmax(0, 1fr) max-content; grid-auto-flow: row dense; column-gap: 1rem; padding: 0.9rem 1rem 1rem; }
+    .handoff-gates, .handoff-track { grid-column: 1 / -1; }
+    .handoff-label { grid-column: 1; margin-top: 0.4rem; }
+    .handoff-tally { grid-column: 2; margin-top: 0.4rem; }
+  }
+
+  /* Reduced motion: hold one frame of the flow, and drop the pause control. */
+  @media (prefers-reduced-motion: reduce) {
+    .handoff-dot { animation-play-state: paused; }
+    .handoff-pause { display: none; }
+  }
+</style>
