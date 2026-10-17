@@ -1,0 +1,69 @@
+/*
+ * How the feed looks when a person opens /rss.xml in a browser. Feed readers
+ * ignore this file. Plain CSS on purpose: XSLT, the usual way to dress up a
+ * feed, is being removed from Chrome (version 158), Firefox and Safari.
+ *
+ * An XML document gets no browser defaults, so every element is placed here:
+ * shown, hidden, or reordered inside its item.
+ */
+@namespace dc url("http://purl.org/dc/elements/1.1/");
+
+:root {
+  display: block;
+  color-scheme: light dark;
+  background: #FFFFFF;
+  color: #111113;
+  font: 17px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+channel {
+  display: block;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 56px 20px 80px;
+}
+channel::before {
+  content: "This is the feed for Srijan Saket\2019s writing. To follow it, copy this page\2019s address into a feed reader such as NetNewsWire, Feedly or Inoreader. The essays themselves are at srijansaket.com/writing.";
+  display: block;
+  margin-bottom: 32px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: #F4F4F5;
+  color: #2C2D32;
+  font-size: 15px;
+  line-height: 1.55;
+}
+channel > title {
+  display: block;
+  font-size: 30px;
+  font-weight: 650;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+channel > description { display: block; margin: 6px 0 28px; color: #62646C; }
+
+/* `link` without a prefix also matches atom:link, which is hidden with it. */
+channel > link, channel > language, channel > lastBuildDate,
+guid, pubDate, category { display: none; }
+
+item {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
+  border-top: 1px solid #EBEBEE;
+}
+item > title { order: 1; display: block; font-size: 19px; font-weight: 650; line-height: 1.35; }
+item > dc|creator { order: 2; display: block; margin-top: 2px; font-size: 14px; color: #8C8E95; }
+item > description { order: 3; display: block; margin-top: 6px; color: #2C2D32; }
+item > link { order: 4; display: block; margin-top: 6px; font-size: 14px; color: #2443D6; overflow-wrap: anywhere; }
+
+@media (prefers-color-scheme: dark) {
+  :root { background: #0E0E10; color: #EDEDEF; }
+  channel::before { background: #1C1C20; color: #D2D3D8; }
+  channel > description { color: #A0A1A8; }
+  item { border-top-color: #232327; }
+  item > dc|creator { color: #75767D; }
+  item > description { color: #D2D3D8; }
+  item > link { color: #8FA3FF; }
+}

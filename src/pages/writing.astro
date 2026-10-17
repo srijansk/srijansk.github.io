@@ -118,8 +118,41 @@ const years = [...groupedByYear.keys()].sort((a, b) => b - a);
   <section class="section" aria-labelledby="subscribe">
     <h2 class="section-title" id="subscribe">Subscribe</h2>
     <p class="page-text">
-      New essays land in the <a href="/rss.xml">RSS feed</a>. The newsletter is
+      New essays appear in this site's feed. To follow it, add the address below to a feed
+      reader such as NetNewsWire, Feedly or Inoreader. I also co-write the newsletter
       <a href="https://bitsnneurons.substack.com" target="_blank" rel="noopener">Bits &amp; Neurons on Substack</a>.
     </p>
+    <div class="feed-copy">
+      <code class="feed-url">https://srijansaket.com/rss.xml</code>
+      <button type="button" class="feed-copy-btn" data-copy="https://srijansaket.com/rss.xml">Copy</button>
+      <span class="feed-copy-status" aria-live="polite"></span>
+    </div>
+    <script>
+      // Copy the feed address; where the clipboard is unavailable, select it instead.
+      for (const button of document.querySelectorAll<HTMLButtonElement>('[data-copy]')) {
+        const status = button.parentElement?.querySelector('.feed-copy-status');
+        button.addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(button.dataset.copy ?? '');
+            button.textContent = 'Copied';
+            if (status) status.textContent = 'Feed address copied.';
+          } catch {
+            const code = button.parentElement?.querySelector('.feed-url');
+            if (code) {
+              const range = document.createRange();
+              range.selectNodeContents(code);
+              getSelection()?.removeAllRanges();
+              getSelection()?.addRange(range);
+            }
+            button.textContent = 'Selected';
+            if (status) status.textContent = 'Feed address selected; copy it with your keyboard.';
+          }
+          setTimeout(() => {
+            button.textContent = 'Copy';
+            if (status) status.textContent = '';
+          }, 2500);
+        });
+      }
+    </script>
   </section>
 </Layout>
