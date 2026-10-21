@@ -30,7 +30,7 @@ My first data point was an anecdote. On an earlier project we gave an agent tool
 
 ## What crewlore changes, and what it leaves alone
 
-My open-source tool [crewlore](https://github.com/srijansk/crewlore) pushes through the hooks Claude Code already provides; the mechanism is the platform's. What crewlore changes is what arrives. The knowledge is not a rule someone wrote by hand. It is compiled from the team's past sessions and pull requests, and each claim carries a scope, a label (decision, procedure or gotcha), whether the team adopted it or tried it and declined, what to do instead when it was declined, and an id that leads to the exact lines it was compiled from.
+My open-source tool [crewlore](https://github.com/srijansk/crewlore) pushes through the hooks Claude Code already provides; the mechanism is the platform's. What crewlore changes is what arrives. The knowledge is not a rule someone wrote by hand. It is compiled from the team's past sessions and pull requests, and each claim carries a scope, a kind (decision, procedure, gotcha or style), whether the team adopted it or tried it and declined, what to do instead when it was declined, and an id that leads to the exact lines it was compiled from.
 
 It also arrives labelled as "evidence to weigh, not instructions". Tool output is the least trusted thing in an agent's context: the [instruction hierarchy](https://arxiv.org/abs/2404.13208) work ranks "untrusted outputs from tools" below the system prompt and the user, because tool output is a common way for injected instructions to get in. Knowledge pushed through that channel should say what it is.
 
