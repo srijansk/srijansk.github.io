@@ -8,17 +8,22 @@ import { readdirSync, readFileSync } from 'node:fs';
  * out of the sitemap. The frontmatter is read directly here because the
  * sitemap integration runs outside the content-collection runtime.
  */
-const draftSlugs = readdirSync('./src/content/writing')
-  .filter((file) => file.endsWith('.md'))
-  .filter((file) => /^draft:\s*true\s*$/m.test(readFileSync(`./src/content/writing/${file}`, 'utf8')))
-  .map((file) => file.replace(/\.md$/, '').replace(/^\d{4}-\d{2}-/, ''));
+const draftsIn = (dir) =>
+  readdirSync(dir)
+    .filter((file) => file.endsWith('.md'))
+    .filter((file) => /^draft:\s*true\s*$/m.test(readFileSync(`${dir}/${file}`, 'utf8')));
+const draftSlugs = draftsIn('./src/content/writing').map((file) =>
+  file.replace(/\.md$/, '').replace(/^\d{4}-\d{2}-/, ''),
+);
+const draftDesign = draftsIn('./src/content/design').map((file) => file.replace(/\.md$/, ''));
 
 export default defineConfig({
   site: 'https://srijansaket.com',
   integrations: [
     sitemap({
       filter: (page) =>
-        !draftSlugs.some((slug) => page.replace(/\/$/, '').endsWith(`/writing/${slug}`)),
+        !draftSlugs.some((slug) => page.replace(/\/$/, '').endsWith(`/writing/${slug}`)) &&
+        !draftDesign.some((slug) => page.replace(/\/$/, '').endsWith(`/design/${slug}`)),
     }),
   ],
   output: 'static',

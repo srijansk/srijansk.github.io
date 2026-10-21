@@ -34,6 +34,7 @@ const minutes = readingTime(piece.body);
         <span>Srijan Saket</span>
         <span class="sep">&middot;</span>
         <time datetime={piece.data.date.toISOString()}>{dateLong.format(piece.data.date)}</time>
+        {piece.data.updated && <><span class="sep">&middot;</span><span>updated <time datetime={piece.data.updated.toISOString()}>{dateLong.format(piece.data.updated)}</time></span></>}
         {minutes && <><span class="sep">&middot;</span><span>{minutes}</span></>}
       </p>
     </header>

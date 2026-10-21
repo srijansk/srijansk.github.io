@@ -2,15 +2,11 @@
 import Layout from '../layouts/Layout.astro';
 import DesignPreview from '../components/DesignPreview.astro';
 import { getCollection } from 'astro:content';
-import { SURFACES } from '../lib/design';
+import { surfaceLabel } from '../lib/design';
 
 const pieces = (await getCollection('design'))
   .filter((d) => import.meta.env.DEV || !d.data.draft)
   .sort((a, b) => a.data.order - b.data.order);
-
-const groups = SURFACES.map((s) => ({ ...s, pieces: pieces.filter((d) => d.data.surface === s.key) })).filter(
-  (g) => g.pieces.length > 0,
-);
 
 const monthYear = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', timeZone: 'UTC' });
 ---
@@ -23,29 +19,24 @@ const monthYear = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'sh
   <section class="page-intro">
     <h1 class="page-title">Design</h1>
     <p class="page-lede">
-      How I think about interfaces for AI. Some are for people: the places where someone directs an
-      agent, checks what it produced and corrects it. Others are for the agents themselves: what
-      they are given, when it reaches them, and the fields they write into. Each piece has a working
-      prototype behind it.
+      How I think about interfaces for AI, on both sides of an agent. Some are for people: the
+      places where someone directs an agent, checks what it produced and corrects it. Others have
+      the agent as their user: what it is given, when, and in what form. The pieces here describe
+      one loop. What a person approves on one side is what the next agent should receive on the
+      other. Each has something you can operate.
     </p>
   </section>
 
-  {groups.map((g) => (
-    <section class="section" aria-labelledby={`surface-${g.key}`}>
-      <div class="section-head">
-        <h2 class="section-title" id={`surface-${g.key}`}>{g.title}</h2>
-      </div>
-      <p class="section-note">{g.note}</p>
-      <div class="work-grid">
-        {g.pieces.map((d) => (
-          <a class="work-card" href={`/design/${d.id}/`}>
-            <div class="work-media work-media--live"><DesignPreview kind={d.data.preview} /></div>
-            <span class="work-title">{d.data.title}</span>
-            <span class="work-meta">{monthYear.format(d.data.date)}</span>
-            <span class="work-text work-text--3">{d.data.teaser ?? d.data.summary}</span>
-          </a>
-        ))}
-      </div>
-    </section>
-  ))}
+  <section class="section" aria-label="Pieces">
+    <div class="work-grid">
+      {pieces.map((d) => (
+        <a class="work-card" href={`/design/${d.id}/`}>
+          <div class="work-media work-media--live"><DesignPreview kind={d.data.preview} /></div>
+          <span class="work-title">{d.data.title}</span>
+          <span class="work-meta">{surfaceLabel(d.data.surface)} · {monthYear.format(d.data.updated ?? d.data.date)}</span>
+          <span class="work-text work-text--3">{d.data.teaser ?? d.data.summary}</span>
+        </a>
+      ))}
+    </div>
+  </section>
 </Layout>

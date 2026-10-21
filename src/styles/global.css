@@ -1386,20 +1386,18 @@ a.row-title:hover { color: var(--accent); }
 /* Announced to screen readers only; the button's own label shows the result. */
 .feed-copy-status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
-.section-note { margin: -0.35rem 0 1.25rem; max-width: 62ch; font-size: 0.97rem; color: var(--muted); }
-
 .row-links { display: flex; gap: 1rem; margin: 0.35rem 0 0; font-size: 0.9rem; }
 .row-links a { color: var(--muted); text-decoration: none; }
 .row-links a:hover { color: var(--text); text-decoration: underline; text-decoration-thickness: 1px; }
 
 /* The review prototype on the Design page: first-paint heights before the
  * figure reports its own (public/writing/_figure.js). */
-.fig-review-proto { height: 1750px; }
-@container (min-width: 480px) { .fig-review-proto { height: 1360px; } }
-@container (min-width: 700px) { .fig-review-proto { height: 1080px; } }
-@container (min-width: 900px) { .fig-review-proto { height: 940px; } }
-.fig-delivery { height: 980px; }
-@container (min-width: 640px) { .fig-delivery { height: 600px; } }
+.fig-review-proto { height: 1950px; }
+@container (min-width: 480px) { .fig-review-proto { height: 1480px; } }
+@container (min-width: 700px) { .fig-review-proto { height: 1150px; } }
+@container (min-width: 900px) { .fig-review-proto { height: 1060px; } }
+.fig-delivery { height: 1220px; }
+@container (min-width: 640px) { .fig-delivery { height: 660px; } }
 
 /* ===== Print ===== */
 @media print {

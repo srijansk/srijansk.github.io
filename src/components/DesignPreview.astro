@@ -33,16 +33,20 @@ const { kind } = Astro.props;
     <>
       <div class="dp-axis"><span>turn 1</span><span>edit</span></div>
       <div class="dp-row">
-        <span class="dp-lab">A tool it must call</span>
-        <span class="dp-track"><span class="dp-never">never called</span><span class="dp-edit"></span></span>
+        <span class="dp-lab">Pull</span>
+        <span class="dp-track"><span class="dp-never">only if it asks</span><span class="dp-edit"></span></span>
       </div>
       <div class="dp-row">
-        <span class="dp-lab">In the instructions</span>
+        <span class="dp-lab">Standing instructions</span>
         <span class="dp-track"><span class="dp-dot dp-dot--start"></span><span class="dp-fade"></span><span class="dp-edit"></span></span>
       </div>
       <div class="dp-row">
-        <span class="dp-lab">When the file opens</span>
+        <span class="dp-lab">Push, with the file</span>
         <span class="dp-track"><span class="dp-dot dp-dot--late"></span><span class="dp-edit"></span></span>
+      </div>
+      <div class="dp-row">
+        <span class="dp-lab">Gate before the edit</span>
+        <span class="dp-track"><span class="dp-dot dp-dot--gate"></span><span class="dp-edit"></span></span>
       </div>
     </>
   )}
@@ -64,7 +68,7 @@ const { kind } = Astro.props;
   /* review */
   .dp-top { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; margin-bottom: 0.4rem; }
   .dp-h { min-width: 0; font-weight: 650; font-size: 0.86rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .dp-btn { flex: none; font-size: 0.66rem; padding: 0.1rem 0.5rem; border-radius: 6px; background: var(--accent); color: var(--bg); }
+  .dp-btn { flex: none; font-size: 0.66rem; font-weight: 600; padding: 0.1rem 0.5rem; border-radius: 6px; background: #F5D24A; color: #5C4600; }
   .dp-p { margin: 0; max-width: 34ch; color: var(--soft); }
   .dp-p s { color: var(--muted); }
   .dp-ins { background: var(--accent-soft); border-radius: 3px; padding: 0 2px; }
@@ -77,13 +81,14 @@ const { kind } = Astro.props;
   /* delivery */
   .dp--delivery { display: flex; flex-direction: column; justify-content: center; font-size: 0.82rem; }
   .dp-axis { display: flex; justify-content: space-between; margin: 0 0 0.5rem 42%; font-size: 0.64rem; color: var(--muted); }
-  .dp-row { display: flex; align-items: center; gap: 0.6rem; margin-top: 0.85rem; }
+  .dp-row { display: flex; align-items: center; gap: 0.6rem; margin-top: 0.65rem; }
   .dp-lab { flex: 0 0 40%; font-size: 0.7rem; color: var(--soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .dp-track { position: relative; flex: 1; height: 1.1rem; border-bottom: 1px solid var(--hairline-strong); }
   .dp-edit { position: absolute; right: 8%; top: -0.2rem; bottom: -0.2rem; border-left: 2px solid var(--text); }
   .dp-never { position: absolute; left: 0; top: 0; font-size: 0.62rem; color: var(--muted); font-style: italic; }
   .dp-dot { position: absolute; top: 0.3rem; width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--accent); }
   .dp-dot--start { left: 0; }
-  .dp-dot--late { left: 74%; }
+  .dp-dot--late { left: 70%; }
+  .dp-dot--gate { left: calc(92% - 0.5rem); }
   .dp-fade { position: absolute; left: 0.5rem; right: 8%; top: 0.5rem; height: 2px; background: linear-gradient(90deg, var(--accent), transparent); }
 </style>

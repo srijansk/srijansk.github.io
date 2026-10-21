@@ -78,10 +78,10 @@ const beliefs = [
     note: 'An agent read a two-step rule in its first minute and drafted it, more than twenty minutes later, as one step.',
   },
   {
-    text: 'Anything an agent writes should show what each claim is made from.',
+    text: 'A person’s correction should outrank the agent that wrote the draft.',
     href: '/design/reviewing-what-an-agent-wrote/',
     source: 'Reviewing what an agent wrote',
-    note: 'Citations that open the exact source line, and human edits that survive the next regeneration.',
+    note: 'In the review prototype, the agent can flag a sentence someone corrected and propose a change, but only a person can make it.',
   },
 ];
 ---
@@ -92,8 +92,9 @@ const beliefs = [
     <p class="intro-text">
       Founding engineer at Pavo AI. Before that, seven years scaling recommendation at ShareChat
       from one million users to two hundred million, then code search at Sourcegraph. I write
-      about what agents lose between finding something and using it, and I design the interfaces
-      people use to check an agent's work.
+      about what agents lose between finding something and using it, and I design interfaces on
+      both sides of an agent: the ones people use to direct and check it, and the ones it works
+      through.
     </p>
     <p class="intro-facts">
       <a href="#papers">Papers at WWW, RecSys, SIGIR and CIKM</a>

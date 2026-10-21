@@ -88,6 +88,8 @@ const design = defineCollection({
     title: z.string(),
     summary: z.string(),
     date: z.coerce.date(),
+    /** Set when a published piece is substantially revised. */
+    updated: z.coerce.date().optional(),
     kind: z.enum(['concept', 'principle', 'study']),
     surface: z.enum(['people', 'agents']),
     /** One line for cards; the summary is the page's dek. */

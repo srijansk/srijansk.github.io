@@ -12,42 +12,55 @@
   .task { margin: 4px 0 0; font-size: 13px; color: var(--soft); line-height: 1.5; }
   .task b { font-weight: 650; color: var(--text); }
 
-  .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; margin: 14px 0 6px; }
-  .scrub { display: flex; align-items: center; gap: 10px; flex: 1 1 320px; }
+  .controls { display: grid; gap: 10px; margin: 14px 0 6px; }
+  .scrub { display: flex; align-items: center; gap: 10px; }
   .scrub label { font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+  .scrub output { font-size: 12.5px; color: var(--text); font-weight: 600; min-width: 4.5em; font-variant-numeric: tabular-nums; }
   .scrub input { flex: 1; accent-color: var(--accent); }
-  .ask { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--soft); }
-  .ask input { accent-color: var(--accent); }
+  .opts { display: flex; flex-wrap: wrap; gap: 8px 22px; align-items: center; font-size: 12.5px; color: var(--soft); }
+  .opts fieldset { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; margin: 0; padding: 0; border: 0; }
+  .opts legend { float: left; margin-right: 8px; padding: 0; color: var(--muted); }
+  .opts label { display: inline-flex; align-items: center; gap: 5px; }
+  .opts input { accent-color: var(--accent); }
 
-  .now { margin: 4px 0 12px; font-size: 13.5px; }
-  .now b { font-weight: 650; }
-  .now .edit-flag { margin-left: 6px; padding: 1px 7px; border-radius: 6px; background: var(--text); color: var(--surface); font-size: 11.5px; font-weight: 600; }
+  .now-line { margin: 6px 0 12px; font-size: 13.5px; }
+  .now-line b { font-weight: 650; }
+  .edit-flag { margin-left: 8px; padding: 1px 7px; border-radius: 6px; background: var(--text); color: var(--surface); font-size: 11.5px; font-weight: 600; }
 
-  /* Lanes: turns run left to right; a dot is where the fact arrives, the band is
+  /* Lanes: turns run left to right; a dot is where the rule arrives, the band is
    * how long it has been in context, and the outlined column is the turn shown. */
-  .lanes { display: grid; grid-template-columns: minmax(150px, 22%) minmax(0, 1fr) minmax(170px, 30%); gap: 10px 16px; align-items: center; }
+  .lanes { display: grid; grid-template-columns: minmax(150px, 22%) minmax(0, 1fr) minmax(180px, 31%); gap: 10px 16px; align-items: center; }
   .lh { font-size: 12px; color: var(--muted); }
   .ticks, .track { display: grid; grid-template-columns: repeat(11, minmax(0, 1fr)); }
   .ticks span { font-size: 10.5px; color: var(--muted); text-align: center; font-variant-numeric: tabular-nums; }
   .ticks span.is-now { color: var(--text); font-weight: 650; }
-  .ticks span.is-edit::after { content: " edit"; }
   .lane-name { font-size: 13px; font-weight: 600; color: var(--text); }
   .lane-sub { display: block; font-size: 11.5px; font-weight: 400; color: var(--muted); }
   .track { position: relative; height: 26px; border-radius: 6px; background: var(--bg); }
   .cell { position: relative; border-left: 1px solid var(--hairline); }
   .cell:first-child { border-left: 0; }
   .cell.in { background: var(--accent-soft); }
-  .cell.now { box-shadow: inset 0 0 0 2px var(--text); border-radius: 4px; }
+  .cell.maybe { background: repeating-linear-gradient(135deg, var(--accent-soft) 0 4px, transparent 4px 8px); }
+  .cell.stale-in { background: var(--warn-soft); }
+  .cell.is-now { box-shadow: inset 0 0 0 2px var(--text); border-radius: 4px; }
   .cell.edit::before { content: ""; position: absolute; left: 50%; top: -4px; bottom: -4px; border-left: 2px dashed var(--muted); }
   .dot { position: absolute; left: 50%; top: 50%; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; background: var(--accent); }
+  .dot.maybe { background: var(--surface); border: 2px solid var(--accent); }
+  .dot.stale { background: var(--warn); }
+  .dot.other { width: 6px; height: 6px; margin: -3px 0 0 -3px; background: var(--muted); }
   .avail { position: absolute; left: 0; right: 0; top: 50%; border-top: 1px dashed var(--hairline-strong); }
-  .lane-state { font-size: 12.5px; line-height: 1.45; color: var(--soft); }
+  .lane-state { margin: 0; font-size: 12.5px; line-height: 1.45; color: var(--soft); }
   .lane-state.none { color: var(--warn); }
   .lane-state.ok { color: var(--accent); }
 
-  .turns { margin: 16px 0 0; padding: 10px 12px; border: 1px solid var(--hairline); border-radius: 8px; background: var(--bg); }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 12px 0 0; font-size: 11.5px; color: var(--muted); }
+  .legend span { display: inline-flex; align-items: center; gap: 5px; }
+  .legend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; }
+
+  .turns { margin: 14px 0 0; padding: 10px 12px; border: 1px solid var(--hairline); border-radius: 8px; background: var(--bg); }
+  .turns h2 { margin: 0 0 4px; font-size: 12px; font-weight: 600; color: var(--muted); }
   .turns ol { margin: 0; padding-left: 22px; font-size: 12.5px; line-height: 1.6; color: var(--soft); columns: 2; column-gap: 28px; }
-  .turns li.is-now { color: var(--text); font-weight: 600; }
+  .turns li[aria-current="step"] { color: var(--text); font-weight: 600; }
   .turns li.is-past { color: var(--muted); }
 
   @media (max-width: 640px) {
@@ -61,29 +74,46 @@
 </head>
 <body>
   <p class="fig-kicker">Schematic · invented session</p>
-  <h1 class="title">One coding session, three routes for the same fact</h1>
-  <p class="task"><b>Task:</b> make retries safe to re-run. <b>Team fact:</b> a retried event keeps the original event&rsquo;s idempotency key.</p>
+  <h1 class="title">One coding session, four routes for the same rule</h1>
+  <p class="task"><b>Task:</b> make retries safe to re-run. <b>Team rule:</b> a retried event keeps the original event&rsquo;s idempotency key.</p>
 
   <div class="controls">
     <div class="scrub">
-      <label for="turn">Turn <span id="turn-n">9</span> of 10</label>
-      <input type="range" id="turn" min="1" max="10" step="1" value="9" aria-describedby="now" />
+      <label for="turn">Turn</label>
+      <input type="range" id="turn" min="1" max="10" step="1" value="9" />
+      <output id="turn-out" for="turn">9 of 10</output>
     </div>
-    <label class="ask"><input type="checkbox" id="asks" /> Suppose the agent calls the tool at turn 2</label>
+    <div class="opts">
+      <fieldset>
+        <legend>The tool:</legend>
+        <label><input type="radio" name="ask" value="unknown" checked /> unknown</label>
+        <label><input type="radio" name="ask" value="asks" /> the agent asks at turn 2</label>
+        <label><input type="radio" name="ask" value="never" /> it never asks</label>
+      </fieldset>
+      <label><input type="checkbox" id="stale" /> the pushed copy is out of date</label>
+    </div>
   </div>
 
-  <p class="now" id="now" aria-live="polite"></p>
+  <p class="now-line" id="now"></p>
 
   <div class="lanes" id="lanes">
     <span class="lh lh-name">Route</span>
     <div class="ticks" id="ticks" aria-hidden="true"></div>
-    <span class="lh lh-state">Where the fact is now</span>
+    <span class="lh lh-state">Where the rule is now</span>
+  </div>
+  <p class="sr-only" id="summary" aria-live="polite"></p>
+
+  <div class="legend" aria-hidden="true">
+    <span><i style="background: var(--accent)"></i>the rule arrives</span>
+    <span><i style="background: var(--muted)"></i>other facts pushed with other files</span>
+    <span><i style="background: var(--warn)"></i>an out-of-date copy</span>
   </div>
 
-  <div class="turns" aria-label="The session, turn by turn">
+  <section class="turns" aria-labelledby="turns-h">
+    <h2 id="turns-h">The session, turn by turn</h2>
     <ol id="turn-list"></ol>
-  </div>
-  <p class="fig-hint">The session is invented; the three routes are how agents receive knowledge today. Distance is counted in turns. How much an older fact still shapes an edit is the open question in the essay.</p>
+  </section>
+  <p class="fig-hint">The session is invented. The counts in the essay come from real runs; how much an older rule still shapes an edit is the open question.</p>
 
 <script>
 (function () {
@@ -103,37 +133,48 @@
   var EDIT = 9;
   // Turn 0 is the start of the session, before the first action.
   var LANES = [
-    { key: 'tool', name: 'A tool it must call', sub: 'available all session' },
+    { key: 'pull', name: 'Pull', sub: 'a tool the agent can call' },
     { key: 'instr', name: 'Standing instructions', sub: 'CLAUDE.md, AGENTS.md, always-on rules' },
-    { key: 'push', name: 'When the file opens', sub: 'delivered with the file it is about' }
+    { key: 'push', name: 'Push, with the file', sub: 'arrives when the file is opened' },
+    { key: 'gate', name: 'A gate before the edit', sub: 'the edit waits for a lookup' }
   ];
+  var OTHER_PUSHES = [3, 4, 6]; // facts about the other files the agent opened
 
   var range = document.getElementById('turn');
-  var asks = document.getElementById('asks');
+  var out = document.getElementById('turn-out');
+  var staleBox = document.getElementById('stale');
   var lanesEl = document.getElementById('lanes');
   var ticksEl = document.getElementById('ticks');
   var nowEl = document.getElementById('now');
-  var turnN = document.getElementById('turn-n');
+  var summaryEl = document.getElementById('summary');
   var listEl = document.getElementById('turn-list');
+
+  function ask() { return document.querySelector('input[name="ask"]:checked').value; }
+  function ago(n) { return n === 0 ? 'this turn' : n === 1 ? '1 turn ago' : n + ' turns ago'; }
 
   function arrival(key) {
     if (key === 'instr') return 0;
     if (key === 'push') return 7;
-    return asks.checked ? 2 : null;
+    if (key === 'gate') return EDIT;
+    return ask() === 'asks' ? 2 : null;
   }
-
-  function ago(n) { return n === 0 ? 'this turn' : n === 1 ? '1 turn ago' : n + ' turns ago'; }
 
   function laneState(key, t) {
     var a = arrival(key);
-    if (key === 'tool') {
-      if (a === null) return { cls: 'none', text: 'Not in context. The agent never called the tool, so the fact never arrived.' };
-      if (t < a) return { cls: '', text: 'Not yet. The fact arrives if the agent asks, at turn ' + a + '.' };
-      return { cls: 'ok', text: 'In context since turn ' + a + ', ' + ago(t - a) + ', because the agent happened to ask.' };
+    if (key === 'pull') {
+      if (ask() === 'never') return { cls: 'none', text: 'Not in context. The agent never asked, so the rule never arrived.' };
+      if (ask() === 'unknown') return { cls: '', text: 'Only if the agent asks, and it cannot ask for a rule it does not know exists.' };
+      if (t < a) return { cls: '', text: 'Not yet. It arrives when the agent asks, at turn 2.' };
+      return { cls: 'ok', text: 'In context since turn 2, ' + ago(t - a) + ', because the agent asked.' };
     }
-    if (key === 'instr') return { cls: 'ok', text: 'In context since the start of the session, ' + ago(t) + ', with everything read since in between.' };
-    if (t < a) return { cls: '', text: 'Not yet. It arrives when the agent opens workers/retry.py, at turn 7.' };
-    return { cls: 'ok', text: 'In context since turn 7, ' + ago(t - a) + ', delivered with the file it is about.' };
+    if (key === 'instr') return { cls: 'ok', text: 'In context since the start, ' + ago(t) + ', with everything read since in between.' };
+    if (key === 'push') {
+      if (t < a) return { cls: '', text: 'Not yet. It arrives when the agent opens workers/retry.py, at turn 7.' };
+      if (staleBox.checked) return { cls: 'none', text: 'Arrived at turn 7, ' + ago(t - a) + ', but from an out-of-date copy. The agent uses it anyway.' };
+      return { cls: 'ok', text: 'In context since turn 7, ' + ago(t - a) + ', delivered with the file it is about.' };
+    }
+    if (t < EDIT) return { cls: '', text: 'Not yet. The lookup runs when the agent tries to edit, and the edit waits for it.' };
+    return { cls: 'ok', text: 'Looked up at the edit, because the edit could not go ahead without it.' };
   }
 
   function build() {
@@ -160,44 +201,51 @@
 
   function render() {
     var t = Number(range.value);
-    turnN.textContent = t;
-    range.setAttribute('aria-valuetext', 'Turn ' + t + ': ' + TURNS[t - 1]);
+    out.textContent = t + ' of 10';
+    range.setAttribute('aria-valuetext', t + ' of 10: ' + TURNS[t - 1]);
     Array.prototype.forEach.call(ticksEl.children, function (s) {
-      var k = Number(s.dataset.t);
-      s.className = (k === t ? 'is-now' : '') + (k === EDIT ? ' is-edit' : '');
+      s.className = Number(s.dataset.t) === t ? 'is-now' : '';
     });
     var summary = [];
     LANES.forEach(function (l) {
       var a = arrival(l.key);
+      var maybe = l.key === 'pull' && ask() === 'unknown';
+      var stale = l.key === 'push' && staleBox.checked;
       var track = lanesEl.querySelector('[data-lane="' + l.key + '"]');
       var cells = '';
       for (var i = 0; i <= 10; i++) {
         var cls = 'cell';
-        if (a !== null && i >= a && i <= t) cls += ' in';
-        if (i === t) cls += ' now';
+        if (maybe && i >= 2 && i <= t) cls += ' maybe';
+        else if (a !== null && i >= a && i <= t) cls += stale ? ' stale-in' : ' in';
+        if (i === t) cls += ' is-now';
         if (i === EDIT) cls += ' edit';
-        cells += '<span class="' + cls + '">' + (a === i ? '<span class="dot"></span>' : '') + '</span>';
+        var dot = '';
+        if (maybe && i === 2) dot = '<span class="dot maybe"></span>';
+        else if (a === i) dot = '<span class="dot' + (stale ? ' stale' : '') + '"></span>';
+        else if (l.key === 'push' && OTHER_PUSHES.indexOf(i) > -1 && i <= t) dot = '<span class="dot other"></span>';
+        cells += '<span class="' + cls + '">' + dot + '</span>';
       }
-      track.innerHTML = (l.key === 'tool' ? '<span class="avail"></span>' : '') + cells;
-      track.style.gridTemplateColumns = 'repeat(11, minmax(0, 1fr))';
+      track.innerHTML = (l.key === 'pull' ? '<span class="avail"></span>' : '') + cells;
       var st = laneState(l.key, t);
       var el = document.getElementById('state-' + l.key);
       el.className = 'lane-state' + (st.cls ? ' ' + st.cls : '');
       el.textContent = st.text;
-      summary.push(l.name + ': ' + (a === null || t < a ? 'not in context' : 'arrived ' + ago(t - a)));
+      summary.push(l.name + ': ' + st.text);
     });
-    nowEl.innerHTML = '<b>Turn ' + t + '.</b> ' + TURNS[t - 1] + '.' + (t === EDIT ? '<span class="edit-flag">the edit</span>' : '') +
-      '<span class="sr-only"> ' + summary.join('; ') + '.</span>';
+    nowEl.innerHTML = '<b>Turn ' + t + '.</b> ' + TURNS[t - 1] + '.' + (t === EDIT ? ' <span class="edit-flag">the edit</span>' : '');
+    summaryEl.textContent = summary.join(' ');
     Array.prototype.forEach.call(listEl.children, function (li) {
       var k = Number(li.dataset.t);
-      li.className = k === t ? 'is-now' : k < t ? 'is-past' : '';
+      if (k === t) li.setAttribute('aria-current', 'step'); else li.removeAttribute('aria-current');
+      li.className = k < t ? 'is-past' : '';
     });
   }
 
   build();
   render();
   range.addEventListener('input', render);
-  asks.addEventListener('change', render);
+  staleBox.addEventListener('change', render);
+  Array.prototype.forEach.call(document.querySelectorAll('input[name="ask"]'), function (r) { r.addEventListener('change', render); });
 })();
 </script>
 <script src="../../writing/_figure.js"></script>

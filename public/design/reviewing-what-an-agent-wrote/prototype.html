@@ -6,10 +6,11 @@
 <title>Reviewing what an agent wrote: prototype</title>
 <link rel="stylesheet" href="../../writing/_figure.css" />
 <style>
+  /* Blue marks are the agent and its checker; yellow marks are people. */
   :root {
     --human: rgba(250, 204, 21, 0.32);
-    --human-ring: rgba(250, 204, 21, 0.5);
-    --human-ink: #6B5000;
+    --human-strong: #F5D24A;
+    --human-ink: #5C4600;
   }
   body { padding: 18px 20px 20px; }
   .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
@@ -18,15 +19,9 @@
   .title { margin: 0; font-size: 17px; font-weight: 650; letter-spacing: -0.01em; }
   .sub { margin: 2px 0 0; font-size: 12.5px; color: var(--muted); }
 
-  /* Counts that open what they count: each steps through its sentences. */
-  .doors {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    padding: 10px 0 12px;
-    border-bottom: 1px solid var(--hairline);
-  }
-  .door {
+  /* Counts: each one steps through the sentences it counts. */
+  .counts { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 0 12px; border-bottom: 1px solid var(--hairline); }
+  .count {
     display: inline-flex;
     align-items: baseline;
     gap: 5px;
@@ -37,27 +32,18 @@
     color: var(--soft);
     font-size: 12.5px;
   }
-  .door b { font-weight: 650; color: var(--text); font-variant-numeric: tabular-nums; }
-  .door:hover { border-color: var(--accent-mid); }
-  .door.is-zero { color: var(--muted); }
-  .door.is-zero b { color: var(--muted); }
-  .door-warn b { color: var(--warn); }
-  .door-ok b { color: var(--accent); }
+  .count b { font-weight: 650; color: var(--text); font-variant-numeric: tabular-nums; }
+  .count:hover { border-color: var(--accent-mid); }
+  .count.is-zero, .count.is-zero b { color: var(--muted); }
+  .count-warn b { color: var(--warn); }
+  .count-ok b { color: var(--accent); }
+  .count-human b { color: var(--human-ink); }
 
-  .changes {
-    margin: 12px 0 0;
-    padding: 7px 11px;
-    border-radius: 8px;
-    background: var(--accent-soft);
-    font-size: 12.5px;
-    color: var(--soft);
-  }
+  .changes { margin: 12px 0 0; padding: 7px 11px; border-radius: 8px; background: var(--accent-soft); font-size: 12.5px; color: var(--soft); }
   .changes b { color: var(--accent); font-weight: 650; }
 
   .grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0 22px; }
-  @media (min-width: 700px) {
-    .grid { grid-template-columns: minmax(0, 1fr) minmax(260px, 38%); }
-  }
+  @media (min-width: 700px) { .grid { grid-template-columns: minmax(0, 1fr) minmax(260px, 38%); } }
 
   .sec { padding: 14px 0; border-bottom: 1px solid var(--hairline); }
   .sec:last-child { border-bottom: 0; }
@@ -65,54 +51,32 @@
   .sec h2 { margin: 0; font-size: 14px; font-weight: 650; }
   .sec h2:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
   .review { display: inline-flex; flex-wrap: wrap; gap: 4px; }
-  .review button {
-    padding: 3px 9px;
-    border: 1px solid var(--hairline-strong);
-    border-radius: 6px;
-    font-size: 12px;
-    color: var(--soft);
-    background: var(--surface);
-  }
+  .review button { padding: 3px 9px; border: 1px solid var(--hairline-strong); border-radius: 6px; font-size: 12px; color: var(--soft); background: var(--surface); }
   .review button:hover { border-color: var(--accent-mid); }
   .review button[aria-pressed="true"]::before { content: "\2713\00a0"; }
-  .review button[data-act="approve"][aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #FFFFFF; }
+  .review button[data-act="approve"][aria-pressed="true"] { background: var(--human-strong); border-color: var(--human-ink); color: var(--human-ink); font-weight: 600; }
   .review button[data-act="changes"][aria-pressed="true"] { background: var(--soft); border-color: var(--soft); color: #FFFFFF; }
   .review button[data-act="reject"][aria-pressed="true"] { background: var(--warn); border-color: var(--warn); color: #FFFFFF; }
   .review button[aria-disabled="true"] { opacity: 0.45; cursor: default; }
-  .sec.is-rejected .sec-body { opacity: 0.62; }
+  .sec.is-rejected .para { color: var(--muted); }
 
   .para { margin: 8px 0 0; font-size: 14px; line-height: 1.7; }
-  .s {
-    border-radius: 3px;
-    -webkit-box-decoration-break: clone;
-    box-decoration-break: clone;
-  }
+  .s { border-radius: 3px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
   .s:focus { outline: none; }
   .s.sel { background: var(--accent-soft); box-shadow: 0 0 0 2px var(--accent-soft); }
   .s-flag { text-decoration: underline wavy var(--warn); text-decoration-thickness: 1px; text-underline-offset: 4px; text-decoration-skip-ink: none; }
   .s-conflict { text-decoration: underline dotted var(--warn); text-decoration-thickness: 1.5px; text-underline-offset: 4px; }
   .s-stale { text-decoration: underline dashed var(--muted); text-decoration-thickness: 1px; text-underline-offset: 4px; }
 
-  /* Citation chips. Outline: cited, not checked. Filled with a tick: checked
-   * against the lines it cites. Orange: the check disagrees or sources
-   * disagree. Dashed: the cited lines changed after the check. */
+  /* Citation chips. Outline: cited, not checked. Filled blue with a tick: the
+   * checker read the cited lines and they hold. Orange: the check or the
+   * sources disagree. Dashed: the cited lines changed after the check. */
   .cite {
-    display: inline-flex;
-    align-items: center;
-    gap: 2px;
-    height: 18px;
-    min-width: 18px;
-    padding: 0 5px;
-    margin-left: 3px;
-    border: 1px solid var(--accent-mid);
-    border-radius: 5px;
-    background: var(--surface);
-    color: var(--accent);
-    font-size: 10.5px;
-    font-weight: 650;
-    line-height: 1;
-    vertical-align: 1px;
-    font-variant-numeric: tabular-nums;
+    display: inline-flex; align-items: center; gap: 2px;
+    height: 18px; min-width: 18px; padding: 0 5px; margin-left: 3px;
+    border: 1px solid var(--accent-mid); border-radius: 5px;
+    background: var(--surface); color: var(--accent);
+    font-size: 10.5px; font-weight: 650; line-height: 1; vertical-align: 1px; font-variant-numeric: tabular-nums;
   }
   .cite[aria-current="true"] { outline: 2px solid var(--accent); outline-offset: 1px; }
   .cite.st-ok { background: var(--accent); border-color: var(--accent); color: #FFFFFF; }
@@ -121,68 +85,25 @@
   .cite.st-stale { border-style: dashed; border-color: var(--muted); color: var(--soft); }
   .mk { font-size: 9.5px; }
 
-  .human {
-    background: var(--human);
-    border-radius: 3px;
-    padding: 0 1px;
-    -webkit-box-decoration-break: clone;
-    box-decoration-break: clone;
-  }
+  .human { background: var(--human); border-radius: 3px; padding: 0 1px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
   .htag {
-    display: inline-flex;
-    align-items: center;
-    height: 18px;
-    padding: 0 6px;
-    margin-left: 3px;
-    border-radius: 5px;
-    background: var(--human);
-    color: var(--human-ink);
-    font-size: 10.5px;
-    font-weight: 650;
-    line-height: 1;
-    vertical-align: 1px;
+    display: inline-flex; align-items: center; height: 18px; padding: 0 6px; margin-left: 3px;
+    border-radius: 5px; background: var(--human); color: var(--human-ink);
+    font-size: 10.5px; font-weight: 650; line-height: 1; vertical-align: 1px;
   }
   .htag[aria-current="true"] { outline: 2px solid var(--human-ink); outline-offset: 1px; }
 
-  .tag {
-    display: inline-block;
-    margin-left: 5px;
-    padding: 0 6px;
-    border: 1px solid var(--hairline-strong);
-    border-radius: 5px;
-    background: var(--bg);
-    color: var(--muted);
-    font-size: 10.5px;
-    line-height: 16px;
-    vertical-align: 1px;
-  }
+  .tag { display: inline-block; margin-left: 5px; padding: 0 6px; border: 1px solid var(--hairline-strong); border-radius: 5px; background: var(--bg); color: var(--muted); font-size: 10.5px; line-height: 16px; vertical-align: 1px; }
+  .tag-human { border-color: transparent; background: var(--human); color: var(--human-ink); }
   del { color: var(--muted); text-decoration-color: var(--warn); }
   ins { text-decoration: underline; text-decoration-color: var(--accent-mid); text-underline-offset: 3px; background: var(--accent-soft); border-radius: 3px; padding: 0 2px; }
 
-  .note {
-    display: flex;
-    gap: 8px;
-    margin: 8px 0 0;
-    padding: 6px 10px;
-    border-radius: 8px;
-    background: var(--warn-soft);
-    color: var(--soft);
-    font-size: 12.5px;
-    line-height: 1.5;
-  }
+  .note { display: flex; gap: 8px; margin: 8px 0 0; padding: 6px 10px; border-radius: 8px; background: var(--warn-soft); color: var(--soft); font-size: 12.5px; line-height: 1.5; }
   .note b { color: var(--warn); font-weight: 650; }
   .note.note-stale { background: var(--bg); border: 1px dashed var(--hairline-strong); }
   .note.note-stale b { color: var(--soft); }
 
-  .prop {
-    display: block;
-    margin: 10px 0 0;
-    padding: 8px 10px;
-    border: 1px dashed var(--hairline-strong);
-    border-radius: 8px;
-    font-size: 13.5px;
-    line-height: 1.6;
-  }
+  .prop { display: block; margin: 10px 0 0; padding: 8px 10px; border: 1px dashed var(--hairline-strong); border-radius: 8px; font-size: 13.5px; line-height: 1.6; }
   .prop:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
   .prop-label { display: block; margin-bottom: 2px; font-size: 12px; color: var(--muted); }
   .prop-actions { display: flex; gap: 6px; margin-top: 6px; }
@@ -192,33 +113,15 @@
 
   .cbox { margin: 10px 0 0; }
   .cbox label { display: block; margin-bottom: 4px; font-size: 12px; color: var(--muted); }
-  .cbox textarea {
-    width: 100%;
-    padding: 7px 9px;
-    border: 1px solid var(--hairline-strong);
-    border-radius: 8px;
-    font: inherit;
-    font-size: 13px;
-    line-height: 1.5;
-    color: var(--text);
-    background: var(--surface);
-    resize: vertical;
-  }
+  .cbox textarea { width: 100%; padding: 7px 9px; border: 1px solid var(--hairline-strong); border-radius: 8px; font: inherit; font-size: 13px; line-height: 1.5; color: var(--text); background: var(--surface); resize: vertical; }
   .sec-status { margin: 8px 0 0; font-size: 12px; line-height: 1.5; color: var(--muted); }
-  .sec-status.st-approved { color: var(--accent); }
+  .sec-status.st-approved { color: var(--human-ink); }
   .sec-status.st-warn, .sec-status.st-rejected { color: var(--warn); }
 
   /* The source a sentence rests on: exact lines, path, position, and state. */
-  .pane {
-    align-self: start;
-    margin-top: 14px;
-    padding: 12px 14px 13px;
-    border: 1px solid var(--hairline-strong);
-    border-radius: 10px;
-    background: var(--surface);
-    box-shadow: 0 1px 2px rgba(17, 17, 19, 0.04);
-    transition: transform 180ms ease;
-  }
+  .pane { align-self: start; margin-top: 14px; padding: 12px 14px 13px; border: 1px solid var(--hairline-strong); border-radius: 10px; background: var(--surface); box-shadow: 0 1px 2px rgba(17, 17, 19, 0.04); transition: transform 180ms ease; }
+  .pane:focus { outline: none; }
+  .pane:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .pane.inline { margin: 10px 0 2px; }
   .pane[hidden] { display: none; }
   .pane-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
@@ -229,31 +132,13 @@
   .pane-head .cite, .pane-head .htag { margin-left: 0; }
   .pane-kind { font-size: 12.5px; font-weight: 650; }
   .pane-path { margin: 5px 0 8px; font-family: var(--mono); font-size: 11.5px; color: var(--soft); overflow-wrap: anywhere; }
-  .pane-code {
-    margin: 0;
-    padding: 7px 0;
-    border: 1px solid var(--hairline);
-    border-radius: 7px;
-    background: var(--bg);
-    font-family: var(--mono);
-    font-size: 11px;
-    line-height: 1.55;
-  }
+  .pane-code { margin: 0; padding: 7px 0; border: 1px solid var(--hairline); border-radius: 7px; background: var(--bg); font-family: var(--mono); font-size: 11px; line-height: 1.55; }
   .pane-code .ln { display: flex; padding: 0 10px 0 6px; }
   .pane-code .ln.hl { background: var(--accent-soft); box-shadow: inset 2px 0 0 var(--accent); }
   .pane-code .ln.changed { background: var(--warn-soft); box-shadow: inset 2px 0 0 var(--warn); }
   .pane-code .ln-n { flex: none; width: 28px; margin-right: 8px; text-align: right; color: var(--muted); user-select: none; }
   .pane-code .ln-t { flex: 1; min-width: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
-  .pane-quote {
-    margin: 0;
-    padding: 7px 10px;
-    border-left: 2px solid var(--accent-mid);
-    border-radius: 0 7px 7px 0;
-    background: var(--bg);
-    font-size: 13px;
-    line-height: 1.55;
-    color: var(--soft);
-  }
+  .pane-quote { margin: 0; padding: 7px 10px; border-left: 2px solid var(--accent-mid); border-radius: 0 7px 7px 0; background: var(--bg); font-size: 13px; line-height: 1.55; color: var(--soft); }
   .pane-ql { display: block; margin-bottom: 2px; font-size: 12px; color: var(--muted); }
   .pane-state { margin: 9px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--soft); }
   .ps-ok { color: var(--accent); }
@@ -278,7 +163,7 @@
 
   @media (max-width: 699px) {
     body { padding: 16px 14px 18px; }
-    .cite, .htag { height: 22px; min-width: 24px; }
+    .cite, .htag { height: 24px; min-width: 26px; }
     .cbox textarea { font-size: 16px; }
   }
 </style>
@@ -291,12 +176,12 @@
     <p class="sub" id="sub"></p>
   </header>
 
-  <div class="doors" id="doors" role="group" aria-label="Sentence states. Each count steps through the sentences it counts."></div>
+  <div class="counts" id="counts" role="group" aria-label="Sentence states. Each count steps through the sentences it counts."></div>
   <p class="changes" id="changes" hidden></p>
 
   <div class="grid" id="grid">
     <div class="doc" id="doc"></div>
-    <aside class="pane" id="pane" aria-label="Source">
+    <aside class="pane" id="pane" tabindex="-1" aria-label="Source">
       <div class="pane-body" id="pane-body"></div>
     </aside>
   </div>
@@ -320,8 +205,7 @@
   // Sources a sentence can rest on. `check` is the starting state:
   // ok (checked against the cited lines), cited (not checked),
   // flag (the check disagrees), conflict (two sources disagree).
-  // `change` describes the demo edit to a checked source and what a
-  // re-check of the edited lines finds.
+  // `change` is the demo edit to a checked source and what a re-check finds.
   var SRC = {
     s1: { n: 1, kind: 'Code', path: 'ledger/settle.py', pos: 'lines 142–151', start: 142,
           code: ['def post_refund(entry, event):',
@@ -365,16 +249,20 @@
           check: 'cited', why: 'It is a comment, not code, so the sentence says it is unsure.' },
     s7r: { n: 7, kind: 'Code', path: 'workers/retry.py', pos: 'line 4', start: 4,
           code: ['MAX_ATTEMPTS = 5'], hl: [0], check: 'ok', fp: '0f4c88', on: 'today',
-          change: { line: 0, to: 'MAX_ATTEMPTS = int(os.environ.get("MAX_ATTEMPTS", 5))', recheck: 'ok', fp: 'e21b57',
-                    note: 'Re-checked against the changed line: the default is still five.' } },
+          change: { line: 0, to: 'MAX_ATTEMPTS = 6', recheck: 'flag', fp: 'e21b57',
+                    flag: 'The sentence says five attempts; line 4 now says six.' } },
     s8: { n: 8, kind: 'Code', path: 'ledger/events.py', pos: 'lines 55–58', start: 55,
           code: ['def retry(event):', '    return replace(event,', '                   attempt=event.attempt + 1,',
                  '                   idempotency_key=event.idempotency_key)'], hl: [3],
           check: 'cited' },
+    s9: { n: 9, kind: 'Config', path: 'jobs/schedule.yaml', pos: 'line 12', start: 12,
+          code: ['  nightly_rollup: "30 5 * * *"   # moved from 05:00 UTC on 18 Oct; runs about an hour'], hl: [0],
+          check: 'ok', fp: '3be1d7', on: 'today' },
     h1: { human: true, kind: 'Written by a person', path: 'Dana, payments team', pos: 'edited 9 Oct',
           quoteLabel: 'The agent’s sentence she replaced:', quote: 'Daily totals are final at midnight UTC.' }
   };
 
+  var DANA = 'A day’s totals are final at 06:00 UTC, once the nightly rollup finishes; anything read earlier can still change.';
   var SECTIONS = [
     { title: 'When a refund posts', request: 'Check the settlement window against the config.',
       draft: [
@@ -387,18 +275,23 @@
         { id: 'a2', t: 'Chargebacks reverse the original entry instead of adding a negative one, so the payment’s history stays in order.', src: ['s2'] },
         { id: 'a3', pre: 'Settlement closes ', del: 'two', ins: 'three', post: ' business days after capture.', src: ['s3r'], tag: 'rewritten' }
       ],
-      rewrites: 1,
       regenMsg: 'Rewritten from your request: one sentence changed and was checked again. Review the section again.' },
     { title: 'Daily totals', request: 'Which fee date is right?',
       draft: [
         { id: 'b1', t: 'Daily totals exclude retried events, so a payment retried three times counts once.', src: ['s4'] },
-        { id: 'b2', t: 'A day’s totals are final at 06:00 UTC, once the nightly rollup finishes; anything read earlier can still change.', human: 'h1' },
+        { id: 'b2', t: DANA, human: 'h1' },
         { id: 'b3', t: 'The new fee schedule took effect on 11 March or 14 March.', src: ['s5', 's6'],
           conflictNote: 'The changelog says 11 March; the change history says 14 March. Both stay on the page until someone settles it.' }
       ],
-      regen: null,
-      rewrites: 0,
-      regenMsg: 'Nothing rewritten. Neither source outranks the other, so both dates stay, and Dana’s sentence is unchanged.' },
+      regen: [
+        { id: 'b1', t: 'Daily totals exclude retried events, so a payment retried three times counts once.', src: ['s4'] },
+        { id: 'b2', t: DANA, human: 'h1' },
+        { id: 'b3', t: 'The new fee schedule took effect on 11 March or 14 March.', src: ['s5', 's6'],
+          conflictNote: 'The changelog says 11 March; the change history says 14 March. Both stay on the page until someone settles it.' },
+        { id: 'b2p', replaces: 'b2', t: 'A day’s totals are final at about 06:30 UTC, once the nightly rollup finishes; anything read earlier can still change.', src: ['s9'], proposed: true,
+          flagNote: 'The agent flags this sentence: the nightly rollup now starts at 05:30 UTC (jobs/schedule.yaml, line 12), so totals settle around 06:30. Its proposed change is below. Dana’s sentence stays as she wrote it until someone approves the change.' }
+      ],
+      regenMsg: 'The agent kept both fee dates, since neither source outranks the other, and flagged Dana’s sentence with a proposed change. Her sentence stays until someone approves it.' },
     { title: 'Retries', request: 'Find where the retry limit is set.',
       draft: [
         { id: 'c1', t: 'Retries appear to stop after five attempts, though the only source is a code comment.', src: ['s7'] },
@@ -408,34 +301,32 @@
         { id: 'c1', pre: 'Retries ', del: 'appear to stop after five attempts, though the only source is a code comment.', ins: 'stop after five attempts.', post: '', src: ['s7r'], tag: 'rewritten' },
         { id: 'c2', t: 'A retried event keeps the original event’s idempotency key, which is how the rollup recognises it.', src: ['s8'], proposed: true }
       ],
-      rewrites: 1,
       regenMsg: 'Rewritten from your request: the agent found the setting, so the sentence no longer hedges. The proposal still waits for you.' }
   ];
 
-  var DOORS = [
-    { key: 'ok', one: 'checked', many: 'checked', cls: 'door-ok' },
+  var COUNTS = [
+    { key: 'ok', one: 'checked', many: 'checked', cls: 'count-ok' },
     { key: 'cited', one: 'cited, not checked', many: 'cited, not checked', cls: '' },
-    { key: 'issue', one: 'open issue', many: 'open issues', cls: 'door-warn' },
+    { key: 'issue', one: 'open issue', many: 'open issues', cls: 'count-warn' },
     { key: 'stale', one: 'needs a re-check', many: 'need a re-check', cls: '' },
-    { key: 'human', one: 'written by a person', many: 'written by people', cls: '' },
+    { key: 'human', one: 'written by a person', many: 'written by people', cls: 'count-human' },
     { key: 'proposal', one: 'proposal waiting', many: 'proposals waiting', cls: '' }
   ];
   var INTRO = 'Review each section: approve it, request changes, or reject it. Then publish your decisions, or regenerate the sections you asked to change.';
 
-  var root = document.getElementById('proto');
   var docEl = document.getElementById('doc');
   var grid = document.getElementById('grid');
   var pane = document.getElementById('pane');
   var paneBody = document.getElementById('pane-body');
   var subEl = document.getElementById('sub');
-  var doorsEl = document.getElementById('doors');
+  var countsEl = document.getElementById('counts');
   var changesEl = document.getElementById('changes');
   var receipt = document.getElementById('receipt');
   var pubBtn = document.getElementById('publish');
   var regenBtn = document.getElementById('regen');
   var narrow = window.matchMedia('(max-width: 699px)');
 
-  var state, live, version, selKey, selSentence, doorPos, paneClosed;
+  var state, live, version, selKey, selSec, countPos, paneClosed;
 
   function esc(s) {
     return String(s).replace(/[&<>"]/g, function (c) {
@@ -444,29 +335,41 @@
   }
   function each(list, fn) { Array.prototype.forEach.call(list, fn); }
   function plural(n, one, many) { return n + ' ' + (n === 1 ? one : many); }
-  function say(text) { receipt.textContent = text; }
+  // Cleared first, so a repeated message is announced again.
+  function say(text) { receipt.textContent = ''; setTimeout(function () { receipt.textContent = text; }, 30); }
 
   function fresh() {
     version = 4;
     selKey = 's1';
-    selSentence = 'a1';
-    doorPos = {};
+    selSec = 0;
+    countPos = {};
     paneClosed = false;
     live = {};
     Object.keys(SRC).forEach(function (k) {
       var s = SRC[k];
-      live[k] = { check: s.check, fp: s.fp, changed: false, flag: s.flag || '', note: '' };
+      live[k] = { check: s.check, fp: s.fp, changed: false, flag: s.flag || '' };
     });
     state = SECTIONS.map(function (sec) {
-      return { review: null, request: sec.request, draft: 'draft', regenerated: false, published: false,
-               publishedIn: 0, rejected: false, msg: '', prop: null, opened: {}, receiptText: '' };
+      return { review: null, request: sec.request, draft: 'draft', regenerated: false, published: false, dirty: false,
+               publishedIn: 0, rejected: false, msg: '', msgCls: '', prop: null, opened: {}, receiptText: '' };
     });
   }
 
-  // ---- What each sentence's state is, computed in one place. ----
+  // ---- Every sentence's state, computed in one place. ----
   function sentences(i) {
     var sec = SECTIONS[i];
     return sec[state[i].draft] || sec.draft;
+  }
+  function proposalOf(i) { return sentences(i).filter(function (s) { return s.proposed; })[0]; }
+  // The sentences currently in the text, after any approved proposal is applied.
+  function textSentences(i) {
+    var list = sentences(i), prop = proposalOf(i), st = state[i];
+    var out = list.filter(function (s) { return !s.proposed; });
+    if (prop && st.prop === 'approve') {
+      if (prop.replaces) out = out.map(function (s) { return s.id === prop.replaces ? prop : s; });
+      else out.push(prop);
+    }
+    return out;
   }
   function sentenceState(s) {
     if (s.human) return 'human';
@@ -477,37 +380,31 @@
     if (states.length && states.every(function (x) { return x === 'ok'; })) return 'ok';
     return 'cited';
   }
-  // Every sentence on the page, in reading order, with its door.
   function inventory() {
     var out = [];
     SECTIONS.forEach(function (sec, i) {
       if (state[i].rejected) return;
-      sentences(i).forEach(function (s) {
-        if (s.proposed) {
-          if (!state[i].prop) out.push({ i: i, s: s, door: 'proposal' });
-          if (state[i].prop !== 'approve') return;
-        }
+      var prop = proposalOf(i);
+      textSentences(i).forEach(function (s) {
         var st = sentenceState(s);
-        var door = st === 'flag' || st === 'conflict' ? 'issue' : st;
-        out.push({ i: i, s: s, door: door });
+        out.push({ i: i, s: s, kind: st === 'flag' || st === 'conflict' ? 'issue' : st });
       });
+      if (prop && !state[i].prop) out.push({ i: i, s: prop, kind: 'proposal' });
     });
     return out;
   }
   function openIssues(i) {
-    return sentences(i).filter(function (s) {
-      if (s.proposed && state[i].prop !== 'approve') return false;
-      var st = sentenceState(s);
-      return st === 'flag' || st === 'conflict';
-    }).length;
+    return textSentences(i).filter(function (s) { var st = sentenceState(s); return st === 'flag' || st === 'conflict'; }).length;
   }
   function sourcesIn(i) {
     var keys = [];
-    sentences(i).forEach(function (s) {
-      if (s.proposed && state[i].prop !== 'approve') return;
-      (s.src || []).forEach(function (k) { if (keys.indexOf(k) < 0) keys.push(k); });
-    });
+    textSentences(i).forEach(function (s) { (s.src || []).forEach(function (k) { if (keys.indexOf(k) < 0) keys.push(k); }); });
     return keys;
+  }
+  function receiptFor(i) {
+    var keys = sourcesIn(i), st = state[i];
+    var opened = keys.filter(function (k) { return st.opened[k]; }).length;
+    return 'Approved by you, ' + opened + ' of ' + plural(keys.length, 'source', 'sources') + ' opened';
   }
 
   // ---- Rendering ----
@@ -530,7 +427,7 @@
     return el;
   });
 
-  var STATE_WORDS = { ok: 'checked', cited: 'cited, not checked', flag: 'the check disagrees', conflict: 'sources disagree', stale: 'source changed since the check' };
+  var STATE_WORDS = { ok: 'checked', cited: 'cited, not checked', flag: 'the check disagrees', conflict: 'sources disagree', stale: 'lost its check when the source changed' };
   function chip(key) {
     var s = SRC[key], st = live[key].check;
     var mark = st === 'ok' ? '<span class="mk" aria-hidden="true">&#10003;</span>'
@@ -540,17 +437,18 @@
     return '<button type="button" class="cite st-' + st + '" data-src="' + key + '" aria-label="' + esc(label) + '">' + s.n + mark + '</button>';
   }
 
-  function sentenceHTML(s, i, opts) {
+  function sentenceHTML(s, opts) {
+    opts = opts || {};
     var st = sentenceState(s);
-    var body = s.del
+    var plain = s.t || (s.pre + s.ins + s.post);
+    var body = s.del && !opts.clean
       ? esc(s.pre) + '<del><span class="sr-only">removed: </span>' + esc(s.del) + '</del> <ins><span class="sr-only">added: </span>' + esc(s.ins) + '</ins>' + esc(s.post)
-      : esc(s.t || (s.pre + s.ins + s.post));
-    if (opts && opts.clean && s.del) body = esc(s.pre + s.ins + s.post);
+      : esc(plain);
     if (s.human) body = '<span class="human">' + body + '</span>';
     var tail = (s.src || []).map(chip).join('');
     if (s.human) tail += '<button type="button" class="htag" data-src="' + s.human + '" aria-label="Written by a person: Dana, 9 October">&#9998; Dana</button>';
-    if (s.tag && !(opts && opts.clean)) tail += '<span class="tag">' + esc(s.tag) + '</span>';
-    if (opts && opts.approved) tail += '<span class="tag">approved proposal</span>';
+    if (s.tag && !opts.clean) tail += '<span class="tag">' + esc(s.tag) + '</span>';
+    if (opts.approved) tail += '<span class="tag tag-human">' + (s.replaces ? 'change approved by you' : 'approved by you') + '</span>';
     var cls = 's' + (st === 'flag' ? ' s-flag' : st === 'conflict' ? ' s-conflict' : st === 'stale' ? ' s-stale' : '');
     return '<span class="' + cls + '" id="snt-' + s.id + '" data-sid="' + s.id + '" tabindex="-1">' + body + tail + '</span>';
   }
@@ -572,29 +470,41 @@
 
   function renderSection(i) {
     var sec = SECTIONS[i], st = state[i];
-    var list = sentences(i);
+    var prop = proposalOf(i);
     var clean = st.published && !st.dirty;
-    var main = list.filter(function (s) { return !s.proposed; });
-    var prop = list.filter(function (s) { return s.proposed; })[0];
-    var html = '<p class="para">' + main.map(function (s) { return sentenceHTML(s, i, { clean: clean }); }).join(' ');
-    if (prop && st.prop === 'approve') html += ' ' + sentenceHTML(prop, i, { approved: true });
-    html += '</p>';
-    main.forEach(function (s) { html += notesHTML(s); });
-    if (prop && st.prop === 'approve') html += notesHTML(prop);
+    var list = textSentences(i);
+    var html = '<p class="para">' + list.map(function (s) {
+      return sentenceHTML(s, { clean: clean, approved: prop && s === prop });
+    }).join(' ') + '</p>';
+    list.forEach(function (s) {
+      html += notesHTML(s);
+      if (prop && !st.prop && prop.replaces === s.id && prop.flagNote && !st.rejected) {
+        html += '<p class="note"><b aria-hidden="true">!</b><span>' + esc(prop.flagNote) + '</span></p>';
+      }
+    });
     if (prop && !st.prop) {
-      html += '<div class="prop" id="snt-' + prop.id + '" tabindex="-1"><span class="prop-label">Proposed by the agent, waiting for a person</span>' +
-        '<span class="s" data-sid="' + prop.id + '">' + esc(prop.t) + prop.src.map(chip).join('') + '</span>' +
-        '<span class="prop-actions"><button type="button" data-prop="approve" aria-label="Approve the proposed sentence in ' + esc(sec.title) + '">Approve</button>' +
-        '<button type="button" data-prop="reject" aria-label="Reject the proposed sentence in ' + esc(sec.title) + '">Reject</button></span></div>';
+      if (st.rejected) {
+        html += '<p class="prop-done">This draft was rejected, and its proposal went with it.</p>';
+      } else {
+        var label = prop.replaces ? 'Proposed change to Dana’s sentence, waiting for a person' : 'Proposed by the agent, waiting for a person';
+        html += '<div class="prop" id="snt-' + prop.id + '" tabindex="-1"><span class="prop-label">' + label + '</span>' +
+          '<span class="s" data-sid="' + prop.id + '">' + esc(prop.t) + prop.src.map(chip).join('') + '</span>' +
+          '<span class="prop-actions"><button type="button" data-prop="approve" aria-label="Approve the proposal in ' + esc(sec.title) + '">Approve</button>' +
+          '<button type="button" data-prop="reject" aria-label="Reject the proposal in ' + esc(sec.title) + '">Reject</button></span></div>';
+      }
     }
-    if (prop && st.prop === 'reject') html += '<p class="prop-done">Proposal rejected. The agent will not suggest it again unless its source changes.</p>';
+    if (prop && st.prop === 'reject') {
+      html += '<p class="prop-done">' + (prop.replaces
+        ? 'Proposal rejected. Dana’s sentence stays as she wrote it.'
+        : 'Proposal rejected. The agent will not suggest it again unless its source changes.') + '</p>';
+    }
     secEls[i].querySelector('.sec-body').innerHTML = html;
     renderReview(i);
   }
 
   function status(i) {
     var st = state[i], open = openIssues(i);
-    if (st.rejected) return ['Rejected. This draft was discarded and the last published version stays; the rejected draft is shown dimmed.', 'st-rejected'];
+    if (st.rejected) return ['Rejected. This draft was discarded and the last published version stays; the rejected draft is shown in grey.', 'st-rejected'];
     if (st.published && !st.dirty) return ['Published in version ' + st.publishedIn + '. ' + st.receiptText + '.', 'st-approved'];
     if (st.review === 'approve') {
       var base = st.receiptText + '. ';
@@ -604,12 +514,13 @@
     }
     if (st.review === 'changes') {
       return st.request.trim()
-        ? ['Your request goes to the agent when you regenerate. Approved sections and people’s edits stay as they are.', '']
+        ? ['Your request goes to the agent when you regenerate. Approved sections and people’s sentences stay as they are.', '']
         : ['Say what should change, then regenerate.', 'st-warn'];
     }
     if (st.review === 'reject') return ['Rejected. Publishing discards this draft and keeps the last published version.', 'st-rejected'];
     if (st.dirty) return ['An approved proposal joins this section with the next publish.', ''];
-    if (st.msg) return [st.msg, ''];
+    if (st.msg) return [st.msg, st.msgCls || ''];
+    if (open) return [plural(open, 'issue is', 'issues are') + ' open. Not reviewed yet.', ''];
     return ['Not reviewed yet.', ''];
   }
 
@@ -625,23 +536,17 @@
     box.hidden = st.review !== 'changes';
     var ta = box.querySelector('textarea');
     if (ta.value !== st.request) ta.value = st.request;
-    var s = status(i);
-    var stEl = el.querySelector('.sec-status');
+    var s = status(i), stEl = el.querySelector('.sec-status');
     stEl.textContent = s[0];
     stEl.className = 'sec-status' + (s[1] ? ' ' + s[1] : '');
   }
 
-  function counts() {
+  function renderCounts() {
     var c = { ok: 0, cited: 0, issue: 0, stale: 0, human: 0, proposal: 0 };
-    inventory().forEach(function (x) { c[x.door] += 1; });
-    return c;
-  }
-
-  function renderDoors() {
-    var c = counts();
-    doorsEl.innerHTML = DOORS.map(function (d) {
+    inventory().forEach(function (x) { c[x.kind] += 1; });
+    countsEl.innerHTML = COUNTS.map(function (d) {
       var n = c[d.key];
-      return '<button type="button" class="door ' + d.cls + (n ? '' : ' is-zero') + '" data-door="' + d.key + '" aria-label="' +
+      return '<button type="button" class="count ' + d.cls + (n ? '' : ' is-zero') + '" data-count="' + d.key + '" aria-label="' +
         esc(plural(n, d.one, d.many) + (n ? '. Go to the next one.' : '.')) + '"><b>' + n + '</b>' + esc(n === 1 ? d.one : d.many) + '</button>';
     }).join('');
   }
@@ -664,40 +569,42 @@
     regenBtn.setAttribute('aria-disabled', String(!requests));
   }
 
-  function rewrittenSinceStart() {
-    var n = 0;
-    SECTIONS.forEach(function (sec, i) { if (state[i].draft === 'regen') n += sec.rewrites; });
-    return n;
-  }
-
+  // The banner counts the rewrites a reviewer can still see.
   function renderBanner() {
     if (version === 4) { changesEl.hidden = true; return; }
-    var n = rewrittenSinceStart();
-    changesEl.innerHTML = '<b>Version ' + version + '</b> · ' + plural(n, 'sentence', 'sentences') +
-      ' rewritten since version 4 · approved sections and people’s edits unchanged';
+    var n = 0;
+    secEls.forEach(function (el, i) { if (!state[i].rejected) n += el.querySelectorAll('.sec-body del').length; });
+    changesEl.innerHTML = '<b>Version ' + version + '</b> · ' + (n
+      ? plural(n, 'rewritten sentence', 'rewritten sentences') + ' waiting for review'
+      : 'no rewritten sentences waiting for review') + ' · approved sections and people’s sentences unchanged';
     changesEl.hidden = false;
   }
 
   function renderAll() {
     SECTIONS.forEach(function (_, i) { renderSection(i); });
-    subEl.textContent = 'Version ' + version + ' · written by an agent from 31 sources · 3 of 14 sections shown';
-    renderDoors();
+    subEl.textContent = 'Version ' + version + ' · written by an agent · an excerpt of three sections';
+    renderCounts();
     renderBanner();
     updateBar();
-    if (!chipFor(selKey)) { selKey = 's1'; selSentence = 'a1'; }
-    select(selKey, null, false);
+    if (!chipFor(selKey)) {
+      var inSec = secEls[selSec] && secEls[selSec].querySelector('.sec-body [data-src]');
+      var c = inSec || docEl.querySelector('.sec-body [data-src]');
+      selKey = c.dataset.src;
+    }
+    select(selKey, null, null);
   }
 
   // ---- The source panel ----
   function renderPane(key) {
     var s = SRC[key], lv = live[key];
+    var close = '<button type="button" class="pane-close" data-close>Hide source</button>';
     if (s.human) {
       paneBody.innerHTML =
-        '<div class="pane-top"><p class="pane-kicker">Who wrote this sentence</p><button type="button" class="pane-close" data-close>Hide</button></div>' +
+        '<div class="pane-top"><p class="pane-kicker">Who wrote this sentence</p>' + close + '</div>' +
         '<div class="pane-head"><span class="htag" aria-hidden="true">&#9998;</span><span class="pane-kind">' + esc(s.kind) + '</span></div>' +
         '<p class="pane-path">' + esc(s.path) + ' · ' + esc(s.pos) + '</p>' +
         '<blockquote class="pane-quote"><span class="pane-ql">' + esc(s.quoteLabel) + '</span>' + esc(s.quote) + '</blockquote>' +
-        '<p class="pane-state ps-human">A person wrote this sentence. The agent can propose a change to it but cannot make one, so regenerating leaves it as written.</p>';
+        '<p class="pane-state ps-human">A person wrote this sentence. The agent can flag it and propose a change, but cannot make one, so regenerating leaves it as written.</p>';
       return;
     }
     var st = lv.check;
@@ -706,19 +613,18 @@
     if (s.code) {
       excerpt = '<pre class="pane-code"><code>' + s.code.map(function (line, j) {
         var changed = lv.changed && s.change && s.change.line === j;
-        var text = changed ? s.change.to : line;
         var num = s.start != null ? s.start + j : '';
         var cls = 'ln' + (changed ? ' changed' : s.hl.indexOf(j) > -1 ? ' hl' : '');
-        return '<span class="' + cls + '"><span class="ln-n">' + num + '</span><span class="ln-t">' + esc(text) +
+        return '<span class="' + cls + '"><span class="ln-n">' + num + '</span><span class="ln-t">' + esc(changed ? s.change.to : line) +
           (changed ? '<span class="sr-only"> (changed)</span>' : '') + '</span></span>';
       }).join('') + '</code></pre>';
     } else {
       excerpt = '<blockquote class="pane-quote">' + esc(s.quote) + '</blockquote>';
     }
     var words;
-    if (st === 'ok') words = 'Checked against these lines, ' + (lv.changed ? 'just now' : s.on) + '. An automated check can still miss an error; a person’s approval is recorded separately.';
+    if (st === 'ok') words = 'Checked against these lines, ' + (lv.changed ? 'just now' : s.on) + '. The checker can still miss an error; a person’s approval is recorded separately.';
     else if (st === 'cited') words = key === 's8'
-      ? (findProp() === 'approve' ? 'Cited, not checked. A person approved the proposed sentence; nobody has checked it against these lines yet.' : 'Read during research. The sentence is only a proposal and waits for a person.')
+      ? (state[2].prop === 'approve' ? 'Cited, not checked. A person approved the proposed sentence; nobody has checked it against these lines yet.' : 'Read during research. The sentence is only a proposal and waits for a person.')
       : 'Cited, not checked. Nothing on this page is marked checked unless a check ran.' + (s.why ? ' ' + s.why : '');
     else if (st === 'flag') words = 'The check disagrees. ' + lv.flag;
     else if (st === 'conflict') words = s.conflict;
@@ -727,56 +633,53 @@
     if (s.change && st === 'ok' && !lv.changed) actions = '<div class="pane-act"><button type="button" data-change="' + key + '">Change this file</button></div>';
     if (st === 'stale') actions = '<div class="pane-act"><button type="button" data-recheck="' + key + '">Re-check</button></div>';
     paneBody.innerHTML =
-      '<div class="pane-top"><p class="pane-kicker">What this sentence rests on</p><button type="button" class="pane-close" data-close>Hide</button></div>' +
+      '<div class="pane-top"><p class="pane-kicker">What this sentence rests on</p>' + close + '</div>' +
       '<div class="pane-head"><span class="cite st-' + st + '" aria-hidden="true">' + s.n + (mark ? '<span class="mk">' + mark + '</span>' : '') + '</span><span class="pane-kind">' + esc(s.kind) + '</span></div>' +
       '<p class="pane-path">' + esc(s.path) + ' · ' + esc(s.pos) + '</p>' +
       excerpt +
       '<p class="pane-state ps-' + st + '">' + esc(words) + '</p>' +
-      (lv.fp && (st === 'ok' || st === 'flag') && s.fp ? '<p class="pane-fp">check bound to these lines · ' + esc(lv.fp) + '</p>' : '') +
+      (s.fp && (st === 'ok' || st === 'flag') ? '<p class="pane-fp">check bound to these lines · ' + esc(lv.fp) + '</p>' : '') +
       actions;
-  }
-
-  function findProp() {
-    var i = SECTIONS.length - 1;
-    return state[i].prop;
   }
 
   function chipFor(key) { return docEl.querySelector('.sec-body [data-src="' + key + '"]'); }
 
-  // Select a source. `byUser` records that a reviewer opened it.
-  function select(key, chipEl, byUser) {
+  // `how`: 'open' (a click or a count step: the reviewer opened the lines),
+  // 'peek' (hover or keyboard focus: shown, not counted), or null (redraw).
+  function select(key, chipEl, how) {
     var c = chipEl || chipFor(key);
     if (!c) return;
-    // Measured before anything moves, so the page can hold the chip still.
     var before = c.getBoundingClientRect().top;
     selKey = key;
     each(docEl.querySelectorAll('.sec-body [aria-current]'), function (n) { n.removeAttribute('aria-current'); });
     each(docEl.querySelectorAll('.s.sel'), function (n) { n.classList.remove('sel'); });
     c.setAttribute('aria-current', 'true');
     var s = c.closest('.s');
-    if (s) { s.classList.add('sel'); selSentence = s.dataset.sid; }
-    if (byUser) {
-      var i = Number(c.closest('.sec').dataset.i);
+    if (s) s.classList.add('sel');
+    var i = Number(c.closest('.sec').dataset.i);
+    selSec = i;
+    if (how === 'open') {
       if (!SRC[key].human) state[i].opened[key] = true;
       paneClosed = false;
     }
+    if (how === 'peek') paneClosed = false;
     renderPane(key);
-    place(c, byUser ? before : null);
+    place(c, how ? before : null);
   }
 
-  // Wide: the panel sits level with the sentence it explains. Narrow: it
-  // opens under the section and the page holds still while it moves.
+  // Wide: the panel sits level with the sentence it explains. Narrow: it opens
+  // under the section, and the page holds still while it moves.
   function place(c, before) {
     if (narrow.matches) {
       if (paneClosed) { pane.hidden = true; return; }
       pane.hidden = false;
-      var body = c.closest('.sec').querySelector('.sec-body');
-      if (body.nextElementSibling !== pane) body.insertAdjacentElement('afterend', pane);
+      var sec = c.closest('.sec');
+      var after = sec.querySelector('.cbox');
+      if (after.nextElementSibling !== pane) after.insertAdjacentElement('afterend', pane);
       pane.classList.add('inline');
       pane.style.transform = '';
       if (before != null && window.parent !== window) {
         var delta = c.getBoundingClientRect().top - before;
-        // Instant, not smooth: the reader should not see the page travel.
         if (Math.abs(delta) > 1) {
           try { window.parent.scrollBy({ top: delta, left: 0, behavior: 'instant' }); } catch (e) { /* not same-origin */ }
         }
@@ -794,7 +697,7 @@
 
   function reAlign() {
     var c = chipFor(selKey);
-    if (c) place(c);
+    if (c) place(c, null);
   }
 
   // ---- Actions ----
@@ -803,13 +706,9 @@
     if (st.rejected || (st.published && !st.dirty)) return;
     st.review = st.review === a ? null : a;
     st.msg = '';
-    if (st.review === 'approve') {
-      var keys = sourcesIn(i);
-      var opened = keys.filter(function (k) { return st.opened[k]; }).length;
-      st.receiptText = 'Approved by you, ' + opened + ' of ' + plural(keys.length, 'source', 'sources') + ' opened';
-    }
+    if (st.review === 'approve') st.receiptText = receiptFor(i);
     renderReview(i);
-    renderDoors();
+    renderCounts();
     updateBar();
     say(st.review ? status(i)[0] : 'Decision cleared for ' + SECTIONS[i].title + '.');
     if (st.review === 'changes') secEls[i].querySelector('textarea').focus();
@@ -821,20 +720,26 @@
     if (st.rejected) return;
     st.prop = p;
     if (st.published) st.dirty = p === 'approve';
+    if (st.review === 'approve') st.receiptText = receiptFor(i);
+    var prop = proposalOf(i);
     renderSection(i);
-    renderDoors();
+    renderCounts();
+    renderBanner();
     updateBar();
     say(p === 'approve'
-      ? 'Approved. The sentence joins the section, marked as an approved proposal.'
-      : 'Rejected. The section stays as it was.');
+      ? (prop.replaces ? 'Approved. The changed sentence replaces Dana’s, marked as a change you approved.' : 'Approved. The sentence joins the section, marked as approved by you.')
+      : (prop.replaces ? 'Rejected. Dana’s sentence stays as she wrote it.' : 'Rejected. The section stays as it was.'));
     secEls[i].querySelector('h2').focus();
-    if (!chipFor(selKey)) selKey = 's1';
-    select(selKey, null, false);
+    if (!chipFor(selKey)) {
+      var c = secEls[i].querySelector('.sec-body [data-src]');
+      if (c) selKey = c.dataset.src;
+    }
+    select(selKey, null, null);
   }
 
   function publish() {
     if (pubBtn.getAttribute('aria-disabled') === 'true') { say('Approve or reject a section first.'); return; }
-    var pub = 0, gone = 0, left = 0;
+    var pub = 0, gone = 0, left = 0, waiting = 0;
     state.forEach(function (st) {
       if (st.review === 'approve' || st.dirty) {
         pub++;
@@ -844,12 +749,18 @@
         st.rejected = true; st.review = null; gone++;
       }
     });
-    state.forEach(function (st) { if (!st.published && !st.rejected) left++; });
+    state.forEach(function (st, i) {
+      if (!st.published && !st.rejected) left++;
+      if (!st.rejected && proposalOf(i) && !st.prop) waiting++;
+    });
     var msg = 'Published ' + plural(pub, 'section', 'sections') + ' in version ' + version + '.';
     if (gone) msg += ' Discarded ' + plural(gone, 'rejected draft', 'rejected drafts') + '.';
-    msg += left ? ' ' + plural(left, 'section stays', 'sections stay') + ' as last published.' : ' Every section is decided. Start over to try another path.';
+    if (left) msg += ' ' + plural(left, 'section stays', 'sections stay') + ' as last published.';
+    if (waiting) msg += ' ' + plural(waiting, 'proposal still waits', 'proposals still wait') + ' for a person.';
+    if (!left && !waiting) msg += ' Every section is decided. Start over to try another path.';
     renderAll();
     say(msg);
+    pubBtn.focus();
   }
 
   function regenerate() {
@@ -859,10 +770,14 @@
     state.forEach(function (st, i) {
       if (st.review !== 'changes' || !st.request.trim()) return;
       var sec = SECTIONS[i];
+      st.msgCls = '';
       if (!st.regenerated) {
         st.regenerated = true;
         if (sec.regen) st.draft = 'regen';
         st.msg = sec.regenMsg;
+      } else if (openIssues(i)) {
+        st.msg = 'Regenerated again. The open issue remains, and the agent cannot settle it from its sources; a person has to.';
+        st.msgCls = 'st-warn';
       } else {
         st.msg = 'Regenerated again: the agent found nothing more to change from this request.';
       }
@@ -873,17 +788,38 @@
     });
     renderAll();
     say('Regenerated ' + plural(count, 'section', 'sections') + ' from your requests. Review ' + (count === 1 ? 'it' : 'them') + ' again before publishing.');
+    regenBtn.focus();
+  }
+
+  function sectionsCiting(key) {
+    var out = [];
+    SECTIONS.forEach(function (_, i) { if (sourcesIn(i).indexOf(key) > -1) out.push(i); });
+    return out;
   }
 
   function changeSource(key) {
     var s = SRC[key], lv = live[key];
     lv.changed = true;
     lv.check = 'stale';
-    var hit = 0;
+    var hit = 0, lapsed = [];
     inventory().forEach(function (x) { if ((x.s.src || []).indexOf(key) > -1) hit++; });
+    sectionsCiting(key).forEach(function (i) {
+      var st = state[i];
+      st.msg = '';
+      if (st.review === 'approve') {
+        st.review = null;
+        st.msg = 'Your approval lapsed: ' + s.path + ' changed after you approved. Look again before approving.';
+        st.msgCls = 'st-warn';
+        lapsed.push(SECTIONS[i].title);
+      }
+    });
     renderAll();
-    select(key, null, false);
-    say(s.path + ' changed. ' + plural(hit, 'sentence', 'sentences') + ' citing it lost the check; every other sentence keeps its state.');
+    select(key, null, null);
+    var msg = s.path + ' changed. ' + plural(hit, 'sentence', 'sentences') + ' citing it lost the check; every other sentence keeps its state.';
+    if (lapsed.length) msg += ' Your approval of ' + lapsed.join(' and ') + ' lapsed.';
+    say(msg);
+    var b = paneBody.querySelector('[data-recheck]');
+    if (b) b.focus();
   }
 
   function recheck(key) {
@@ -891,17 +827,19 @@
     lv.check = s.change.recheck;
     lv.fp = s.change.fp;
     if (lv.check === 'flag') lv.flag = s.change.flag;
+    sectionsCiting(key).forEach(function (i) { if (!/^Your approval lapsed/.test(state[i].msg)) state[i].msg = ''; });
     renderAll();
-    select(key, null, false);
+    select(key, null, null);
     say(lv.check === 'ok' ? s.change.note : 'Re-checked: the check now disagrees. ' + s.change.flag);
+    pane.focus();
   }
 
-  function stepDoor(key) {
-    var items = inventory().filter(function (x) { return x.door === key; });
-    var d = DOORS.filter(function (x) { return x.key === key; })[0];
+  function stepCount(key) {
+    var items = inventory().filter(function (x) { return x.kind === key; });
+    var d = COUNTS.filter(function (x) { return x.key === key; })[0];
     if (!items.length) { say('Nothing here: 0 ' + d.many + '.'); return; }
-    var pos = ((doorPos[key] === undefined ? -1 : doorPos[key]) + 1) % items.length;
-    doorPos[key] = pos;
+    var pos = ((countPos[key] === undefined ? -1 : countPos[key]) + 1) % items.length;
+    countPos[key] = pos;
     var x = items[pos];
     var target = document.getElementById('snt-' + x.s.id);
     var label = x.s.t || (x.s.pre + x.s.ins + x.s.post);
@@ -909,8 +847,7 @@
     if (!target) return;
     var key0 = x.s.human || (x.s.src || [])[0];
     var c = target.querySelector('[data-src="' + key0 + '"]') || chipFor(key0);
-    if (c) select(key0, c, true);
-    target.focus({ preventScroll: true });
+    if (c) select(key0, c, 'open');
     target.scrollIntoView({ block: 'nearest' });
   }
 
@@ -923,7 +860,7 @@
   // ---- Wiring ----
   docEl.addEventListener('click', function (e) {
     var c = e.target.closest('[data-src]');
-    if (c) { select(c.dataset.src, c, true); return; }
+    if (c) { select(c.dataset.src, c, 'open'); pane.focus({ preventScroll: true }); return; }
     var a = e.target.closest('[data-act]');
     if (a) { act(Number(a.closest('.sec').dataset.i), a.dataset.act); return; }
     var p = e.target.closest('[data-prop]');
@@ -932,11 +869,11 @@
   docEl.addEventListener('mouseover', function (e) {
     if (narrow.matches) return;
     var c = e.target.closest('[data-src]');
-    if (c && c.dataset.src !== selKey) select(c.dataset.src, c, true);
+    if (c && c.dataset.src !== selKey) select(c.dataset.src, c, 'peek');
   });
   docEl.addEventListener('focusin', function (e) {
     var c = e.target.closest('[data-src]');
-    if (c && c.dataset.src !== selKey) select(c.dataset.src, c, true);
+    if (c && c.dataset.src !== selKey) select(c.dataset.src, c, 'peek');
   });
   docEl.addEventListener('input', function (e) {
     if (e.target.tagName !== 'TEXTAREA') return;
@@ -956,12 +893,17 @@
       paneClosed = true;
       var c = chipFor(selKey);
       pane.hidden = true;
-      if (c) c.focus();
+      if (c) c.focus({ preventScroll: true });
     }
   });
-  doorsEl.addEventListener('click', function (e) {
-    var d = e.target.closest('[data-door]');
-    if (d) stepDoor(d.dataset.door);
+  pane.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    var c = chipFor(selKey);
+    if (c) c.focus({ preventScroll: true });
+  });
+  countsEl.addEventListener('click', function (e) {
+    var d = e.target.closest('[data-count]');
+    if (d) stepCount(d.dataset.count);
   });
   pubBtn.addEventListener('click', publish);
   regenBtn.addEventListener('click', regenerate);

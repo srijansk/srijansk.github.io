@@ -1,7 +1,7 @@
 ---
 title: "When knowledge reaches the agent"
-summary: "For an agent, knowledge that is available is not knowledge that arrives. One coding session drawn as a timeline, with the same team fact delivered three ways."
-teaser: "The same team fact, delivered three ways in one coding session, and where each one is when the agent makes the edit."
+summary: "An agent can only use what is in front of it when it acts. Four ways to put a team's knowledge in front of a coding agent, what each one costs, and what my own data says about them."
+teaser: "One team rule, four ways to put it in front of a coding agent, and what each one gets wrong."
 date: 2026-10-21
 kind: concept
 surface: agents
@@ -9,36 +9,37 @@ order: 2
 preview: delivery
 ---
 
-An AI-native interface is the one an agent works through: the instructions it starts with, the tools it can call, and whatever arrives in its context while it works. The agent is the user here, and like any user it acts on what is in front of it when it decides. That makes timing a design decision. A fact the agent could have found is not a fact it had when it made the edit.
+Some of the interfaces I think about most have a model as their user. SWE-agent's authors called this the [agent-computer interface](https://arxiv.org/abs/2405.15793), on the view that language-model agents "represent a new category of end users with their own needs and abilities". For a coding agent, that interface includes the instructions it starts with, the tools it can call, and whatever arrives in its context while it works. This piece is about the last part: when a piece of team knowledge should reach the agent, and in what form.
 
-I have watched this fail. On an earlier project we gave an agent tools to search a knowledge base, with descriptions and worked examples, and it never called them. Adding guidance to the prompt did not change that either; I wrote it up in [Agent Context Is a Recommendation Problem](/writing/agent-context-is-a-recommendation-problem/).
+My first data point was an anecdote. On an earlier project we gave an agent tools to search a knowledge base, with descriptions and worked examples, and it never called them, even after the prompt told it to. That was one task on one model, an existence proof rather than a rate, as I wrote in [Agent Context Is a Recommendation Problem](/writing/agent-context-is-a-recommendation-problem/). Later runs were more even. When a knowledge tool was live and prominent in the agent's workspace, agents called it in 37 of 43 tasks. When a frozen copy of the knowledge was attached instead, they never called the live source, and read the stale copy in 12 of 17 tasks. Pulling works when the agent knows to ask. Pushing wins attention, including for the wrong version.
 
 <figure class="wide">
-  <iframe src="/design/when-knowledge-reaches-the-agent/timeline.html" title="Interactive timeline: one invented coding session in ten turns, showing when the same team fact reaches the agent through a tool it must call, through its standing instructions, and when it opens the file it is about to change" loading="lazy" class="fig-delivery"></iframe>
-  <figcaption><b>SCHEMATIC</b> — One invented session in ten turns. The fact is a team rule: a retried event must keep the original event's idempotency key. Move through the turns and see, for each route, where the fact is when the agent edits the retry code. The session is invented; the three routes are how agents receive knowledge today.</figcaption>
+  <iframe src="/design/when-knowledge-reaches-the-agent/timeline.html" title="Interactive schematic: one invented coding session in ten turns, showing when one team rule reaches the agent through a tool it can call, its standing instructions, a push when it opens the file, and a lookup it must make before the edit" loading="lazy" class="fig-delivery"></iframe>
+  <figcaption><b>SCHEMATIC</b> — One invented session in ten turns and one team rule: a retried event keeps the original event's idempotency key. Move through the turns, change the assumptions, and see where the rule is when the agent edits the retry code.</figcaption>
 </figure>
 
-## Three routes, and where each one fails
+## Four routes
 
-**A tool the agent has to call.** The agent decides when to ask, which works when it knows what it does not know. A coding agent changing retry logic does not know the team has a rule about idempotency keys, so it has no reason to look. This is the route that failed for us.
+**Pull, through a tool the agent can call.** It works when the agent knows what it is missing, and it cannot work for a rule the agent does not know exists: an agent changing retry logic has no reason to search for idempotency keys. Cursor's version is a rule the agent applies "when Agent decides it's relevant based on description".
 
-**Standing instructions.** CLAUDE.md, AGENTS.md and always-on editor rules put the fact in context from the first turn. It is there, but it is far from the moment it matters and competes with everything else the agent reads on the way. In a long run, an early fact can go missing from later work even though it was never truncated; I wrote about that in [Context Aging](/writing/context-aging/).
+**Standing instructions.** CLAUDE.md, AGENTS.md and always-on editor rules are in context from the first turn, and Claude Code re-reads its root CLAUDE.md after compaction. The cost is distance. The rule sits many turns from the edit, behind everything read since, and long runs can lose early facts without truncating them, which I wrote about in [Context Aging](/writing/context-aging/).
 
-**At the moment the work touches it.** The fact arrives when the agent opens the file it applies to. The platforms already lean this way: Claude Code [loads CLAUDE.md files in subdirectories on demand](https://docs.claude.com/en/docs/claude-code/memory) and supports rules scoped to file paths, and Cursor rules can [apply when a file matches a pattern](https://cursor.com/docs/context/rules). My open-source tool [crewlore](https://github.com/srijansk/crewlore) does it per claim rather than per directory: when the agent reads or edits a file, the team's decisions and gotchas scoped to that file arrive with the tool's result, each quoting where it came from, so in the usual read-then-edit flow they are in view before the edit.
+**Push, with the file.** The rule arrives when the agent opens the file it applies to. Claude Code loads a path-scoped rule "when Claude uses the Read, Write, or Edit tool on a matching file" ([docs](https://docs.claude.com/en/docs/claude-code/memory)), and Cursor rules can apply "when file matches a specified pattern" ([docs](https://cursor.com/docs/context/rules)). It is the agent's version of what Rhodes and Maes called [just-in-time information retrieval](https://www.bradleyrhodes.com/Papers/rhodes-jitir-agents-ibmsj-2000.pdf): information presented "based on a person's local context in an easily accessible yet nonintrusive manner". Its failure is the stale copy. Whatever is pushed gets used, current or not.
 
-## Manners for pushing knowledge
+**A gate before the edit.** The agent has to look the rule up before its first irreversible step, so the edit waits. It is the most reliable route and the most intrusive one. In the context-aging work with Susnato Dhar, timing decided whether a prompt was obeyed: a nudge to read more, sent at drafting time, fired ten times in one run and was followed zero times, while a gate that forced reads before the first draft was obeyed.
 
-Putting something into an agent's context uninvited is an interruption, and it needs the same restraint a good colleague shows. These are the rules crewlore's hooks follow:
+## What crewlore changes, and what it leaves alone
 
-- Say it once per scope in a conversation. The agent reads the same file many times; it does not need the same reminder each time.
-- Say nothing when there is nothing to add. An empty interruption still costs attention.
-- Never block. If delivery fails, the agent carries on as if the hook were not there.
-- Come back after compaction. Compaction drops injected context, so the hook forgets what it has shown and offers it again on the next read.
+My open-source tool [crewlore](https://github.com/srijansk/crewlore) pushes through the hooks Claude Code already provides; the mechanism is the platform's. What crewlore changes is what arrives. The knowledge is not a rule someone wrote by hand. It is compiled from the team's past sessions and pull requests, and each claim carries a scope, a label (decision, procedure or gotcha), whether the team adopted it or tried it and declined, what to do instead when it was declined, and an id that leads to the exact lines it was compiled from.
 
-The same thinking applies to anything an agent receives without asking for it: retrieved documents, warnings from a linter, a reviewer's notes. Each one should arrive next to the action it bears on, once, and only when it changes what the agent should do.
+It also arrives labelled as "evidence to weigh, not instructions". Tool output is the least trusted thing in an agent's context: the [instruction hierarchy](https://arxiv.org/abs/2404.13208) work ranks "untrusted outputs from tools" below the system prompt and the user, because tool output is a common way for injected instructions to get in. Knowledge pushed through that channel should say what it is.
 
-## What this does not settle
+crewlore's hooks do not gate. If delivery fails, the agent carries on as if they were not there. They mention each scope once per conversation, stay silent when there is nothing to add, and offer it again after the conversation is compacted. A gate would be more reliable for the rules that matter most, and a team that needs one can add it; the hooks deliberately do not block.
 
-I have not measured the three routes against each other. The context-aging work with Susnato Dhar is a reason for caution: there, a ledger that put noted values back in front of the agent before it wrote fired as designed, and the score did not move. Arriving at the right moment is a precondition for using a fact, not a guarantee. The comparison I would run gives one set of tasks and one set of team facts to the same agent three times, once per route, and counts the edits that break a known rule.
+The rule in the timeline is the same sentence that waits for a person's approval in [Reviewing what an agent wrote](/design/reviewing-what-an-agent-wrote/). The two pieces describe one loop. What a person approves on one side is what the next agent should receive on the other, at the file it applies to, in its current version.
 
-There is also a limit on push. It only works for knowledge with an address, such as a file, a table or a service. A rule about how the team works in general has nowhere to attach, and still belongs in the standing instructions.
+## What would change my mind
+
+I have not compared the four routes on the same tasks. The test I would run gives one agent one set of tasks and one set of team rules four times, once per route, and counts the edits that break a rule, along with what each route costs in tokens and in interruptions. If pushing with the file does no better than standing instructions once the stale-copy problem is fixed, the argument about distance is wrong.
+
+Push also needs an address. A rule about a file, a table or a service can travel with it. A rule about how the team works in general has nowhere to attach, and still belongs in the standing instructions.

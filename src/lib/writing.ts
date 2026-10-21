@@ -131,7 +131,10 @@ export async function seriesSiblings(entry: WritingEntry): Promise<WritingEntry[
   const series = entry.data.series;
   if (!series) return [];
   const all = await getAllWriting();
+  // Drafts build to their URLs for review, so a live post must not count or
+  // link them; a draft (or the dev server) sees the series as it will land.
+  const showDrafts = import.meta.env.DEV || entry.data.draft;
   return all
-    .filter((e) => e.data.series === series)
+    .filter((e) => e.data.series === series && (showDrafts || !e.data.draft))
     .sort((a, b) => (a.data.seriesOrder ?? 0) - (b.data.seriesOrder ?? 0));
 }
