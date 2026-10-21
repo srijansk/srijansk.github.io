@@ -23,4 +23,9 @@ export default defineConfig({
   ],
   output: 'static',
   trailingSlash: 'ignore',
+  // Design pieces retired on 2026-10-21 still have links pointing at them.
+  redirects: {
+    '/design/counts-are-doors': '/design/reviewing-what-an-agent-wrote/',
+    '/design/explanations-you-can-scrub': '/writing/',
+  },
 });

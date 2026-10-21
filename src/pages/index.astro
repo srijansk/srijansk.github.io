@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import DesignPreview from '../components/DesignPreview.astro';
+import { SURFACES, surfaceLabel } from '../lib/design';
 import { getCollection } from 'astro:content';
 import {
   getPublishedWriting,
@@ -25,10 +26,13 @@ const otherPubs = allPubs.filter((p) => p.data.type !== 'paper');
 const allWriting = await getPublishedWriting({ includeDrafts: import.meta.env.DEV });
 const writing = allWriting.filter((w) => w.data.featured).slice(0, 4);
 
-const design = (await getCollection('design'))
+// One piece from each side of the interface, so the home page shows both.
+const designPieces = (await getCollection('design'))
   .filter((d) => import.meta.env.DEV || !d.data.draft)
-  .sort((a, b) => a.data.order - b.data.order)
-  .slice(0, 2);
+  .sort((a, b) => a.data.order - b.data.order);
+const design = SURFACES.map((s) => designPieces.find((d) => d.data.surface === s.key)).filter(
+  (d): d is NonNullable<typeof d> => Boolean(d),
+);
 
 const monthYear = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', timeZone: 'UTC' });
 const talkType: Record<string, string> = {
@@ -39,7 +43,6 @@ const talkType: Record<string, string> = {
   'pc-service': 'Programme committee',
   webinar: 'Webinar',
 };
-const designKind: Record<string, string> = { concept: 'Concept', principle: 'Principle', study: 'Study' };
 
 // What the essays argue, one line each. Every belief links to the piece that
 // makes the case, and the note under it gives the number or finding behind it.
@@ -159,10 +162,10 @@ const beliefs = [
       <div class="work-grid">
         {design.map((d) => (
           <a class="work-card" href={`/design/${d.id}/`}>
-            <span class="work-media work-media--live"><DesignPreview kind={d.data.preview} /></span>
+            <div class="work-media work-media--live"><DesignPreview kind={d.data.preview} /></div>
             <span class="work-title">{d.data.title}</span>
-            <span class="work-meta">{designKind[d.data.kind]} · {monthYear.format(d.data.date)}</span>
-            <span class="work-text">{d.data.summary}</span>
+            <span class="work-meta">{surfaceLabel(d.data.surface)} · {monthYear.format(d.data.date)}</span>
+            <span class="work-text work-text--3">{d.data.teaser ?? d.data.summary}</span>
           </a>
         ))}
       </div>
@@ -181,8 +184,8 @@ const beliefs = [
           A local-first compiler that turns coding-agent sessions and agent-authored pull requests
           into a plaintext, citable team-knowledge book in your git repo. Every claim quotes the
           exact source line it came from, and records whether the team adopted it or tried it and
-          declined: a field added after measuring, on 120 real agent pull requests, that without it
-          the rejected approach was stored as current practice in roughly half of the declined ones.
+          declined: a field added after measuring 120 real agent pull requests. Without it, 47 of the
+          60 declined ones had the rejected approach stored as current practice.
           Alpha, on PyPI: <code>pipx install crewlore</code>.
         </p>
       </li>

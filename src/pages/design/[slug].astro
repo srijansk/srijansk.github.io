@@ -2,6 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import { getCollection, render } from 'astro:content';
 import { readingTime } from '../../lib/writing';
+import { surfaceLabel } from '../../lib/design';
 
 /** Design pieces read like essays: the post layout, one column, figures break out. */
 export async function getStaticPaths() {
@@ -13,7 +14,6 @@ const { piece } = Astro.props;
 const { Content } = await render(piece);
 
 const dateLong = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
-const kindLabel: Record<string, string> = { concept: 'Concept', principle: 'Principle', study: 'Study' };
 const minutes = readingTime(piece.body);
 ---
 
@@ -27,7 +27,7 @@ const minutes = readingTime(piece.body);
 >
   <article class="post">
     <header class="post-header">
-      <p class="post-series-kicker"><a href="/design/">Design</a> · {kindLabel[piece.data.kind]}</p>
+      <p class="post-series-kicker"><a href="/design/">Design</a> · {surfaceLabel(piece.data.surface)}</p>
       <h1>{piece.data.title}</h1>
       <p class="post-dek">{piece.data.summary}</p>
       <p class="post-meta">

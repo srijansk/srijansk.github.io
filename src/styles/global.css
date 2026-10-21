@@ -10,7 +10,7 @@
   --text: #111113;
   --soft: #2C2D32;
   --muted: #62646C;
-  --faint: #8C8E95;
+  --faint: #71737B;
   --accent: #2443D6;
   --accent-soft: rgba(36, 67, 214, 0.08);
   --loss: #C2410C;
@@ -34,7 +34,7 @@
     --text: #EDEDEF;
     --soft: #D2D3D8;
     --muted: #A0A1A8;
-    --faint: #75767D;
+    --faint: #84858D;
     --accent: #8FA3FF;
     --accent-soft: rgba(143, 163, 255, 0.12);
     --loss: #F0895B;
@@ -44,7 +44,7 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
 html, body { margin: 0; padding: 0; background: var(--bg); }
 
 body {
@@ -372,7 +372,7 @@ strong { font-weight: 600; color: var(--text); }
 
 /* Work cards: writing and design. The whole card is one link. */
 .work-grid { display: grid; grid-template-columns: 1fr; gap: 2.25rem 1.75rem; }
-@media (min-width: 620px) { .work-grid { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 620px) { .work-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .work-card { display: flex; flex-direction: column; color: inherit; text-decoration: none; }
 .work-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 6px; border-radius: 12px; }
 .work-media {
@@ -1386,34 +1386,11 @@ a.row-title:hover { color: var(--accent); }
 /* Announced to screen readers only; the button's own label shows the result. */
 .feed-copy-status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
+.section-note { margin: -0.35rem 0 1.25rem; max-width: 62ch; font-size: 0.97rem; color: var(--muted); }
+
 .row-links { display: flex; gap: 1rem; margin: 0.35rem 0 0; font-size: 0.9rem; }
 .row-links a { color: var(--muted); text-decoration: none; }
 .row-links a:hover { color: var(--text); text-decoration: underline; text-decoration-thickness: 1px; }
-
-/* Counts are doors: each count is a disclosure that opens what it counts. */
-.prose .doors { font-family: var(--font-sans); border-top: 1px solid var(--hairline); margin: 2rem 0; }
-.prose .door { border-bottom: 1px solid var(--hairline); }
-.prose .door summary {
-  display: flex;
-  align-items: baseline;
-  gap: 0.8rem;
-  padding: 0.8rem 0.25rem;
-  cursor: pointer;
-  list-style: none;
-}
-.prose .door summary::-webkit-details-marker { display: none; }
-.prose .door-n { min-width: 3.2rem; font-size: 1.4rem; font-weight: 650; letter-spacing: -0.02em; color: var(--accent); font-variant-numeric: tabular-nums; }
-.prose .door-l { flex: 1; font-size: 1rem; color: var(--text); }
-.prose .door-hint { font-size: 0.82rem; color: var(--faint); }
-.prose .door[open] .door-hint { visibility: hidden; }
-.prose .door summary:hover .door-l { color: var(--accent); }
-.prose .door summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
-.prose .door-list { list-style: none; margin: 0 0 0.9rem 4rem; padding: 0; }
-.prose .door-list li { font-size: 0.95rem; line-height: 1.5; color: var(--soft); padding: 0.35rem 0; }
-.prose .door-list li + li { border-top: 1px dashed var(--hairline); }
-.prose .door-list i { display: block; font-style: normal; font-size: 0.84rem; color: var(--faint); }
-.prose .door-more { color: var(--faint) !important; font-size: 0.88rem !important; }
-@media (max-width: 540px) { .prose .door-list { margin-left: 0; } }
 
 /* The review prototype on the Design page: first-paint heights before the
  * figure reports its own (public/writing/_figure.js). */
@@ -1421,6 +1398,8 @@ a.row-title:hover { color: var(--accent); }
 @container (min-width: 480px) { .fig-review-proto { height: 1360px; } }
 @container (min-width: 700px) { .fig-review-proto { height: 1080px; } }
 @container (min-width: 900px) { .fig-review-proto { height: 940px; } }
+.fig-delivery { height: 980px; }
+@container (min-width: 640px) { .fig-delivery { height: 600px; } }
 
 /* ===== Print ===== */
 @media print {

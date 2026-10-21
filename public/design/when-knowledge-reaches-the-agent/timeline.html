@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>When knowledge reaches the agent: timeline</title>
+<link rel="stylesheet" href="../../writing/_figure.css" />
+<style>
+  body { padding: 18px 20px 20px; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .title { margin: 0; font-size: 16px; font-weight: 650; letter-spacing: -0.01em; }
+  .task { margin: 4px 0 0; font-size: 13px; color: var(--soft); line-height: 1.5; }
+  .task b { font-weight: 650; color: var(--text); }
+
+  .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; margin: 14px 0 6px; }
+  .scrub { display: flex; align-items: center; gap: 10px; flex: 1 1 320px; }
+  .scrub label { font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+  .scrub input { flex: 1; accent-color: var(--accent); }
+  .ask { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--soft); }
+  .ask input { accent-color: var(--accent); }
+
+  .now { margin: 4px 0 12px; font-size: 13.5px; }
+  .now b { font-weight: 650; }
+  .now .edit-flag { margin-left: 6px; padding: 1px 7px; border-radius: 6px; background: var(--text); color: var(--surface); font-size: 11.5px; font-weight: 600; }
+
+  /* Lanes: turns run left to right; a dot is where the fact arrives, the band is
+   * how long it has been in context, and the outlined column is the turn shown. */
+  .lanes { display: grid; grid-template-columns: minmax(150px, 22%) minmax(0, 1fr) minmax(170px, 30%); gap: 10px 16px; align-items: center; }
+  .lh { font-size: 12px; color: var(--muted); }
+  .ticks, .track { display: grid; grid-template-columns: repeat(11, minmax(0, 1fr)); }
+  .ticks span { font-size: 10.5px; color: var(--muted); text-align: center; font-variant-numeric: tabular-nums; }
+  .ticks span.is-now { color: var(--text); font-weight: 650; }
+  .ticks span.is-edit::after { content: " edit"; }
+  .lane-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .lane-sub { display: block; font-size: 11.5px; font-weight: 400; color: var(--muted); }
+  .track { position: relative; height: 26px; border-radius: 6px; background: var(--bg); }
+  .cell { position: relative; border-left: 1px solid var(--hairline); }
+  .cell:first-child { border-left: 0; }
+  .cell.in { background: var(--accent-soft); }
+  .cell.now { box-shadow: inset 0 0 0 2px var(--text); border-radius: 4px; }
+  .cell.edit::before { content: ""; position: absolute; left: 50%; top: -4px; bottom: -4px; border-left: 2px dashed var(--muted); }
+  .dot { position: absolute; left: 50%; top: 50%; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; background: var(--accent); }
+  .avail { position: absolute; left: 0; right: 0; top: 50%; border-top: 1px dashed var(--hairline-strong); }
+  .lane-state { font-size: 12.5px; line-height: 1.45; color: var(--soft); }
+  .lane-state.none { color: var(--warn); }
+  .lane-state.ok { color: var(--accent); }
+
+  .turns { margin: 16px 0 0; padding: 10px 12px; border: 1px solid var(--hairline); border-radius: 8px; background: var(--bg); }
+  .turns ol { margin: 0; padding-left: 22px; font-size: 12.5px; line-height: 1.6; color: var(--soft); columns: 2; column-gap: 28px; }
+  .turns li.is-now { color: var(--text); font-weight: 600; }
+  .turns li.is-past { color: var(--muted); }
+
+  @media (max-width: 640px) {
+    body { padding: 16px 14px 18px; }
+    .lanes { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+    .lh-name, .lh-state { display: none; }
+    .lane-state { margin-bottom: 10px; }
+    .turns ol { columns: 1; }
+  }
+</style>
+</head>
+<body>
+  <p class="fig-kicker">Schematic · invented session</p>
+  <h1 class="title">One coding session, three routes for the same fact</h1>
+  <p class="task"><b>Task:</b> make retries safe to re-run. <b>Team fact:</b> a retried event keeps the original event&rsquo;s idempotency key.</p>
+
+  <div class="controls">
+    <div class="scrub">
+      <label for="turn">Turn <span id="turn-n">9</span> of 10</label>
+      <input type="range" id="turn" min="1" max="10" step="1" value="9" aria-describedby="now" />
+    </div>
+    <label class="ask"><input type="checkbox" id="asks" /> Suppose the agent calls the tool at turn 2</label>
+  </div>
+
+  <p class="now" id="now" aria-live="polite"></p>
+
+  <div class="lanes" id="lanes">
+    <span class="lh lh-name">Route</span>
+    <div class="ticks" id="ticks" aria-hidden="true"></div>
+    <span class="lh lh-state">Where the fact is now</span>
+  </div>
+
+  <div class="turns" aria-label="The session, turn by turn">
+    <ol id="turn-list"></ol>
+  </div>
+  <p class="fig-hint">The session is invented; the three routes are how agents receive knowledge today. Distance is counted in turns. How much an older fact still shapes an edit is the open question in the essay.</p>
+
+<script>
+(function () {
+  'use strict';
+  var TURNS = [
+    'Reads the task',
+    'Searches the code for “retry”',
+    'Opens workers/queue.py',
+    'Opens tests/test_retry.py',
+    'Runs the tests',
+    'Opens jobs/rollup.sql',
+    'Opens workers/retry.py',
+    'Plans the change',
+    'Edits workers/retry.py',
+    'Runs the tests again'
+  ];
+  var EDIT = 9;
+  // Turn 0 is the start of the session, before the first action.
+  var LANES = [
+    { key: 'tool', name: 'A tool it must call', sub: 'available all session' },
+    { key: 'instr', name: 'Standing instructions', sub: 'CLAUDE.md, AGENTS.md, always-on rules' },
+    { key: 'push', name: 'When the file opens', sub: 'delivered with the file it is about' }
+  ];
+
+  var range = document.getElementById('turn');
+  var asks = document.getElementById('asks');
+  var lanesEl = document.getElementById('lanes');
+  var ticksEl = document.getElementById('ticks');
+  var nowEl = document.getElementById('now');
+  var turnN = document.getElementById('turn-n');
+  var listEl = document.getElementById('turn-list');
+
+  function arrival(key) {
+    if (key === 'instr') return 0;
+    if (key === 'push') return 7;
+    return asks.checked ? 2 : null;
+  }
+
+  function ago(n) { return n === 0 ? 'this turn' : n === 1 ? '1 turn ago' : n + ' turns ago'; }
+
+  function laneState(key, t) {
+    var a = arrival(key);
+    if (key === 'tool') {
+      if (a === null) return { cls: 'none', text: 'Not in context. The agent never called the tool, so the fact never arrived.' };
+      if (t < a) return { cls: '', text: 'Not yet. The fact arrives if the agent asks, at turn ' + a + '.' };
+      return { cls: 'ok', text: 'In context since turn ' + a + ', ' + ago(t - a) + ', because the agent happened to ask.' };
+    }
+    if (key === 'instr') return { cls: 'ok', text: 'In context since the start of the session, ' + ago(t) + ', with everything read since in between.' };
+    if (t < a) return { cls: '', text: 'Not yet. It arrives when the agent opens workers/retry.py, at turn 7.' };
+    return { cls: 'ok', text: 'In context since turn 7, ' + ago(t - a) + ', delivered with the file it is about.' };
+  }
+
+  function build() {
+    var ticks = '';
+    for (var i = 0; i <= 10; i++) ticks += '<span data-t="' + i + '">' + (i === 0 ? 'start' : i) + '</span>';
+    ticksEl.innerHTML = ticks;
+    LANES.forEach(function (l) {
+      var name = document.createElement('span');
+      name.className = 'lane-name';
+      name.innerHTML = l.name + '<span class="lane-sub">' + l.sub + '</span>';
+      var track = document.createElement('div');
+      track.className = 'track';
+      track.dataset.lane = l.key;
+      track.setAttribute('aria-hidden', 'true');
+      var state = document.createElement('p');
+      state.className = 'lane-state';
+      state.id = 'state-' + l.key;
+      lanesEl.appendChild(name);
+      lanesEl.appendChild(track);
+      lanesEl.appendChild(state);
+    });
+    listEl.innerHTML = TURNS.map(function (t, i) { return '<li data-t="' + (i + 1) + '">' + t + '</li>'; }).join('');
+  }
+
+  function render() {
+    var t = Number(range.value);
+    turnN.textContent = t;
+    range.setAttribute('aria-valuetext', 'Turn ' + t + ': ' + TURNS[t - 1]);
+    Array.prototype.forEach.call(ticksEl.children, function (s) {
+      var k = Number(s.dataset.t);
+      s.className = (k === t ? 'is-now' : '') + (k === EDIT ? ' is-edit' : '');
+    });
+    var summary = [];
+    LANES.forEach(function (l) {
+      var a = arrival(l.key);
+      var track = lanesEl.querySelector('[data-lane="' + l.key + '"]');
+      var cells = '';
+      for (var i = 0; i <= 10; i++) {
+        var cls = 'cell';
+        if (a !== null && i >= a && i <= t) cls += ' in';
+        if (i === t) cls += ' now';
+        if (i === EDIT) cls += ' edit';
+        cells += '<span class="' + cls + '">' + (a === i ? '<span class="dot"></span>' : '') + '</span>';
+      }
+      track.innerHTML = (l.key === 'tool' ? '<span class="avail"></span>' : '') + cells;
+      track.style.gridTemplateColumns = 'repeat(11, minmax(0, 1fr))';
+      var st = laneState(l.key, t);
+      var el = document.getElementById('state-' + l.key);
+      el.className = 'lane-state' + (st.cls ? ' ' + st.cls : '');
+      el.textContent = st.text;
+      summary.push(l.name + ': ' + (a === null || t < a ? 'not in context' : 'arrived ' + ago(t - a)));
+    });
+    nowEl.innerHTML = '<b>Turn ' + t + '.</b> ' + TURNS[t - 1] + '.' + (t === EDIT ? '<span class="edit-flag">the edit</span>' : '') +
+      '<span class="sr-only"> ' + summary.join('; ') + '.</span>';
+    Array.prototype.forEach.call(listEl.children, function (li) {
+      var k = Number(li.dataset.t);
+      li.className = k === t ? 'is-now' : k < t ? 'is-past' : '';
+    });
+  }
+
+  build();
+  render();
+  range.addEventListener('input', render);
+  asks.addEventListener('change', render);
+})();
+</script>
+<script src="../../writing/_figure.js"></script>
+</body>
+</html>

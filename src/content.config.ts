@@ -76,9 +76,11 @@ const writing = defineCollection({
 });
 
 /**
- * Design: how I think about interfaces for AI, shown as concepts with working
- * prototypes. Each entry renders at /design/<slug>/ in the post layout; the
- * `prototype` path, when set, is an iframed interactive figure under /design/.
+ * Design: how I think about interfaces for AI, on both sides of the agent.
+ * `surface` says which side a piece is about: `people` for AI-human
+ * interfaces (directing, checking and correcting agents), `agents` for
+ * AI-native ones (what an agent is given, when, and what it writes into).
+ * Each entry renders at /design/<slug>/ in the post layout.
  */
 const design = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/design' }),
@@ -87,9 +89,12 @@ const design = defineCollection({
     summary: z.string(),
     date: z.coerce.date(),
     kind: z.enum(['concept', 'principle', 'study']),
+    surface: z.enum(['people', 'agents']),
+    /** One line for cards; the summary is the page's dek. */
+    teaser: z.string().optional(),
     order: z.number().default(0),
     /** Which mini preview the cards draw for this piece. */
-    preview: z.enum(['review', 'tally', 'figures']),
+    preview: z.enum(['review', 'delivery']),
     draft: z.boolean().default(false),
   }),
 });
