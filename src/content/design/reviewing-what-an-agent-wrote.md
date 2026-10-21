@@ -14,7 +14,7 @@ Writing a long reference document is now an agent's job. Reviewing it is still a
 
 <figure class="wide">
   <iframe src="/design/reviewing-what-an-agent-wrote/prototype.html" title="Interactive prototype: three sections of an invented agent-written reference document, with citations that open their source lines, per-section approval, regeneration, and checks tied to the lines they read" loading="lazy" class="fig-review-proto"></iframe>
-  <figcaption><b>PROTOTYPE</b> — Open a citation to see the lines it rests on. Approve, request changes to, or reject each section, then publish or regenerate. In the source panel, change a cited file and watch which checks lapse.</figcaption>
+  <figcaption><b>Prototype.</b> Open a citation to see the lines it rests on. Approve, request changes to, or reject each section, then publish or regenerate. In the source panel, change a cited file and watch which checks lapse.</figcaption>
 </figure>
 
 ## A person's correction outranks the agent

@@ -15,7 +15,7 @@ My first data point was an anecdote. On an earlier project we gave an agent tool
 
 <figure class="wide">
   <iframe src="/design/when-knowledge-reaches-the-agent/timeline.html" title="Interactive schematic: one invented coding session in ten turns, showing when one team rule reaches the agent through a tool it can call, its standing instructions, a push when it opens the file, and a lookup it must make before the edit" loading="lazy" class="fig-delivery"></iframe>
-  <figcaption><b>SCHEMATIC</b> — One invented session in ten turns and one team rule: a retried event keeps the original event's idempotency key. Move through the turns, change the assumptions, and see where the rule is when the agent edits the retry code.</figcaption>
+  <figcaption><b>Schematic.</b> One invented session in ten turns and one team rule: a retried event keeps the original event's idempotency key. Move through the turns, change the assumptions, and see where the rule is when the agent edits the retry code.</figcaption>
 </figure>
 
 ## Four routes
