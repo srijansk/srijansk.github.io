@@ -34,9 +34,9 @@ My open-source tool [crewlore](https://github.com/srijansk/crewlore) pushes thro
 
 It also arrives labelled as "evidence to weigh, not instructions". Tool output is the least trusted thing in an agent's context: the [instruction hierarchy](https://arxiv.org/abs/2404.13208) work ranks "untrusted outputs from tools" below the system prompt and the user, because tool output is a common way for injected instructions to get in. Knowledge pushed through that channel should say what it is.
 
-crewlore's hooks do not gate. If delivery fails, the agent carries on as if they were not there. They mention each scope once per conversation, stay silent when there is nothing to add, and offer it again after the conversation is compacted. A gate would be more reliable for the rules that matter most, and a team that needs one can add it; the hooks deliberately do not block.
+crewlore's hooks do not gate. If delivery fails, the agent carries on as if they were not there. They mention each scope once per conversation, stay silent when there is nothing to add, and offer it again after the conversation is compacted. A gate would be more reliable for the rules that matter most, and a team that needs one can add it.
 
-The rule in the timeline is the same sentence that waits for a person's approval in [Reviewing what an agent wrote](/design/reviewing-what-an-agent-wrote/). The two pieces describe one loop. What a person approves on one side is what the next agent should receive on the other, at the file it applies to, in its current version.
+The rule in the timeline is the same sentence that waits for a person's approval in [Reviewing what an agent wrote](/design/reviewing-what-an-agent-wrote/). Approval there decides what should arrive here: the sentence a person approved, at the file it applies to, and never an older copy.
 
 ## What would change my mind
 

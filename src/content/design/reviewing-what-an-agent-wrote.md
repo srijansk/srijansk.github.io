@@ -19,7 +19,7 @@ Writing a long reference document is now an agent's job. Reviewing it is still a
 
 ## A person's correction outranks the agent
 
-When a reviewer rewrites a sentence, the sentence becomes theirs. In the prototype, Dana has corrected when a day's totals become final. Regenerate that section and the agent notices that the nightly rollup now starts later: it flags her sentence and pins a proposed change underneath, and her sentence stays exactly as she wrote it until someone approves the change. The agent can argue with a person's sentence. It cannot overwrite one.
+When a reviewer rewrites a sentence, the sentence becomes theirs. In the prototype, Dana has corrected when a day's totals become final. Regenerate that section and the agent notices that the nightly rollup now starts later: it flags Dana's sentence and pins a proposed change underneath, and the sentence stays exactly as written until someone approves the change. The agent can argue with a person's sentence. It cannot overwrite one.
 
 Code generators met this problem long ago. Generated code "should never be edited by hand, otherwise you can't safely regenerate it", so the Generation Gap pattern keeps the handwritten part in a class the generator never touches ([Fowler, after Vlissides](https://www.martinfowler.com/dslCatalog/generationGap.html)). A document cannot be split into two classes, so the same rule has to live at the level of the sentence. Without it, every regeneration puts earlier corrections at risk, and reviewers soon stop correcting.
 

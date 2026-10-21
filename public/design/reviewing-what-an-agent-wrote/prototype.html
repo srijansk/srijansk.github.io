@@ -259,7 +259,7 @@
           code: ['  nightly_rollup: "30 5 * * *"   # moved from 05:00 UTC on 18 Oct; runs about an hour'], hl: [0],
           check: 'ok', fp: '3be1d7', on: 'today' },
     h1: { human: true, kind: 'Written by a person', path: 'Dana, payments team', pos: 'edited 9 Oct',
-          quoteLabel: 'The agent’s sentence she replaced:', quote: 'Daily totals are final at midnight UTC.' }
+          quoteLabel: 'The agent’s sentence Dana replaced:', quote: 'Daily totals are final at midnight UTC.' }
   };
 
   var DANA = 'A day’s totals are final at 06:00 UTC, once the nightly rollup finishes; anything read earlier can still change.';
@@ -289,9 +289,9 @@
         { id: 'b3', t: 'The new fee schedule took effect on 11 March or 14 March.', src: ['s5', 's6'],
           conflictNote: 'The changelog says 11 March; the change history says 14 March. Both stay on the page until someone settles it.' },
         { id: 'b2p', replaces: 'b2', t: 'A day’s totals are final at about 06:30 UTC, once the nightly rollup finishes; anything read earlier can still change.', src: ['s9'], proposed: true,
-          flagNote: 'The agent flags this sentence: the nightly rollup now starts at 05:30 UTC (jobs/schedule.yaml, line 12), so totals settle around 06:30. Its proposed change is below. Dana’s sentence stays as she wrote it until someone approves the change.' }
+          flagNote: 'The agent flags this sentence: the nightly rollup now starts at 05:30 UTC (jobs/schedule.yaml, line 12), so totals settle around 06:30. Its proposed change is below. Dana’s sentence stays as written until someone approves the change.' }
       ],
-      regenMsg: 'The agent kept both fee dates, since neither source outranks the other, and flagged Dana’s sentence with a proposed change. Her sentence stays until someone approves it.' },
+      regenMsg: 'The agent kept both fee dates, since neither source outranks the other, and flagged Dana’s sentence with a proposed change. The sentence stays until someone approves it.' },
     { title: 'Retries', request: 'Find where the retry limit is set.',
       draft: [
         { id: 'c1', t: 'Retries appear to stop after five attempts, though the only source is a code comment.', src: ['s7'] },
@@ -495,7 +495,7 @@
     }
     if (prop && st.prop === 'reject') {
       html += '<p class="prop-done">' + (prop.replaces
-        ? 'Proposal rejected. Dana’s sentence stays as she wrote it.'
+        ? 'Proposal rejected. Dana’s sentence stays as written.'
         : 'Proposal rejected. The agent will not suggest it again unless its source changes.') + '</p>';
     }
     secEls[i].querySelector('.sec-body').innerHTML = html;
@@ -728,7 +728,7 @@
     updateBar();
     say(p === 'approve'
       ? (prop.replaces ? 'Approved. The changed sentence replaces Dana’s, marked as a change you approved.' : 'Approved. The sentence joins the section, marked as approved by you.')
-      : (prop.replaces ? 'Rejected. Dana’s sentence stays as she wrote it.' : 'Rejected. The section stays as it was.'));
+      : (prop.replaces ? 'Rejected. Dana’s sentence stays as written.' : 'Rejected. The section stays as it was.'));
     secEls[i].querySelector('h2').focus();
     if (!chipFor(selKey)) {
       var c = secEls[i].querySelector('.sec-body [data-src]');
