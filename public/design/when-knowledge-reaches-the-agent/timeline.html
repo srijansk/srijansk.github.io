@@ -190,7 +190,7 @@
     if (key === 'push') return t < 7 ? 'not yet' : staleBox.checked ? 'an out-of-date copy' : 'in context since turn 7';
     return t < EDIT ? 'not yet' : 'looked up at the edit';
   }
-  var sumTimer;
+  var sumTimer, firstRender = true;
 
   function build() {
     var ticks = '';
@@ -248,6 +248,9 @@
     nowEl.innerHTML = '<b>Turn ' + t + '.</b> ' + TURNS[t - 1] + '.' + (t === EDIT ? ' <span class="edit-flag">the edit</span>' : '');
     var short = 'Turn ' + t + ', ' + TURNS[t - 1] + '. ' + LANES.map(function (l) { return l.name + ': ' + shortState(l.key, t); }).join('; ') + '.';
     clearTimeout(sumTimer);
+    // The first render sets the text directly, so a live region is not filled
+    // after the page is in the tree; later changes are debounced.
+    if (firstRender) { summaryEl.textContent = short; firstRender = false; return; }
     sumTimer = setTimeout(function () { summaryEl.textContent = short; }, 300);
     Array.prototype.forEach.call(listEl.children, function (li) {
       var k = Number(li.dataset.t);

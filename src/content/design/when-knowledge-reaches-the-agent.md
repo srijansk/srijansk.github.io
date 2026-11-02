@@ -21,11 +21,11 @@ Some of the interfaces I think about most have a model as their user. SWE-agent'
 
 ## Four routes, in the order they reach the agent
 
-The platform docs list the first three. What the timeline adds is when each route puts the rule in front of the agent, relative to the edit.
+Cursor's rule types and Claude Code's memory page cover the first three. What the timeline adds is when each route puts the rule in front of the agent, relative to the edit.
 
 **Standing instructions.** CLAUDE.md, AGENTS.md and always-on editor rules are in context from the first turn, and Claude Code re-reads its root CLAUDE.md after compaction. The cost is distance. The rule sits many turns from the edit, behind everything read since, and long runs can lose early facts without truncating them, which I wrote about in [Context Aging](/writing/context-aging/).
 
-**Pull, through a tool the agent can call.** It works when the agent knows what it is missing, and it cannot work for a rule the agent does not know exists: an agent changing retry logic has no reason to search for idempotency keys. Cursor's "Apply Intelligently" rules are half-way: the rule's description is always in context, and the agent pulls the body "when Agent decides it's relevant based on description" ([docs](https://cursor.com/docs/context/rules)). That solves not knowing a rule exists, and leaves the failure in the opening, where the tools were described and never called.
+**Pull, through a tool the agent can call.** It works when the agent knows what it is missing, and it cannot work for a rule the agent does not know exists: an agent changing retry logic has no reason to search for idempotency keys. Cursor's "Apply Intelligently" rules are halfway: the rule's description is always in context, and the agent pulls the body "when Agent decides it's relevant based on description" ([docs](https://cursor.com/docs/context/rules)). That solves not knowing a rule exists, and leaves the failure in the opening, where the tools were described and never called.
 
 **Push, with the file.** The rule arrives when the agent opens the file it applies to. Claude Code loads a path-scoped rule "when Claude uses the Read, Write, or Edit tool on a matching file" ([docs](https://docs.claude.com/en/docs/claude-code/memory)), and Cursor rules can apply "when file matches a specified pattern" ([docs](https://cursor.com/docs/context/rules)). It is the agent's version of what Rhodes and Maes called [just-in-time information retrieval](https://www.bradleyrhodes.com/Papers/rhodes-jitir-agents-ibmsj-2000.pdf): information presented "based on a person's local context in an easily accessible yet nonintrusive manner". Its failure is the stale copy: in the runs above, the frozen copy was read in 12 of 17 tasks while the live source was never called.
 
@@ -35,11 +35,11 @@ The platform docs list the first three. What the timeline adds is when each rout
 
 My open-source tool [crewlore](https://github.com/srijansk/crewlore) pushes through the hooks Claude Code already provides; the mechanism is the platform's. What crewlore changes is what arrives. The knowledge is not a rule someone wrote by hand. It is compiled from the team's past sessions and pull requests, and each claim says whether the team adopted it or tried it and declined, what to do instead when it was declined, and which lines it was compiled from.
 
-It also arrives labelled as "evidence to weigh, not instructions". In the [instruction hierarchy](https://arxiv.org/abs/2404.13208) proposed for language models, tool output is the lowest-privileged source of instructions: the paper ranks "untrusted outputs from tools" below the system prompt and the user, because that is where injected instructions arrive, so knowledge pushed through that channel should say what it is.
+It also arrives labelled as "evidence to weigh, not instructions". In the [instruction hierarchy](https://arxiv.org/abs/2404.13208) proposed for language models, tool output is the lowest-privileged source of instructions: the paper ranks "untrusted outputs from tools" below the system prompt and the user, because that is where indirect injections arrive, so knowledge pushed through that channel should say what it is.
 
 crewlore's hooks do not gate. If delivery fails, the agent carries on as if they were not there. They mention each scope once per conversation and again after it is compacted, and stay silent when there is nothing to add. A gate would be more reliable for the rules that matter most, and a team that needs one can add it.
 
-The rule in the timeline is the sentence that waits for a person's approval in [Reviewing what an agent wrote](/design/reviewing-what-an-agent-wrote/); which version arrives here is decided there.
+The rule in the timeline is the sentence that waits for a person's approval in [Reviewing what an agent wrote](/design/reviewing-what-an-agent-wrote/); and the version that arrives here is the one approved there.
 
 ## What would change my mind
 
