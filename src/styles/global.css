@@ -1392,10 +1392,10 @@ a.row-title:hover { color: var(--accent); }
 
 /* The review prototype on the Design page: first-paint heights before the
  * figure reports its own (public/writing/_figure.js). */
-.fig-review-proto { height: 1950px; }
-@container (min-width: 480px) { .fig-review-proto { height: 1480px; } }
-@container (min-width: 700px) { .fig-review-proto { height: 1150px; } }
-@container (min-width: 900px) { .fig-review-proto { height: 1060px; } }
+.fig-review-proto { height: 1790px; }
+@container (min-width: 480px) { .fig-review-proto { height: 1400px; } }
+@container (min-width: 700px) { .fig-review-proto { height: 1330px; } }
+@container (min-width: 900px) { .fig-review-proto { height: 1190px; } }
 .fig-delivery { height: 1220px; }
 @container (min-width: 640px) { .fig-delivery { height: 660px; } }
 

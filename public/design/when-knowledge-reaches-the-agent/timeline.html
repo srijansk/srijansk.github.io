@@ -132,9 +132,10 @@
   ];
   var EDIT = 9;
   // Turn 0 is the start of the session, before the first action.
+  // In the order the routes reach the agent during a session.
   var LANES = [
-    { key: 'pull', name: 'Pull', sub: 'a tool the agent can call' },
     { key: 'instr', name: 'Standing instructions', sub: 'CLAUDE.md, AGENTS.md, always-on rules' },
+    { key: 'pull', name: 'Pull', sub: 'a tool the agent can call' },
     { key: 'push', name: 'Push, with the file', sub: 'arrives when the file is opened' },
     { key: 'gate', name: 'A gate before the edit', sub: 'the edit waits for a lookup' }
   ];

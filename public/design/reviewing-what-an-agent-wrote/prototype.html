@@ -19,6 +19,23 @@
   .title { margin: 0; font-size: 17px; font-weight: 650; letter-spacing: -0.01em; }
   .sub { margin: 2px 0 0; font-size: 12.5px; color: var(--muted); }
 
+  /* Three things to try: the guided first state. Numbers and "done" are text,
+   * so the strip carries no colour meaning and reads the same in both themes. */
+  .guide { margin: 8px 0 0; padding: 10px 12px 11px; border: 1px solid var(--hairline-strong); border-radius: 10px; background: var(--bg); }
+  .guide-h { margin: 0 0 8px; font-size: 12px; font-weight: 650; color: var(--muted); }
+  .guide-steps { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+  @media (min-width: 700px) { .guide-steps { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 18px; } }
+  .guide-steps li { display: grid; grid-template-columns: 20px minmax(0, 1fr); grid-template-rows: 1fr auto; gap: 4px 8px; align-items: start; font-size: 12.5px; line-height: 1.5; color: var(--soft); }
+  .guide-n { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: var(--text); color: var(--surface); font-size: 11px; font-weight: 650; }
+  .guide-steps li.is-done .guide-n { background: transparent; border: 1px solid var(--hairline-strong); color: var(--muted); }
+  .guide-steps li.is-done .guide-t { color: var(--muted); }
+  .guide-t b { font-weight: 650; color: var(--text); }
+  .guide-foot { grid-column: 2; display: flex; align-items: center; gap: 10px; min-height: 22px; }
+  .guide-go { padding: 1px 8px; border: 1px solid var(--hairline-strong); border-radius: 6px; font-size: 11.5px; color: var(--soft); background: var(--surface); }
+  .guide-go:hover { border-color: var(--accent-mid); color: var(--text); }
+  .guide-done { font-size: 11.5px; font-weight: 600; color: var(--text); }
+  .guide-end { margin: 8px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--soft); }
+
   /* Counts: each one steps through the sentences it counts. */
   .counts { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 0 12px; border-bottom: 1px solid var(--hairline); }
   .count {
@@ -176,6 +193,28 @@
     <p class="sub" id="sub"></p>
   </header>
 
+  <section class="guide" id="guide" aria-labelledby="guide-h">
+    <h2 class="guide-h" id="guide-h">Three things to try</h2>
+    <ol class="guide-steps" id="guide-steps">
+      <li data-step="open">
+        <span class="guide-n" aria-hidden="true">1</span>
+        <span class="guide-t">Open citation <b>3</b> in &ldquo;When a refund posts&rdquo;, after &ldquo;two business days after capture&rdquo;. The sentence reads fine. The line it rests on says three.</span>
+        <span class="guide-foot"><button type="button" class="guide-go" data-go="open">Find it</button><span class="guide-done" hidden>&#10003; Done</span></span>
+      </li>
+      <li data-step="approve">
+        <span class="guide-n" aria-hidden="true">2</span>
+        <span class="guide-t">Approve &ldquo;When a refund posts&rdquo;. The receipt under it records how many of its sources you opened, and that an issue is still open.</span>
+        <span class="guide-foot"><button type="button" class="guide-go" data-go="approve">Find it</button><span class="guide-done" hidden>&#10003; Done</span></span>
+      </li>
+      <li data-step="regen">
+        <span class="guide-n" aria-hidden="true">3</span>
+        <span class="guide-t">Request changes on &ldquo;Daily totals&rdquo;, keep the request, and press Regenerate. Dana&rsquo;s sentence stays as written. The agent can only propose.</span>
+        <span class="guide-foot"><button type="button" class="guide-go" data-go="regen">Find it</button><span class="guide-done" hidden>&#10003; Done</span></span>
+      </li>
+    </ol>
+    <p class="guide-end" id="guide-end" hidden>Those are the three ideas. Everything else works too: change a cited file from the source panel, or reject a draft and publish.</p>
+  </section>
+
   <div class="counts" id="counts" role="group" aria-label="Sentence states. Each count steps through the sentences it counts."></div>
   <p class="changes" id="changes" hidden></p>
 
@@ -324,9 +363,10 @@
   var receipt = document.getElementById('receipt');
   var pubBtn = document.getElementById('publish');
   var regenBtn = document.getElementById('regen');
+  var guideEl = document.getElementById('guide');
   var narrow = window.matchMedia('(max-width: 699px)');
 
-  var state, live, version, selKey, selSec, countPos, paneClosed;
+  var state, live, version, selKey, selSec, countPos, paneClosed, guideDone;
 
   function esc(s) {
     return String(s).replace(/[&<>"]/g, function (c) {
@@ -343,7 +383,9 @@
     selKey = 's1';
     selSec = 0;
     countPos = {};
-    paneClosed = false;
+    // The source panel opens with the first citation the reader opens.
+    paneClosed = true;
+    guideDone = {};
     live = {};
     Object.keys(SRC).forEach(function (k) {
       var s = SRC[k];
@@ -586,6 +628,7 @@
     renderCounts();
     renderBanner();
     updateBar();
+    renderGuide();
     if (!chipFor(selKey)) {
       var inSec = secEls[selSec] && secEls[selSec].querySelector('.sec-body [data-src]');
       var c = inSec || docEl.querySelector('.sec-body [data-src]');
@@ -659,7 +702,7 @@
     var i = Number(c.closest('.sec').dataset.i);
     selSec = i;
     if (how === 'open') {
-      if (!SRC[key].human) state[i].opened[key] = true;
+      if (!SRC[key].human) { state[i].opened[key] = true; markStep('open'); }
       paneClosed = false;
     }
     if (how === 'peek') paneClosed = false;
@@ -706,7 +749,7 @@
     if (st.rejected || (st.published && !st.dirty)) return;
     st.review = st.review === a ? null : a;
     st.msg = '';
-    if (st.review === 'approve') st.receiptText = receiptFor(i);
+    if (st.review === 'approve') { st.receiptText = receiptFor(i); markStep('approve'); }
     renderReview(i);
     renderCounts();
     updateBar();
@@ -786,6 +829,7 @@
       st.opened = {};
       count++;
     });
+    markStep('regen');
     renderAll();
     say('Regenerated ' + plural(count, 'section', 'sections') + ' from your requests. Review ' + (count === 1 ? 'it' : 'them') + ' again before publishing.');
     regenBtn.focus();
@@ -856,6 +900,45 @@
     renderAll();
     say(INTRO);
   }
+
+  // ---- The guided first state ----
+  // A step is done when the reader performs it; "Find it" only moves focus to
+  // the control the step names.
+  var GUIDE_TARGETS = {
+    open: function () { return chipFor('s3'); },
+    approve: function () { return secEls[0].querySelector('[data-act="approve"]'); },
+    regen: function () { return secEls[1].querySelector('[data-act="changes"]'); }
+  };
+  var GUIDE_HINTS = {
+    open: 'Citation 3 is focused. Press Enter, or tap it, to open the lines it rests on.',
+    approve: 'The Approve button for When a refund posts is focused.',
+    regen: 'The Request changes button for Daily totals is focused. Press it, keep the request, then press Regenerate below the document.'
+  };
+  function markStep(k) {
+    if (guideDone[k]) return;
+    guideDone[k] = true;
+    renderGuide();
+  }
+  function renderGuide() {
+    var all = true;
+    each(guideEl.querySelectorAll('[data-step]'), function (li) {
+      var done = !!guideDone[li.dataset.step];
+      li.classList.toggle('is-done', done);
+      li.querySelector('.guide-done').hidden = !done;
+      li.querySelector('[data-go]').hidden = done;
+      if (!done) all = false;
+    });
+    document.getElementById('guide-end').hidden = !all;
+  }
+  guideEl.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-go]');
+    if (!b) return;
+    var t = GUIDE_TARGETS[b.dataset.go]();
+    if (!t) { say('That control is not on the page in this version. Start over to see it.'); return; }
+    t.scrollIntoView({ block: 'center' });
+    t.focus({ preventScroll: true });
+    say(GUIDE_HINTS[b.dataset.go]);
+  });
 
   // ---- Wiring ----
   docEl.addEventListener('click', function (e) {

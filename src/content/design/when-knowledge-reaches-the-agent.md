@@ -1,28 +1,29 @@
 ---
 title: "When knowledge reaches the agent"
-summary: "An agent can only use what is in front of it when it acts. Four ways to put a team's knowledge in front of a coding agent, what each one costs, and what my own data says about them."
+summary: "An agent can only use what is in front of it when it acts. Four ways to put a team's knowledge in front of a coding agent, in the order they reach it during a session, what each one costs, and what my own data says about them."
 teaser: "One team rule, four ways to put it in front of a coding agent, and what each one gets wrong."
 date: 2026-10-21
+updated: 2026-11-01
 kind: concept
 surface: agents
 order: 2
 preview: delivery
 ---
 
+On an earlier project we gave an agent tools to search a knowledge base, with descriptions and worked examples, and it never called them, even after the prompt told it to. That was one task on one model, an existence proof rather than a rate, as I wrote in [Agent Context Is a Recommendation Problem](/writing/agent-context-is-a-recommendation-problem/). Later runs were more even. When a knowledge tool was live and prominent in the agent's workspace, agents called it in 37 of 43 tasks. When a frozen copy of the knowledge was attached instead, they never called the live source, and read the stale copy in 12 of 17 tasks. Pulling works when the agent knows to ask. Pushing wins attention, including for the wrong version.
+
 Some of the interfaces I think about most have a model as their user. SWE-agent's authors called this the [agent-computer interface](https://arxiv.org/abs/2405.15793), on the view that language-model agents "represent a new category of end users with their own needs and abilities". For a coding agent, that interface includes the instructions it starts with, the tools it can call, and whatever arrives in its context while it works. This piece is about the last part: when a piece of team knowledge should reach the agent, and in what form.
 
-My first data point was an anecdote. On an earlier project we gave an agent tools to search a knowledge base, with descriptions and worked examples, and it never called them, even after the prompt told it to. That was one task on one model, an existence proof rather than a rate, as I wrote in [Agent Context Is a Recommendation Problem](/writing/agent-context-is-a-recommendation-problem/). Later runs were more even. When a knowledge tool was live and prominent in the agent's workspace, agents called it in 37 of 43 tasks. When a frozen copy of the knowledge was attached instead, they never called the live source, and read the stale copy in 12 of 17 tasks. Pulling works when the agent knows to ask. Pushing wins attention, including for the wrong version.
-
 <figure class="wide">
-  <iframe src="/design/when-knowledge-reaches-the-agent/timeline.html" title="Interactive schematic: one invented coding session in ten turns, showing when one team rule reaches the agent through a tool it can call, its standing instructions, a push when it opens the file, and a lookup it must make before the edit" loading="lazy" class="fig-delivery"></iframe>
+  <iframe src="/design/when-knowledge-reaches-the-agent/timeline.html" title="Interactive schematic: one invented coding session in ten turns, showing when one team rule reaches the agent through its standing instructions, a tool it can call, a push when it opens the file, and a lookup it must make before the edit" loading="lazy" class="fig-delivery"></iframe>
   <figcaption><b>Schematic.</b> One invented session in ten turns and one team rule: a retried event keeps the original event's idempotency key. Move through the turns, change the assumptions, and see where the rule is when the agent edits the retry code.</figcaption>
 </figure>
 
-## Four routes
-
-**Pull, through a tool the agent can call.** It works when the agent knows what it is missing, and it cannot work for a rule the agent does not know exists: an agent changing retry logic has no reason to search for idempotency keys. Cursor's version is a rule the agent applies "when Agent decides it's relevant based on description".
+## Four routes, in the order they reach the agent
 
 **Standing instructions.** CLAUDE.md, AGENTS.md and always-on editor rules are in context from the first turn, and Claude Code re-reads its root CLAUDE.md after compaction. The cost is distance. The rule sits many turns from the edit, behind everything read since, and long runs can lose early facts without truncating them, which I wrote about in [Context Aging](/writing/context-aging/).
+
+**Pull, through a tool the agent can call.** It works when the agent knows what it is missing, and it cannot work for a rule the agent does not know exists: an agent changing retry logic has no reason to search for idempotency keys. Cursor's version is a rule the agent applies "when Agent decides it's relevant based on description".
 
 **Push, with the file.** The rule arrives when the agent opens the file it applies to. Claude Code loads a path-scoped rule "when Claude uses the Read, Write, or Edit tool on a matching file" ([docs](https://docs.claude.com/en/docs/claude-code/memory)), and Cursor rules can apply "when file matches a specified pattern" ([docs](https://cursor.com/docs/context/rules)). It is the agent's version of what Rhodes and Maes called [just-in-time information retrieval](https://www.bradleyrhodes.com/Papers/rhodes-jitir-agents-ibmsj-2000.pdf): information presented "based on a person's local context in an easily accessible yet nonintrusive manner". Its failure is the stale copy. Whatever is pushed gets used, current or not.
 
