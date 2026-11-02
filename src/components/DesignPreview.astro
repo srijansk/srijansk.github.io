@@ -82,7 +82,7 @@ const { kind } = Astro.props;
   .dp--delivery { display: flex; flex-direction: column; justify-content: center; font-size: 0.82rem; }
   .dp-axis { display: flex; justify-content: space-between; margin: 0 0 0.5rem 42%; font-size: 0.64rem; color: var(--muted); }
   .dp-row { display: flex; align-items: center; gap: 0.6rem; margin-top: 0.65rem; }
-  .dp-lab { flex: 0 0 40%; font-size: 0.7rem; color: var(--soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dp-lab { flex: 0 0 40%; font-size: 0.7rem; line-height: 1.15; color: var(--soft); }
   .dp-track { position: relative; flex: 1; height: 1.1rem; border-bottom: 1px solid var(--hairline-strong); }
   .dp-edit { position: absolute; right: 8%; top: -0.2rem; bottom: -0.2rem; border-left: 2px solid var(--text); }
   .dp-never { position: absolute; left: 0; top: 0; font-size: 0.62rem; color: var(--muted); font-style: italic; }
@@ -91,4 +91,11 @@ const { kind } = Astro.props;
   .dp-dot--late { left: 70%; }
   .dp-dot--gate { left: calc(92% - 0.5rem); }
   .dp-fade { position: absolute; left: 0.5rem; right: 8%; top: 0.5rem; height: 2px; background: linear-gradient(90deg, var(--accent), transparent); }
+
+  /* Narrow cards (an iPad beside the sidebar, a phone in landscape): the
+   * popover would cover the paragraph, so it goes; the rows tighten. */
+  @container (max-width: 310px) {
+    .dp-pop { display: none; }
+    .dp-row { margin-top: 0.45rem; }
+  }
 </style>

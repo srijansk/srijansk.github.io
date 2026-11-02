@@ -21,7 +21,7 @@ const monthYear = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'sh
     <p class="page-lede">
       How I think about interfaces for AI, on both sides of an agent. Some are for people: the
       places where someone directs an agent, checks what it produced and corrects it. Others have
-      the agent as their user: what it is given, when, and in what form. The pieces here describe
+      the agent as their user: what it is given, and when. The pieces here describe
       one loop. What a person approves on one side is what the next agent should receive on the
       other. Each has something you can operate.
     </p>
@@ -33,7 +33,7 @@ const monthYear = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'sh
         <a class="work-card" href={`/design/${d.id}/`}>
           <div class="work-media work-media--live"><DesignPreview kind={d.data.preview} /></div>
           <span class="work-title">{d.data.title}</span>
-          <span class="work-meta">{surfaceLabel(d.data.surface)} · {monthYear.format(d.data.updated ?? d.data.date)}</span>
+          <span class="work-meta">{surfaceLabel(d.data.surface)} · {monthYear.format(d.data.date)}</span>
           <span class="work-text work-text--3">{d.data.teaser ?? d.data.summary}</span>
         </a>
       ))}

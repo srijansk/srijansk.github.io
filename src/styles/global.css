@@ -379,6 +379,8 @@ strong { font-weight: 600; color: var(--text); }
   display: block;
   aspect-ratio: 16 / 10;
   overflow: hidden;
+  /* Card previews adapt to the card's width (DesignPreview.astro). */
+  container-type: inline-size;
   border: 1px solid var(--hairline);
   border-radius: 12px;
   background: #FFFFFF;
@@ -1392,12 +1394,17 @@ a.row-title:hover { color: var(--accent); }
 
 /* The review prototype on the Design page: first-paint heights before the
  * figure reports its own (public/writing/_figure.js). */
-.fig-review-proto { height: 1790px; }
-@container (min-width: 480px) { .fig-review-proto { height: 1400px; } }
-@container (min-width: 700px) { .fig-review-proto { height: 1330px; } }
-@container (min-width: 900px) { .fig-review-proto { height: 1190px; } }
+/* Measured at the figure's inner width (the container minus the 1px borders),
+ * so each boundary sits 2px above the figure's own breakpoint. */
+.fig-review-proto { height: 1982px; }
+@container (min-width: 482px) { .fig-review-proto { height: 1476px; } }
+@container (min-width: 602px) { .fig-review-proto { height: 1442px; } }
+@container (min-width: 702px) { .fig-review-proto { height: 1411px; } }
+@container (min-width: 902px) { .fig-review-proto { height: 1264px; } }
 .fig-delivery { height: 1220px; }
-@container (min-width: 640px) { .fig-delivery { height: 660px; } }
+@container (min-width: 482px) { .fig-delivery { height: 1040px; } }
+@container (min-width: 642px) { .fig-delivery { height: 780px; } }
+@container (min-width: 802px) { .fig-delivery { height: 655px; } }
 
 /* ===== Print ===== */
 @media print {

@@ -113,7 +113,7 @@
     <h2 id="turns-h">The session, turn by turn</h2>
     <ol id="turn-list"></ol>
   </section>
-  <p class="fig-hint">The session is invented. The counts in the essay come from real runs; how much an older rule still shapes an edit is the open question.</p>
+  <p class="fig-hint">The session is invented. The counts in the text above come from real runs; how much an older rule still shapes an edit is the open question.</p>
 
 <script>
 (function () {
@@ -178,6 +178,20 @@
     return { cls: 'ok', text: 'Looked up at the edit, because the edit could not go ahead without it.' };
   }
 
+  // A short state per lane for the live region; the full sentences stay
+  // visible beside the lanes and are not live.
+  function shortState(key, t) {
+    if (key === 'instr') return 'in context since the start';
+    if (key === 'pull') {
+      if (ask() === 'never') return 'never arrived';
+      if (ask() === 'unknown') return 'only if the agent asks';
+      return t < 2 ? 'not yet' : 'in context since turn 2';
+    }
+    if (key === 'push') return t < 7 ? 'not yet' : staleBox.checked ? 'an out-of-date copy' : 'in context since turn 7';
+    return t < EDIT ? 'not yet' : 'looked up at the edit';
+  }
+  var sumTimer;
+
   function build() {
     var ticks = '';
     for (var i = 0; i <= 10; i++) ticks += '<span data-t="' + i + '">' + (i === 0 ? 'start' : i) + '</span>';
@@ -207,7 +221,6 @@
     Array.prototype.forEach.call(ticksEl.children, function (s) {
       s.className = Number(s.dataset.t) === t ? 'is-now' : '';
     });
-    var summary = [];
     LANES.forEach(function (l) {
       var a = arrival(l.key);
       var maybe = l.key === 'pull' && ask() === 'unknown';
@@ -231,10 +244,11 @@
       var el = document.getElementById('state-' + l.key);
       el.className = 'lane-state' + (st.cls ? ' ' + st.cls : '');
       el.textContent = st.text;
-      summary.push(l.name + ': ' + st.text);
     });
     nowEl.innerHTML = '<b>Turn ' + t + '.</b> ' + TURNS[t - 1] + '.' + (t === EDIT ? ' <span class="edit-flag">the edit</span>' : '');
-    summaryEl.textContent = summary.join(' ');
+    var short = 'Turn ' + t + ', ' + TURNS[t - 1] + '. ' + LANES.map(function (l) { return l.name + ': ' + shortState(l.key, t); }).join('; ') + '.';
+    clearTimeout(sumTimer);
+    sumTimer = setTimeout(function () { summaryEl.textContent = short; }, 300);
     Array.prototype.forEach.call(listEl.children, function (li) {
       var k = Number(li.dataset.t);
       if (k === t) li.setAttribute('aria-current', 'step'); else li.removeAttribute('aria-current');

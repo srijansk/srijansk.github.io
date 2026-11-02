@@ -19,12 +19,12 @@
   .title { margin: 0; font-size: 17px; font-weight: 650; letter-spacing: -0.01em; }
   .sub { margin: 2px 0 0; font-size: 12.5px; color: var(--muted); }
 
-  /* Three things to try: the guided first state. Numbers and "done" are text,
-   * so the strip carries no colour meaning and reads the same in both themes. */
+  /* Four things to try: the guided first state. Numbers and "done" are text,
+   * so the strip uses none of the meaning colours (blue, yellow, orange). */
   .guide { margin: 8px 0 0; padding: 10px 12px 11px; border: 1px solid var(--hairline-strong); border-radius: 10px; background: var(--bg); }
   .guide-h { margin: 0 0 8px; font-size: 12px; font-weight: 650; color: var(--muted); }
   .guide-steps { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
-  @media (min-width: 700px) { .guide-steps { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 18px; } }
+  @media (min-width: 700px) { .guide-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 22px; } }
   .guide-steps li { display: grid; grid-template-columns: 20px minmax(0, 1fr); grid-template-rows: 1fr auto; gap: 4px 8px; align-items: start; font-size: 12.5px; line-height: 1.5; color: var(--soft); }
   .guide-n { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: var(--text); color: var(--surface); font-size: 11px; font-weight: 650; }
   .guide-steps li.is-done .guide-n { background: transparent; border: 1px solid var(--hairline-strong); color: var(--muted); }
@@ -35,6 +35,9 @@
   .guide-go:hover { border-color: var(--accent-mid); color: var(--text); }
   .guide-done { font-size: 11.5px; font-weight: 600; color: var(--text); }
   .guide-end { margin: 8px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--soft); }
+  /* The closing line keeps its space while hidden, so finishing the last step
+   * does not shift the document under the reader. */
+  .guide-end[hidden] { display: block; visibility: hidden; }
 
   /* Counts: each one steps through the sentences it counts. */
   .counts { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 0 12px; border-bottom: 1px solid var(--hairline); }
@@ -194,25 +197,30 @@
   </header>
 
   <section class="guide" id="guide" aria-labelledby="guide-h">
-    <h2 class="guide-h" id="guide-h">Three things to try</h2>
-    <ol class="guide-steps" id="guide-steps">
+    <h2 class="guide-h" id="guide-h">Four things to try</h2>
+    <ol class="guide-steps" id="guide-steps" role="list">
       <li data-step="open">
-        <span class="guide-n" aria-hidden="true">1</span>
-        <span class="guide-t">Open citation <b>3</b> in &ldquo;When a refund posts&rdquo;, after &ldquo;two business days after capture&rdquo;. The sentence reads fine. The line it rests on says three.</span>
-        <span class="guide-foot"><button type="button" class="guide-go" data-go="open">Find it</button><span class="guide-done" hidden>&#10003; Done</span></span>
+        <span class="guide-n">1</span>
+        <span class="guide-t">Open citation <b>3</b> in &ldquo;When a refund posts&rdquo;. It is flagged before you click: the sentence says two days, the line it rests on says three.</span>
+        <span class="guide-foot"><button type="button" class="guide-go" data-go="open" aria-label="Show me citation 3">Show me</button><span class="guide-done" hidden>&#10003; Done</span></span>
+      </li>
+      <li data-step="change">
+        <span class="guide-n">2</span>
+        <span class="guide-t">Open citation <b>1</b> and press &ldquo;Change this file&rdquo; in the source panel. Its sentence loses its check; every other sentence keeps its state.</span>
+        <span class="guide-foot"><button type="button" class="guide-go" data-go="change" aria-label="Show me citation 1">Show me</button><span class="guide-done" hidden>&#10003; Done</span></span>
       </li>
       <li data-step="approve">
-        <span class="guide-n" aria-hidden="true">2</span>
+        <span class="guide-n">3</span>
         <span class="guide-t">Approve &ldquo;When a refund posts&rdquo;. The receipt under it records how many of its sources you opened, and that an issue is still open.</span>
-        <span class="guide-foot"><button type="button" class="guide-go" data-go="approve">Find it</button><span class="guide-done" hidden>&#10003; Done</span></span>
+        <span class="guide-foot"><button type="button" class="guide-go" data-go="approve" aria-label="Show me the Approve button for When a refund posts">Show me</button><span class="guide-done" hidden>&#10003; Done</span></span>
       </li>
       <li data-step="regen">
-        <span class="guide-n" aria-hidden="true">3</span>
+        <span class="guide-n">4</span>
         <span class="guide-t">Request changes on &ldquo;Daily totals&rdquo;, keep the request, and press Regenerate. Dana&rsquo;s sentence stays as written. The agent can only propose.</span>
-        <span class="guide-foot"><button type="button" class="guide-go" data-go="regen">Find it</button><span class="guide-done" hidden>&#10003; Done</span></span>
+        <span class="guide-foot"><button type="button" class="guide-go" data-go="regen" aria-label="Show me the Request changes button for Daily totals">Show me</button><span class="guide-done" hidden>&#10003; Done</span></span>
       </li>
     </ol>
-    <p class="guide-end" id="guide-end" hidden>Those are the three ideas. Everything else works too: change a cited file from the source panel, or reject a draft and publish.</p>
+    <p class="guide-end" id="guide-end" hidden>Those are the four ideas. Everything else works too: re-check the changed file, or reject a draft and publish.</p>
   </section>
 
   <div class="counts" id="counts" role="group" aria-label="Sentence states. Each count steps through the sentences it counts."></div>
@@ -375,8 +383,14 @@
   }
   function each(list, fn) { Array.prototype.forEach.call(list, fn); }
   function plural(n, one, many) { return n + ' ' + (n === 1 ? one : many); }
-  // Cleared first, so a repeated message is announced again.
-  function say(text) { receipt.textContent = ''; setTimeout(function () { receipt.textContent = text; }, 30); }
+  // Cleared first, so a repeated message is announced again. A step the reader
+  // has just completed is announced with the action's own message.
+  var pendingStep = '';
+  function say(text) {
+    if (pendingStep) { text += ' ' + pendingStep; pendingStep = ''; }
+    receipt.textContent = '';
+    setTimeout(function () { receipt.textContent = text; }, 30);
+  }
 
   function fresh() {
     version = 4;
@@ -611,14 +625,18 @@
     regenBtn.setAttribute('aria-disabled', String(!requests));
   }
 
-  // The banner counts the rewrites a reviewer can still see.
+  // The banner counts the rewrites a reviewer can still see, and the
+  // proposals still waiting for a person.
   function renderBanner() {
     if (version === 4) { changesEl.hidden = true; return; }
-    var n = 0;
+    var n = 0, p = 0;
     secEls.forEach(function (el, i) { if (!state[i].rejected) n += el.querySelectorAll('.sec-body del').length; });
-    changesEl.innerHTML = '<b>Version ' + version + '</b> · ' + (n
-      ? plural(n, 'rewritten sentence', 'rewritten sentences') + ' waiting for review'
-      : 'no rewritten sentences waiting for review') + ' · approved sections and people’s sentences unchanged';
+    inventory().forEach(function (x) { if (x.kind === 'proposal') p += 1; });
+    var parts = ['<b>Version ' + version + '</b>',
+      n ? plural(n, 'rewritten sentence', 'rewritten sentences') + ' waiting for review' : 'no rewritten sentences waiting for review'];
+    if (p) parts.push(plural(p, 'proposed change', 'proposed changes') + ' waiting for a person');
+    parts.push('approved sections and people’s sentences unchanged');
+    changesEl.innerHTML = parts.join(' · ');
     changesEl.hidden = false;
   }
 
@@ -702,10 +720,15 @@
     var i = Number(c.closest('.sec').dataset.i);
     selSec = i;
     if (how === 'open') {
-      if (!SRC[key].human) { state[i].opened[key] = true; markStep('open'); }
+      if (!SRC[key].human) {
+        state[i].opened[key] = true;
+        if (key === 's3' || key === 's3r') markStep('open');
+      }
       paneClosed = false;
     }
-    if (how === 'peek') paneClosed = false;
+    // A hover or a keyboard focus shows the panel on wide screens; on narrow
+    // screens a closed panel waits for a tap or Enter.
+    if (how === 'peek' && !narrow.matches) paneClosed = false;
     renderPane(key);
     place(c, how ? before : null);
   }
@@ -746,10 +769,13 @@
   // ---- Actions ----
   function act(i, a) {
     var st = state[i];
-    if (st.rejected || (st.published && !st.dirty)) return;
+    if (st.rejected || (st.published && !st.dirty)) {
+      say('This section is ' + (st.rejected ? 'rejected' : 'published') + '. Start over to review it again.');
+      return;
+    }
     st.review = st.review === a ? null : a;
     st.msg = '';
-    if (st.review === 'approve') { st.receiptText = receiptFor(i); markStep('approve'); }
+    if (st.review === 'approve') { st.receiptText = receiptFor(i); if (i === 0) markStep('approve'); }
     renderReview(i);
     renderCounts();
     updateBar();
@@ -808,11 +834,13 @@
 
   function regenerate() {
     if (regenBtn.getAttribute('aria-disabled') === 'true') { say('Request changes on a section and say what should change, then regenerate.'); return; }
-    var count = 0;
+    var count = 0, first = -1;
     version += 1;
     state.forEach(function (st, i) {
       if (st.review !== 'changes' || !st.request.trim()) return;
       var sec = SECTIONS[i];
+      if (first < 0) first = i;
+      if (i === 1) markStep('regen');
       st.msgCls = '';
       if (!st.regenerated) {
         st.regenerated = true;
@@ -826,13 +854,15 @@
       }
       st.review = null;
       st.request = '';
-      st.opened = {};
+      // The receipt forgets only the sources whose sentences were rewritten.
+      var keep = sourcesIn(i);
+      Object.keys(st.opened).forEach(function (k) { if (keep.indexOf(k) < 0) delete st.opened[k]; });
       count++;
     });
-    markStep('regen');
     renderAll();
     say('Regenerated ' + plural(count, 'section', 'sections') + ' from your requests. Review ' + (count === 1 ? 'it' : 'them') + ' again before publishing.');
-    regenBtn.focus();
+    // Focus moves to the first regenerated section, not to a button that has just gone quiet.
+    secEls[first].querySelector('h2').focus();
   }
 
   function sectionsCiting(key) {
@@ -845,6 +875,7 @@
     var s = SRC[key], lv = live[key];
     lv.changed = true;
     lv.check = 'stale';
+    if (key === 's1') markStep('change');
     var hit = 0, lapsed = [];
     inventory().forEach(function (x) { if ((x.s.src || []).indexOf(key) > -1) hit++; });
     sectionsCiting(key).forEach(function (i) {
@@ -905,18 +936,25 @@
   // A step is done when the reader performs it; "Find it" only moves focus to
   // the control the step names.
   var GUIDE_TARGETS = {
-    open: function () { return chipFor('s3'); },
+    open: function () { return chipFor('s3') || chipFor('s3r'); },
+    change: function () { return chipFor('s1'); },
     approve: function () { return secEls[0].querySelector('[data-act="approve"]'); },
     regen: function () { return secEls[1].querySelector('[data-act="changes"]'); }
   };
   var GUIDE_HINTS = {
     open: 'Citation 3 is focused. Press Enter, or tap it, to open the lines it rests on.',
+    change: 'Citation 1 is focused. Open it, then press Change this file in the source panel.',
     approve: 'The Approve button for When a refund posts is focused.',
     regen: 'The Request changes button for Daily totals is focused. Press it, keep the request, then press Regenerate below the document.'
   };
+  var STEP_N = { open: 1, change: 2, approve: 3, regen: 4 };
+  var GUIDE_END = document.getElementById('guide-end').textContent;
+  var hintShown = false;
   function markStep(k) {
     if (guideDone[k]) return;
     guideDone[k] = true;
+    var n = Object.keys(guideDone).length;
+    pendingStep = 'Step ' + STEP_N[k] + ' of 4 done.' + (n === 4 ? ' ' + GUIDE_END : '');
     renderGuide();
   }
   function renderGuide() {
@@ -937,13 +975,23 @@
     if (!t) { say('That control is not on the page in this version. Start over to see it.'); return; }
     t.scrollIntoView({ block: 'center' });
     t.focus({ preventScroll: true });
-    say(GUIDE_HINTS[b.dataset.go]);
+    hintShown = true;
+    say(t.getAttribute('aria-disabled') === 'true'
+      ? 'That section is already decided, so its buttons are off. Start over to review it again.'
+      : GUIDE_HINTS[b.dataset.go]);
   });
 
   // ---- Wiring ----
   docEl.addEventListener('click', function (e) {
     var c = e.target.closest('[data-src]');
-    if (c) { select(c.dataset.src, c, 'open'); pane.focus({ preventScroll: true }); return; }
+    if (c) {
+      // A hint from "Show me" is stale once the reader has done the thing.
+      if (hintShown) { hintShown = false; receipt.textContent = ''; }
+      select(c.dataset.src, c, 'open');
+      if (pendingStep) say('Opened source ' + SRC[c.dataset.src].n + '.');
+      pane.focus({ preventScroll: true });
+      return;
+    }
     var a = e.target.closest('[data-act]');
     if (a) { act(Number(a.closest('.sec').dataset.i), a.dataset.act); return; }
     var p = e.target.closest('[data-prop]');
@@ -996,7 +1044,9 @@
 
   fresh();
   renderAll();
-  say(INTRO);
+  // Set directly: a live region filled on load would read the whole line to
+  // a screen reader mid-article.
+  receipt.textContent = INTRO;
 })();
 </script>
 <script src="../../writing/_figure.js"></script>
