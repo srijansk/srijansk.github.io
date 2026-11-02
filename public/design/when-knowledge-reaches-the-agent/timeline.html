@@ -250,8 +250,8 @@
     clearTimeout(sumTimer);
     // The first render sets the text directly, so a live region is not filled
     // after the page is in the tree; later changes are debounced.
-    if (firstRender) { summaryEl.textContent = short; firstRender = false; return; }
-    sumTimer = setTimeout(function () { summaryEl.textContent = short; }, 300);
+    if (firstRender) { summaryEl.textContent = short; firstRender = false; }
+    else sumTimer = setTimeout(function () { summaryEl.textContent = short; }, 300);
     Array.prototype.forEach.call(listEl.children, function (li) {
       var k = Number(li.dataset.t);
       if (k === t) li.setAttribute('aria-current', 'step'); else li.removeAttribute('aria-current');

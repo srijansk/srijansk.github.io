@@ -1394,39 +1394,46 @@ a.row-title:hover { color: var(--accent); }
 
 /* The review prototype on the Design page: first-paint heights before the
  * figure reports its own (public/writing/_figure.js). */
-/* First-paint heights, measured 2026-11-01 at the figure's inner width (the
- * container minus the 1px borders) on a fresh load, one step per band where
- * the figure reflows, so the page moves little before the figure reports. */
-.fig-review-proto { height: 1952px; }
-@container (min-width: 362px) { .fig-review-proto { height: 1803px; } }
-@container (min-width: 374px) { .fig-review-proto { height: 1757px; } }
-@container (min-width: 390px) { .fig-review-proto { height: 1691px; } }
-@container (min-width: 412px) { .fig-review-proto { height: 1650px; } }
-@container (min-width: 432px) { .fig-review-proto { height: 1623px; } }
-@container (min-width: 462px) { .fig-review-proto { height: 1527px; } }
-@container (min-width: 482px) { .fig-review-proto { height: 1484px; } }
-@container (min-width: 562px) { .fig-review-proto { height: 1447px; } }
-@container (min-width: 622px) { .fig-review-proto { height: 1383px; } }
-@container (min-width: 652px) { .fig-review-proto { height: 1359px; } }
-@container (min-width: 702px) { .fig-review-proto { height: 1415px; } }
-@container (min-width: 722px) { .fig-review-proto { height: 1396px; } }
-@container (min-width: 782px) { .fig-review-proto { height: 1346px; } }
-@container (min-width: 802px) { .fig-review-proto { height: 1322px; } }
-@container (min-width: 902px) { .fig-review-proto { height: 1268px; } }
-@container (min-width: 976px) { .fig-review-proto { height: 1250px; } }
+/* First-paint heights, measured 2026-11-01 on fresh loads. A boundary sits at
+ * the container width whose figure (two pixels narrower, inside its borders)
+ * first shows that height, with a step wherever the figure reflows. */
+.fig-review-proto { height: 1995px; }
+@container (min-width: 333px) { .fig-review-proto { height: 1952px; } }
+@container (min-width: 348px) { .fig-review-proto { height: 1822px; } }
+@container (min-width: 354px) { .fig-review-proto { height: 1803px; } }
+@container (min-width: 372px) { .fig-review-proto { height: 1757px; } }
+@container (min-width: 388px) { .fig-review-proto { height: 1691px; } }
+@container (min-width: 410px) { .fig-review-proto { height: 1650px; } }
+@container (min-width: 430px) { .fig-review-proto { height: 1623px; } }
+@container (min-width: 440px) { .fig-review-proto { height: 1605px; } }
+@container (min-width: 460px) { .fig-review-proto { height: 1527px; } }
+@container (min-width: 480px) { .fig-review-proto { height: 1484px; } }
+@container (min-width: 560px) { .fig-review-proto { height: 1447px; } }
+@container (min-width: 620px) { .fig-review-proto { height: 1383px; } }
+@container (min-width: 650px) { .fig-review-proto { height: 1359px; } }
+@container (min-width: 700px) { .fig-review-proto { height: 1415px; } }
+@container (min-width: 716px) { .fig-review-proto { height: 1396px; } }
+@container (min-width: 780px) { .fig-review-proto { height: 1346px; } }
+@container (min-width: 800px) { .fig-review-proto { height: 1322px; } }
+@container (min-width: 900px) { .fig-review-proto { height: 1268px; } }
+@container (min-width: 974px) { .fig-review-proto { height: 1250px; } }
 .fig-delivery { height: 1219px; }
-@container (min-width: 352px) { .fig-delivery { height: 1195px; } }
-@container (min-width: 376px) { .fig-delivery { height: 1176px; } }
+@container (min-width: 350px) { .fig-delivery { height: 1195px; } }
+@container (min-width: 372px) { .fig-delivery { height: 1176px; } }
+@container (min-width: 412px) { .fig-delivery { height: 1135px; } }
+@container (min-width: 430px) { .fig-delivery { height: 1117px; } }
+@container (min-width: 440px) { .fig-delivery { height: 1099px; } }
 @container (min-width: 462px) { .fig-delivery { height: 1081px; } }
+@container (min-width: 480px) { .fig-delivery { height: 1058px; } }
 @container (min-width: 482px) { .fig-delivery { height: 1040px; } }
-@container (min-width: 502px) { .fig-delivery { height: 1017px; } }
+@container (min-width: 500px) { .fig-delivery { height: 1017px; } }
 @container (min-width: 643px) { .fig-delivery { height: 769px; } }
-@container (min-width: 682px) { .fig-delivery { height: 750px; } }
-@container (min-width: 702px) { .fig-delivery { height: 732px; } }
-@container (min-width: 722px) { .fig-delivery { height: 705px; } }
-@container (min-width: 762px) { .fig-delivery { height: 687px; } }
-@container (min-width: 782px) { .fig-delivery { height: 670px; } }
-@container (min-width: 802px) { .fig-delivery { height: 653px; } }
+@container (min-width: 680px) { .fig-delivery { height: 750px; } }
+@container (min-width: 700px) { .fig-delivery { height: 732px; } }
+@container (min-width: 708px) { .fig-delivery { height: 705px; } }
+@container (min-width: 760px) { .fig-delivery { height: 687px; } }
+@container (min-width: 780px) { .fig-delivery { height: 670px; } }
+@container (min-width: 800px) { .fig-delivery { height: 653px; } }
 
 /* ===== Print ===== */
 @media print {

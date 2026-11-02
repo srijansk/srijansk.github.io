@@ -39,7 +39,7 @@ It also arrives labelled as "evidence to weigh, not instructions". In the [instr
 
 crewlore's hooks do not gate. If delivery fails, the agent carries on as if they were not there. They mention each scope once per conversation and again after it is compacted, and stay silent when there is nothing to add. A gate would be more reliable for the rules that matter most, and a team that needs one can add it.
 
-The rule in the timeline is the sentence that waits for a person's approval in [Reviewing what an agent wrote](/design/reviewing-what-an-agent-wrote/); and the version that arrives here is the one approved there.
+The rule in the timeline is the sentence that waits for a person's approval in [Reviewing what an agent wrote](/design/reviewing-what-an-agent-wrote/); what arrives here is whichever version a person approved there.
 
 ## What would change my mind
 
